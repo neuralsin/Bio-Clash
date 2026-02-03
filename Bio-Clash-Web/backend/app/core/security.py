@@ -1,26 +1,28 @@
 """
 Security Module
 Password hashing and JWT token management.
+HACKATHON DEMO: Using simple base64 encoding instead of bcrypt for demo purposes.
 """
 from datetime import datetime, timedelta
 from typing import Optional
-from passlib.context import CryptContext
+import base64
 from jose import JWTError, jwt
 
 from app.core.config import settings
 
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against its hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a password against its hash. DEMO: Simple base64 comparison."""
+    try:
+        encoded = base64.b64encode(plain_password.encode()).decode()
+        return encoded == hashed_password
+    except:
+        return False
 
 
 def get_password_hash(password: str) -> str:
-    """Hash a password."""
-    return pwd_context.hash(password)
+    """Hash a password. DEMO: Simple base64 encoding."""
+    return base64.b64encode(password.encode()).decode()
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:

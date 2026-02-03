@@ -24,54 +24,66 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     Register a new user.
     Creates User, empty Profile, and initial Village with starter buildings.
     """
-    # Check if email exists
-    if db.query(User).filter(User.email == user_data.email).first():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+    try:
+        # Check if email exists
+        if db.query(User).filter(User.email == user_data.email).first():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered"
+            )
+        
+        # Check if username exists
+        if db.query(User).filter(User.username == user_data.username).first():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username already taken"
+            )
+        
+        # Create user
+        hashed_password = get_password_hash(user_data.password)
+        new_user = User(
+            email=user_data.email,
+            username=user_data.username,
+            hashed_password=hashed_password
         )
-    
-    # Check if username exists
-    if db.query(User).filter(User.username == user_data.username).first():
+        db.add(new_user)
+        db.flush()  # Get the user.id
+        
+        # Create empty profile
+        new_profile = Profile(user_id=new_user.id)
+        db.add(new_profile)
+        
+        # Create initial village with starter buildings
+        new_village = Village(user_id=new_user.id)
+        db.add(new_village)
+        db.flush()
+        
+        # Add starter buildings (THE CODEX: Level 1 of each)
+        starter_buildings = [
+            Building(village_id=new_village.id, building_type=BuildingType.TOWN_HALL, level=1, position_x=5, position_y=5),
+            Building(village_id=new_village.id, building_type=BuildingType.CANNON, level=1, position_x=3, position_y=3),
+            Building(village_id=new_village.id, building_type=BuildingType.ARCHER_TOWER, level=1, position_x=7, position_y=3),
+            Building(village_id=new_village.id, building_type=BuildingType.WALLS, level=1, position_x=4, position_y=4),
+            Building(village_id=new_village.id, building_type=BuildingType.GOLD_MINE, level=1, position_x=2, position_y=6),
+            Building(village_id=new_village.id, building_type=BuildingType.ELIXIR_COLLECTOR, level=1, position_x=8, position_y=6),
+        ]
+        db.add_all(starter_buildings)
+        
+        db.commit()
+        db.refresh(new_user)
+        
+        return new_user
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        import traceback
+        print(f"❌ Registration error: {e}")
+        print(traceback.format_exc())
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already taken"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Registration failed: {str(e)}"
         )
-    
-    # Create user
-    hashed_password = get_password_hash(user_data.password)
-    new_user = User(
-        email=user_data.email,
-        username=user_data.username,
-        hashed_password=hashed_password
-    )
-    db.add(new_user)
-    db.flush()  # Get the user.id
-    
-    # Create empty profile
-    new_profile = Profile(user_id=new_user.id)
-    db.add(new_profile)
-    
-    # Create initial village with starter buildings
-    new_village = Village(user_id=new_user.id)
-    db.add(new_village)
-    db.flush()
-    
-    # Add starter buildings (THE CODEX: Level 1 of each)
-    starter_buildings = [
-        Building(village_id=new_village.id, building_type=BuildingType.TOWN_HALL, level=1, position_x=5, position_y=5),
-        Building(village_id=new_village.id, building_type=BuildingType.CANNON, level=1, position_x=3, position_y=3),
-        Building(village_id=new_village.id, building_type=BuildingType.ARCHER_TOWER, level=1, position_x=7, position_y=3),
-        Building(village_id=new_village.id, building_type=BuildingType.WALLS, level=1, position_x=4, position_y=4),
-        Building(village_id=new_village.id, building_type=BuildingType.GOLD_MINE, level=1, position_x=2, position_y=6),
-        Building(village_id=new_village.id, building_type=BuildingType.ELIXIR_COLLECTOR, level=1, position_x=8, position_y=6),
-    ]
-    db.add_all(starter_buildings)
-    
-    db.commit()
-    db.refresh(new_user)
-    
-    return new_user
 
 
 @router.post("/login", response_model=Token)
