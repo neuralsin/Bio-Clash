@@ -1,0 +1,372 @@
+[
+    {
+        "name": "Barbell Bench Press",
+        "primary_muscle": "chest",
+        "secondary_muscles": "triceps,shoulders",
+        "category": "strength",
+        "equipment_needed": "Barbell, Bench",
+        "difficulty": 2,
+        "description": "Compound pushing exercise targeting the chest. Lie on bench, lower bar to chest, press up."
+    },
+    {
+        "name": "Incline Dumbbell Press",
+        "primary_muscle": "chest",
+        "secondary_muscles": "triceps,shoulders",
+        "category": "strength",
+        "equipment_needed": "Dumbbells, Incline Bench",
+        "difficulty": 2
+    },
+    {
+        "name": "Push-ups",
+        "primary_muscle": "chest",
+        "secondary_muscles": "triceps,core",
+        "category": "strength",
+        "equipment_needed": "None",
+        "difficulty": 1
+    },
+    {
+        "name": "Cable Flys",
+        "primary_muscle": "chest",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Cable Machine",
+        "difficulty": 2
+    },
+    {
+        "name": "Dumbbell Flys",
+        "primary_muscle": "chest",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Dumbbells, Bench",
+        "difficulty": 2
+    },
+    {
+        "name": "Pull-ups",
+        "primary_muscle": "back",
+        "secondary_muscles": "biceps",
+        "category": "compound",
+        "equipment_needed": "Pull-up Bar",
+        "difficulty": 3,
+        "description": "Vertical pulling movement. Hang from bar, pull body up until chin over bar."
+    },
+    {
+        "name": "Barbell Rows",
+        "primary_muscle": "back",
+        "secondary_muscles": "biceps,core",
+        "category": "compound",
+        "equipment_needed": "Barbell",
+        "difficulty": 2
+    },
+    {
+        "name": "Lat Pulldown",
+        "primary_muscle": "back",
+        "secondary_muscles": "biceps",
+        "category": "strength",
+        "equipment_needed": "Cable Machine",
+        "difficulty": 1
+    },
+    {
+        "name": "Seated Cable Row",
+        "primary_muscle": "back",
+        "secondary_muscles": "biceps",
+        "category": "strength",
+        "equipment_needed": "Cable Machine",
+        "difficulty": 1
+    },
+    {
+        "name": "Dumbbell Rows",
+        "primary_muscle": "back",
+        "secondary_muscles": "biceps",
+        "category": "strength",
+        "equipment_needed": "Dumbbell, Bench",
+        "difficulty": 1
+    },
+    {
+        "name": "Deadlift",
+        "primary_muscle": "compound",
+        "secondary_muscles": "back,legs,core",
+        "category": "compound",
+        "equipment_needed": "Barbell",
+        "difficulty": 4,
+        "description": "The king of compound lifts. Full posterior chain activation. Powers Eagle Artillery."
+    },
+    {
+        "name": "Barbell Squat",
+        "primary_muscle": "legs",
+        "secondary_muscles": "core",
+        "category": "compound",
+        "equipment_needed": "Barbell, Squat Rack",
+        "difficulty": 3,
+        "description": "Primary leg builder. Powers Inferno Tower."
+    },
+    {
+        "name": "Leg Press",
+        "primary_muscle": "legs",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Leg Press Machine",
+        "difficulty": 1
+    },
+    {
+        "name": "Lunges",
+        "primary_muscle": "legs",
+        "secondary_muscles": "core",
+        "category": "strength",
+        "equipment_needed": "Dumbbells (optional)",
+        "difficulty": 2
+    },
+    {
+        "name": "Leg Extensions",
+        "primary_muscle": "legs",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Leg Extension Machine",
+        "difficulty": 1
+    },
+    {
+        "name": "Romanian Deadlift",
+        "primary_muscle": "legs",
+        "secondary_muscles": "back",
+        "category": "strength",
+        "equipment_needed": "Barbell or Dumbbells",
+        "difficulty": 2
+    },
+    {
+        "name": "Overhead Press",
+        "primary_muscle": "shoulders",
+        "secondary_muscles": "triceps",
+        "category": "compound",
+        "equipment_needed": "Barbell or Dumbbells",
+        "difficulty": 2,
+        "description": "Primary shoulder builder. Powers Wizard Tower."
+    },
+    {
+        "name": "Lateral Raises",
+        "primary_muscle": "shoulders",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Dumbbells",
+        "difficulty": 1
+    },
+    {
+        "name": "Face Pulls",
+        "primary_muscle": "shoulders",
+        "secondary_muscles": "traps",
+        "category": "strength",
+        "equipment_needed": "Cable Machine",
+        "difficulty": 1
+    },
+    {
+        "name": "Front Raises",
+        "primary_muscle": "shoulders",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Dumbbells",
+        "difficulty": 1
+    },
+    {
+        "name": "Tricep Pushdowns",
+        "primary_muscle": "triceps",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Cable Machine",
+        "difficulty": 1,
+        "description": "Isolation for triceps. Powers Mortar."
+    },
+    {
+        "name": "Skull Crushers",
+        "primary_muscle": "triceps",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "EZ Bar, Bench",
+        "difficulty": 2
+    },
+    {
+        "name": "Dips",
+        "primary_muscle": "triceps",
+        "secondary_muscles": "chest,shoulders",
+        "category": "compound",
+        "equipment_needed": "Dip Bars",
+        "difficulty": 2
+    },
+    {
+        "name": "Overhead Tricep Extension",
+        "primary_muscle": "triceps",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Dumbbell or Cable",
+        "difficulty": 1
+    },
+    {
+        "name": "Bicep Curls",
+        "primary_muscle": "biceps",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Dumbbells or Barbell",
+        "difficulty": 1,
+        "description": "Classic arm builder. Powers Hidden Tesla."
+    },
+    {
+        "name": "Hammer Curls",
+        "primary_muscle": "biceps",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Dumbbells",
+        "difficulty": 1
+    },
+    {
+        "name": "Preacher Curls",
+        "primary_muscle": "biceps",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Preacher Bench, EZ Bar",
+        "difficulty": 1
+    },
+    {
+        "name": "Chin-ups",
+        "primary_muscle": "biceps",
+        "secondary_muscles": "back",
+        "category": "compound",
+        "equipment_needed": "Pull-up Bar",
+        "difficulty": 3
+    },
+    {
+        "name": "Plank",
+        "primary_muscle": "core",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "None",
+        "difficulty": 1,
+        "description": "Isometric core hold. Powers Walls."
+    },
+    {
+        "name": "Crunches",
+        "primary_muscle": "core",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "None",
+        "difficulty": 1
+    },
+    {
+        "name": "Hanging Leg Raises",
+        "primary_muscle": "core",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Pull-up Bar",
+        "difficulty": 2
+    },
+    {
+        "name": "Russian Twists",
+        "primary_muscle": "core",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Weight Plate (optional)",
+        "difficulty": 1
+    },
+    {
+        "name": "Ab Wheel Rollout",
+        "primary_muscle": "core",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Ab Wheel",
+        "difficulty": 3
+    },
+    {
+        "name": "Barbell Shrugs",
+        "primary_muscle": "traps",
+        "secondary_muscles": "",
+        "category": "strength",
+        "equipment_needed": "Barbell",
+        "difficulty": 1,
+        "description": "Trap builder. Powers Air Defense."
+    },
+    {
+        "name": "Farmers Walk",
+        "primary_muscle": "traps",
+        "secondary_muscles": "core,grip",
+        "category": "strength",
+        "equipment_needed": "Dumbbells or Farmer Walk Handles",
+        "difficulty": 2
+    },
+    {
+        "name": "Running",
+        "primary_muscle": "cardio",
+        "secondary_muscles": "legs",
+        "category": "cardio",
+        "equipment_needed": "None or Treadmill",
+        "difficulty": 1,
+        "description": "Endurance cardio. Powers X-Bow."
+    },
+    {
+        "name": "Cycling",
+        "primary_muscle": "cardio",
+        "secondary_muscles": "legs",
+        "category": "cardio",
+        "equipment_needed": "Bike or Stationary Bike",
+        "difficulty": 1
+    },
+    {
+        "name": "Rowing Machine",
+        "primary_muscle": "cardio",
+        "secondary_muscles": "back,legs",
+        "category": "cardio",
+        "equipment_needed": "Rowing Machine",
+        "difficulty": 2
+    },
+    {
+        "name": "Jump Rope",
+        "primary_muscle": "cardio",
+        "secondary_muscles": "",
+        "category": "cardio",
+        "equipment_needed": "Jump Rope",
+        "difficulty": 1
+    },
+    {
+        "name": "Swimming",
+        "primary_muscle": "cardio",
+        "secondary_muscles": "back,shoulders",
+        "category": "cardio",
+        "equipment_needed": "Pool",
+        "difficulty": 2
+    },
+    {
+        "name": "Clean and Jerk",
+        "primary_muscle": "compound",
+        "secondary_muscles": "legs,shoulders,back",
+        "category": "compound",
+        "equipment_needed": "Barbell",
+        "difficulty": 5
+    },
+    {
+        "name": "Snatch",
+        "primary_muscle": "compound",
+        "secondary_muscles": "legs,shoulders,back",
+        "category": "compound",
+        "equipment_needed": "Barbell",
+        "difficulty": 5
+    },
+    {
+        "name": "Power Clean",
+        "primary_muscle": "compound",
+        "secondary_muscles": "legs,back",
+        "category": "compound",
+        "equipment_needed": "Barbell",
+        "difficulty": 4
+    },
+    {
+        "name": "Thrusters",
+        "primary_muscle": "compound",
+        "secondary_muscles": "legs,shoulders",
+        "category": "compound",
+        "equipment_needed": "Barbell or Dumbbells",
+        "difficulty": 3
+    },
+    {
+        "name": "Burpees",
+        "primary_muscle": "compound",
+        "secondary_muscles": "chest,legs,core",
+        "category": "cardio",
+        "equipment_needed": "None",
+        "difficulty": 2
+    }
+]
