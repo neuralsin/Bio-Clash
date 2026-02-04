@@ -79,7 +79,7 @@ namespace DevelopersHub.ClashOfWhatecer
             fitnessUI._panel = fitnessPanel;
 
             // Create background panel
-            GameObject bgPanel = CreatePanel(fitnessPanel.transform, "Background", new Color(0.1f, 0.1f, 0.15f, 0.95f));
+            GameObject bgPanel = CreatePanel(fitnessPanel.transform, "Background", new Color(0.13f, 0.16f, 0.22f, 0.98f));
             RectTransform bgRect = bgPanel.GetComponent<RectTransform>();
             bgRect.anchorMin = new Vector2(0.15f, 0.1f);
             bgRect.anchorMax = new Vector2(0.85f, 0.9f);
@@ -87,13 +87,28 @@ namespace DevelopersHub.ClashOfWhatecer
             bgRect.offsetMax = Vector2.zero;
 
             // Create title
-            GameObject titleGO = CreateText(bgPanel.transform, "Title", "💪 FITNESS CENTER", 36, TextAlignmentOptions.Center);
+            GameObject titleGO = CreateText(bgPanel.transform, "Title", "💪 FITNESS CENTER", 42, TextAlignmentOptions.Center);
+            TextMeshProUGUI titleText = titleGO.GetComponent<TextMeshProUGUI>();
+            titleText.color = new Color(1f, 0.92f, 0.5f, 1f); // CoC Gold
+            
+            // Add outline for impact
+            Outline outline = titleGO.AddComponent<Outline>();
+            outline.effectColor = Color.black;
+            outline.effectDistance = new Vector2(2, -2);
+
             RectTransform titleRect = titleGO.GetComponent<RectTransform>();
             titleRect.anchorMin = new Vector2(0, 0.9f);
             titleRect.anchorMax = new Vector2(1, 1);
 
             // Create close button
             GameObject closeBtn = CreateButton(bgPanel.transform, "CloseButton", "✕", 32);
+            closeBtn.GetComponent<Image>().color = new Color(0.85f, 0.1f, 0.1f, 1f); // CoC Red
+            
+             // Add outline to button frame
+            Outline btnOutline = closeBtn.AddComponent<Outline>();
+            btnOutline.effectColor = Color.black;
+            btnOutline.effectDistance = new Vector2(1, -1);
+            
             RectTransform closeBtnRect = closeBtn.GetComponent<RectTransform>();
             closeBtnRect.anchorMin = new Vector2(0.92f, 0.92f);
             closeBtnRect.anchorMax = new Vector2(0.98f, 0.98f);
@@ -130,7 +145,10 @@ namespace DevelopersHub.ClashOfWhatecer
 
             // Control buttons row
             fitnessUI._startWorkoutButton = CreateButton(workoutSection.transform, "StartWorkoutBtn", "▶️ START", 14, new Vector2(0.02f, 0.02f), new Vector2(0.24f, 0.32f)).GetComponent<Button>();
+            fitnessUI._startWorkoutButton.image.color = new Color(0.4f, 0.8f, 0.2f, 1f); // Emerald Green
+
             fitnessUI._stopWorkoutButton = CreateButton(workoutSection.transform, "StopWorkoutBtn", "⏹️ FINISH", 14, new Vector2(0.02f, 0.02f), new Vector2(0.24f, 0.32f)).GetComponent<Button>();
+            fitnessUI._stopWorkoutButton.image.color = new Color(1f, 0.6f, 0.2f, 1f); // Orange
             fitnessUI._pauseWorkoutButton = CreateButton(workoutSection.transform, "PauseWorkoutBtn", "⏸️ PAUSE", 14, new Vector2(0.26f, 0.02f), new Vector2(0.48f, 0.32f)).GetComponent<Button>();
             fitnessUI._addExerciseButton = CreateButton(workoutSection.transform, "AddExerciseBtn", "➕ ADD SET", 14, new Vector2(0.50f, 0.02f), new Vector2(0.72f, 0.32f)).GetComponent<Button>();
             fitnessUI._quickRunButton = CreateButton(quickLogSection.transform, "RunButton", "🏃 Run", 14, new Vector2(0.74f, 0.02f), new Vector2(0.98f, 0.32f)).GetComponent<Button>();
@@ -158,6 +176,7 @@ namespace DevelopersHub.ClashOfWhatecer
             fitnessUI._setsInput = CreateInputField(inputSection.transform, "SetsInput", "3", new Vector2(0.66f, 0.05f), new Vector2(0.78f, 0.50f)).GetComponent<TMP_InputField>();
             
             fitnessUI._logButton = CreateButton(inputSection.transform, "LogButton", "📝 LOG", 16, new Vector2(0.80f, 0.05f), new Vector2(0.98f, 0.50f)).GetComponent<Button>();
+            fitnessUI._logButton.image.color = new Color(0.4f, 0.8f, 0.2f, 1f); // Emerald Green
 
             // Create Stats section (LEFT: 0.05-0.48, 0.08-0.52)
             GameObject statsSection = CreatePanel(bgPanel.transform, "StatsSection", new Color(0.12f, 0.15f, 0.2f, 1f));
@@ -345,7 +364,12 @@ namespace DevelopersHub.ClashOfWhatecer
             rect.offsetMax = Vector2.zero;
             
             Image img = inputGO.AddComponent<Image>();
-            img.color = new Color(0.2f, 0.25f, 0.3f, 1f);
+            img.color = new Color(0.1f, 0.12f, 0.15f, 1f); // Deep Dark Blue
+            
+            // Add subtle outline
+            Outline outline = inputGO.AddComponent<Outline>();
+            outline.effectColor = new Color(0.3f, 0.35f, 0.45f, 1f);
+            outline.effectDistance = new Vector2(1, -1);
             
             // Text area
             GameObject textArea = new GameObject("Text Area");
@@ -359,7 +383,7 @@ namespace DevelopersHub.ClashOfWhatecer
             // Placeholder
             GameObject placeholderGO = CreateText(textArea.transform, "Placeholder", placeholder, 16);
             TextMeshProUGUI placeholderTMP = placeholderGO.GetComponent<TextMeshProUGUI>();
-            placeholderTMP.color = new Color(0.6f, 0.6f, 0.6f, 1f);
+            placeholderTMP.color = new Color(0.5f, 0.5f, 0.6f, 1f);
             
             // Input text
             GameObject textGO = CreateText(textArea.transform, "Text", "", 16);
@@ -386,7 +410,12 @@ namespace DevelopersHub.ClashOfWhatecer
             bgRect.offsetMin = Vector2.zero;
             bgRect.offsetMax = Vector2.zero;
             Image bgImg = bgBar.AddComponent<Image>();
-            bgImg.color = new Color(0.2f, 0.2f, 0.25f, 1f);
+            bgImg.color = new Color(0, 0, 0, 0.5f); // Translucent Black
+            
+            // Add outline to bar
+            Outline barOutline = bgBar.AddComponent<Outline>();
+            barOutline.effectColor = new Color(0.4f, 0.4f, 0.45f, 0.8f);
+            barOutline.effectDistance = new Vector2(1, -1);
             
             // Fill bar
             GameObject fillBar = new GameObject(muscleName + "BarFill");

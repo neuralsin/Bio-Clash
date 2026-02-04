@@ -148,41 +148,85 @@ namespace DevelopersHub.ClashOfWhatecer
                 _panel.SetActive(false);
         }
 
+        private void OnEnable()
+        {
+            if (_panel != null)
+            {
+                StartCoroutine(AnimatePopIn());
+            }
+        }
+
+        private IEnumerator AnimatePopIn()
+        {
+            _panel.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+            
+            // Phase 1: 0.7 -> 1.1 (Overshoot)
+            float timer = 0f;
+            float duration = 0.2f;
+            while (timer < duration)
+            {
+                timer += Time.deltaTime;
+                float t = timer / duration;
+                float scale = Mathf.Lerp(0.7f, 1.1f, t);
+                _panel.transform.localScale = Vector3.one * scale;
+                yield return null;
+            }
+
+            // Phase 2: 1.1 -> 1.0 (Settle)
+            timer = 0f;
+            duration = 0.1f;
+            while (timer < duration)
+            {
+                timer += Time.deltaTime;
+                float t = timer / duration;
+                float scale = Mathf.Lerp(1.1f, 1.0f, t);
+                _panel.transform.localScale = Vector3.one * scale;
+                yield return null;
+            }
+
+            _panel.transform.localScale = Vector3.one;
+        }
+
+        private IEnumerator PunchScale(Transform target)
+        {
+            Vector3 original = Vector3.one;
+            float duration = 0.15f;
+            float time = 0;
+            
+            while (time < duration)
+            {
+                time += Time.deltaTime;
+                float t = time / duration;
+                float scale = 1.0f + Mathf.Sin(t * Mathf.PI) * 0.05f; // 5% punch
+                target.localScale = original * scale;
+                yield return null;
+            }
+            target.localScale = original;
+        }
+
         private void Start()
         {
-            // Close button
+            RefreshStats();
+            
             if (_closeButton != null)
-                _closeButton.onClick.AddListener(Close);
+                _closeButton.onClick.AddListener(ClosePanel);
+            else
+                Debug.LogWarning("UI_Fitness: Close Button not assigned!");
 
-            // Log workout button
             if (_logButton != null)
-                _logButton.onClick.AddListener(LogWorkout);
+                _logButton.onClick.AddListener(AddExerciseToSession);
 
-            // Quick log buttons
-            if (_quickBenchButton != null)
-                _quickBenchButton.onClick.AddListener(() => QuickLog("Bench Press"));
-            if (_quickSquatButton != null)
-                _quickSquatButton.onClick.AddListener(() => QuickLog("Squat"));
-            if (_quickDeadliftButton != null)
-                _quickDeadliftButton.onClick.AddListener(() => QuickLog("Deadlift"));
-            if (_quickRunButton != null)
-                _quickRunButton.onClick.AddListener(() => QuickLog("Run 30min"));
-
-            // Health log button
-            if (_logHealthButton != null)
-                _logHealthButton.onClick.AddListener(LogHealth);
-
-            // Workout session buttons
-            if (_startWorkoutButton != null)
-                _startWorkoutButton.onClick.AddListener(StartWorkout);
-            if (_stopWorkoutButton != null)
-                _stopWorkoutButton.onClick.AddListener(StopWorkout);
-            if (_pauseWorkoutButton != null)
-                _pauseWorkoutButton.onClick.AddListener(TogglePauseWorkout);
-            if (_addExerciseButton != null)
-                _addExerciseButton.onClick.AddListener(AddExerciseToSession);
-
-            // Load saved health data
+            if (_quickBenchButton != null) _quickBenchButton.onClick.AddListener(() => QuickLog("Bench Press"));
+            if (_quickSquatButton != null) _quickSquatButton.onClick.AddListener(() => QuickLog("Squat"));
+            if (_quickDeadliftButton != null) _quickDeadliftButton.onClick.AddListener(() => QuickLog("Deadlift"));
+            if (_quickRunButton != null) _quickRunButton.onClick.AddListener(() => QuickLog("Run"));
+            
+            // Workout Session Listeners
+            if (_startWorkoutButton != null) _startWorkoutButton.onClick.AddListener(StartWorkout);
+            if (_stopWorkoutButton != null) _stopWorkoutButton.onClick.AddListener(StopWorkout);
+            if (_pauseWorkoutButton != null) _pauseWorkoutButton.onClick.AddListener(TogglePauseWorkout);
+            if (_addExerciseButton != null) _addExerciseButton.onClick.AddListener(AddExerciseToSession);
+            
             LoadHealthData();
 
             // Initialize workout session UI
@@ -284,7 +328,9 @@ namespace DevelopersHub.ClashOfWhatecer
             // Play success sound
             if (SoundManager.instanse != null)
                 SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-
+            
+            StartCoroutine(PunchScale(_panel.transform)); // Punch whole panel
+            
             Debug.Log($"✅ Logged: {weight}kg x {reps} reps");
         }
 
@@ -721,6 +767,9 @@ namespace DevelopersHub.ClashOfWhatecer
 
             if (SoundManager.instanse != null)
                 SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                
+            StartCoroutine(PunchScale(_logButton.transform)); // Punch log button
+            
             Debug.Log($"➕ Added: {exerciseName} - {sets}x{reps} @ {weight}kg ({muscleGroup})");
         }
 
