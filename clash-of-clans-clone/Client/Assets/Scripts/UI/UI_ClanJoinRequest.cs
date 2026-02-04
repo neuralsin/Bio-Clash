@@ -40,7 +40,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Accept()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             active = this;
             _acceptButton.interactable = false;
             _rejectButton.interactable = false;
@@ -53,7 +53,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Reject()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             active = this;
             _acceptButton.interactable = false;
             _rejectButton.interactable = false;

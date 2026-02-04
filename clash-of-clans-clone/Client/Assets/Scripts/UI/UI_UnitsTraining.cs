@@ -47,17 +47,17 @@ namespace DevelopersHub.ClashOfWhatecer
             _bar.fillAmount = 0;
             _unit = null;
             int level = 1;
-            for (int i = 0; i < Player.instanse.initializationData.research.Count; i++)
+            for (int i = 0; i < Player.instance.initializationData.research.Count; i++)
             {
-                if (Player.instanse.initializationData.research[i].type == Data.ResearchType.unit && Player.instanse.initializationData.research[i].globalID == id.ToString())
+                if (Player.instance.initializationData.research[i].type == Data.ResearchType.unit && Player.instance.initializationData.research[i].globalID == id.ToString())
                 {
-                    level = Player.instanse.initializationData.research[i].level;
+                    level = Player.instance.initializationData.research[i].level;
                     break;
                 }
             }
-            for (int i = 0; i < Player.instanse.initializationData.serverUnits.Count; i++)
+            for (int i = 0; i < Player.instance.initializationData.serverUnits.Count; i++)
             {
-                if (Player.instanse.initializationData.serverUnits[i].id == id && Player.instanse.initializationData.serverUnits[i].level == level)
+                if (Player.instance.initializationData.serverUnits[i].id == id && Player.instance.initializationData.serverUnits[i].level == level)
                 {
                     _unit = new Data.Unit();
                     _unit.id = id;
@@ -66,8 +66,8 @@ namespace DevelopersHub.ClashOfWhatecer
                     _unit.level = level;
                     _unit.databaseID = 0;
                     _unit.trainedTime = 0;
-                    _unit.trainTime = Player.instanse.initializationData.serverUnits[i].trainTime;
-                    if(Player.instanse.data.gems >= Player.instanse.initializationData.serverUnits[i].requiredGems && Player.instanse.elixir >= Player.instanse.initializationData.serverUnits[i].requiredElixir && Player.instanse.gold >= Player.instanse.initializationData.serverUnits[i].requiredGold && Player.instanse.darkElixir >= Player.instanse.initializationData.serverUnits[i].requiredDarkElixir)
+                    _unit.trainTime = Player.instance.initializationData.serverUnits[i].trainTime;
+                    if(Player.instance.data.gems >= Player.instance.initializationData.serverUnits[i].requiredGems && Player.instance.elixir >= Player.instance.initializationData.serverUnits[i].requiredElixir && Player.instance.gold >= Player.instance.initializationData.serverUnits[i].requiredGold && Player.instance.darkElixir >= Player.instance.initializationData.serverUnits[i].requiredDarkElixir)
                     {
                         havrResources = true;
                     }
@@ -90,7 +90,7 @@ namespace DevelopersHub.ClashOfWhatecer
                 //transform.SetParent(null);
                 return;
             }
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             Packet paket = new Packet();
             paket.Write((int)Player.RequestsID.CANCELTRAIN);
             paket.Write(_unit.databaseID);
@@ -111,7 +111,7 @@ namespace DevelopersHub.ClashOfWhatecer
             _bar.fillAmount = fill;
             if (fill >= 1f && _unit.trained)
             {
-                Player.instanse.RushSyncRequest();
+                Player.instance.RushSyncRequest();
                 gameObject.SetActive(false);
             }
         }

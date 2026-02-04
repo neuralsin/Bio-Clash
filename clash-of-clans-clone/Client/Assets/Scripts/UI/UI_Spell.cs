@@ -21,7 +21,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private UI_SpellItem _spellPrefab = null;
         [SerializeField] private Data.SpellID[] _spellsAvailable = null; public Data.SpellID[] spellsList { get { return _spellsAvailable; } }
 
-        private static UI_Spell _instance = null; public static UI_Spell instanse { get { return _instance; } }
+        private static UI_Spell _instance = null; public static UI_Spell instance { get { return _instance; } }
 
         private List<UI_SpellBrewing> brewingItems = new List<UI_SpellBrewing>();
         private List<UI_SpellItem> uiSpells = new List<UI_SpellItem>();
@@ -54,11 +54,11 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             for (int i = 0; i < uiSpells.Count; i++)
             {
-                for (int j = 0; j < Player.instanse.initializationData.serverSpells.Count; j++)
+                for (int j = 0; j < Player.instance.initializationData.serverSpells.Count; j++)
                 {
-                    if (uiSpells[i].id == Player.instanse.initializationData.serverSpells[j].id)
+                    if (uiSpells[i].id == Player.instance.initializationData.serverSpells[j].id)
                     {
-                        uiSpells[i].Initialize(Player.instanse.initializationData.serverSpells[j]);
+                        uiSpells[i].Initialize(Player.instance.initializationData.serverSpells[j]);
                         break;
                     }
                 }
@@ -90,7 +90,7 @@ namespace DevelopersHub.ClashOfWhatecer
             ClearBrewingItems();
             if (status)
             {
-                UI_Main.instanse.SetStatus(false);
+                UI_Main.instance.SetStatus(false);
                 Initialize();
                 Sync();
             }
@@ -100,20 +100,20 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void UpdateBrewingList()
         {
-            for (int i = 0; i < Player.instanse.data.spells.Count; i++)
+            for (int i = 0; i < Player.instance.data.spells.Count; i++)
             {
-                if (Player.instanse.data.spells[i].ready == false)
+                if (Player.instance.data.spells[i].ready == false)
                 {
                     int x1 = -1;
                     int x2 = -1;
                     for (int j = 0; j < brewingItems.Count; j++)
                     {
-                        if (brewingItems[j] && Player.instanse.data.spells[i].databaseID == brewingItems[j].databaseID)
+                        if (brewingItems[j] && Player.instance.data.spells[i].databaseID == brewingItems[j].databaseID)
                         {
                             x1 = j;
                             break;
                         }
-                        if (brewingItems[j] && brewingItems[j].databaseID <= 0 && Player.instanse.data.spells[i].id == brewingItems[j].id)
+                        if (brewingItems[j] && brewingItems[j].databaseID <= 0 && Player.instance.data.spells[i].id == brewingItems[j].id)
                         {
                             x2 = j;
                         }
@@ -126,12 +126,12 @@ namespace DevelopersHub.ClashOfWhatecer
                     {
                         if (x2 >= 0)
                         {
-                            brewingItems[x2].Initialize(Player.instanse.data.spells[i]);
+                            brewingItems[x2].Initialize(Player.instance.data.spells[i]);
                         }
                         else
                         {
                             UI_SpellBrewing spell = Instantiate(_brewPrefab, _brewGrid.transform);
-                            spell.Initialize(Player.instanse.data.spells[i]);
+                            spell.Initialize(Player.instance.data.spells[i]);
                             RectTransform rect = spell.GetComponent<RectTransform>();
                             rect.sizeDelta = new Vector2(brewingItemHeight, brewingItemHeight);
                             brewingItems.Add(spell);
@@ -154,7 +154,7 @@ namespace DevelopersHub.ClashOfWhatecer
         private void Close()
         {
             SetStatus(false);
-            UI_Main.instanse.SetStatus(true);
+            UI_Main.instance.SetStatus(true);
         }
 
         public void Sync()
@@ -167,10 +167,10 @@ namespace DevelopersHub.ClashOfWhatecer
                 occupied += uiSpells[i].housing;
             }
 
-            for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+            for (int i = 0; i < Player.instance.data.buildings.Count; i++)
             {
-                if (Player.instanse.data.buildings[i].id != Data.BuildingID.spellfactory) { continue; }
-                available += Player.instanse.data.buildings[i].capacity;
+                if (Player.instance.data.buildings[i].id != Data.BuildingID.spellfactory) { continue; }
+                available += Player.instance.data.buildings[i].capacity;
                 break;
             }
 
@@ -184,9 +184,9 @@ namespace DevelopersHub.ClashOfWhatecer
                 if (brewingItems[i])
                 {
                     int x = -1;
-                    for (int j = 0; j < Player.instanse.data.spells.Count; j++)
+                    for (int j = 0; j < Player.instance.data.spells.Count; j++)
                     {
-                        if (Player.instanse.data.spells[j].databaseID == brewingItems[i].databaseID)
+                        if (Player.instance.data.spells[j].databaseID == brewingItems[i].databaseID)
                         {
                             x = j;
                             break;
@@ -194,7 +194,7 @@ namespace DevelopersHub.ClashOfWhatecer
                     }
                     if (x >= 0)
                     {
-                        if (Player.instanse.data.spells[x].ready)
+                        if (Player.instance.data.spells[x].ready)
                         {
                             RemoveTrainingItem(i);
                         }

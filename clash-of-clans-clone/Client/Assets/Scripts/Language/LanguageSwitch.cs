@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@
         [SerializeField] private GameObject _elements = null;
         [SerializeField] private Button _closeButton = null;
 
-        private static LanguageSwitch _instance = null; public static LanguageSwitch instanse { get { return _instance; } }
+        private static LanguageSwitch _instance = null; public static LanguageSwitch instance { get { return _instance; } }
         private bool _active = false; public bool isActive { get { return _active; } }
 
         private void Awake()
@@ -35,7 +35,7 @@
 
         public void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _active = false;
             _elements.SetActive(false);
         }
@@ -58,13 +58,13 @@
         public void Switch(Language.LanguageID id)
         {
             language = id;
-            switch (Language.instanse.language)
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "تغییر زبان به " + Language.instanse.GetLanguageName(id) + "؟" }, new string[] { "بله", "خیر" });
+                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "????? ???? ?? " + Language.instance.GetLanguageName(id) + "?" }, new string[] { "???", "???" });
                     break;
                 default:
-                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "Change language to " + Language.instanse.GetLanguageName(id) + "?" }, new string[] { "Yes", "No" });
+                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "Change language to " + Language.instance.GetLanguageName(id) + "?" }, new string[] { "Yes", "No" });
                     break;
             }
         }

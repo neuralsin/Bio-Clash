@@ -45,7 +45,7 @@ public class CUIColorPicker : MonoBehaviour
     private static bool GetLocalMouse(GameObject go, out Vector2 result)
     {
         var rt = (RectTransform)go.transform;
-        var mp = rt.InverseTransformPoint(CameraController.instanse.inputs.Main.PointerPosition.ReadValue<Vector2>());
+        var mp = rt.InverseTransformPoint(CameraController.instance.inputs.Main.PointerPosition.ReadValue<Vector2>());
         result.x = Mathf.Clamp(mp.x, rt.rect.min.x, rt.rect.max.x);
         result.y = Mathf.Clamp(mp.y, rt.rect.min.y, rt.rect.max.y);
         return rt.rect.Contains(mp);
@@ -145,7 +145,7 @@ public class CUIColorPicker : MonoBehaviour
         Action dragSV = null;
         Action idle = () =>
         {
-            if (CameraController.instanse.inputs.Main.Move.WasPressedThisFrame()/*Input.GetMouseButtonDown(0)*/)
+            if (CameraController.instance.inputs.Main.Move.WasPressedThisFrame()/*Input.GetMouseButtonDown(0)*/)
             {
                 Vector2 mp;
                 if (GetLocalMouse(hueGO, out mp))
@@ -166,7 +166,7 @@ public class CUIColorPicker : MonoBehaviour
             applyHue();
             applySaturationValue();
             hueKnob.transform.localPosition = new Vector2(hueKnob.transform.localPosition.x, mp.y);
-            if (CameraController.instanse.inputs.Main.Move.WasReleasedThisFrame()/*Input.GetMouseButtonUp(0)*/)
+            if (CameraController.instance.inputs.Main.Move.WasReleasedThisFrame()/*Input.GetMouseButtonUp(0)*/)
             {
                 _update = idle;
             }
@@ -179,7 +179,7 @@ public class CUIColorPicker : MonoBehaviour
             Value = mp.y / satvalSz.y;
             applySaturationValue();
             satvalKnob.transform.localPosition = mp;
-            if (CameraController.instanse.inputs.Main.Move.WasReleasedThisFrame()/*Input.GetMouseButtonUp(0)*/)
+            if (CameraController.instance.inputs.Main.Move.WasReleasedThisFrame()/*Input.GetMouseButtonUp(0)*/)
             {
                 _update = idle;
             }

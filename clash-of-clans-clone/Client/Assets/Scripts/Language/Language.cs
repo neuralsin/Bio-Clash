@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +8,7 @@
     {
 
         private static LanguageID defaultLanguage = LanguageID.english;
-        private static Language _instance = null; public static Language instanse { get { Initialize(); return _instance; } }
+        private static Language _instance = null; public static Language instance { get { Initialize(); return _instance; } }
 
         [Serializable] public class Translation
         {
@@ -82,11 +82,11 @@
             switch (id)
             {
                 case LanguageID.english: return "English";
-                case LanguageID.persian: return "فارسی";
-                case LanguageID.russian: return "Русский";
-                case LanguageID.arabic: return "العربية";
-                case LanguageID.spanish: return "Española";
-                case LanguageID.french: return "Français";
+                case LanguageID.persian: return "?????";
+                case LanguageID.russian: return "???????";
+                case LanguageID.arabic: return "???????";
+                case LanguageID.spanish: return "Espa�ola";
+                case LanguageID.french: return "Fran�ais";
                 case LanguageID.italian: return "Italiana";
                 case LanguageID.german: return "Deutsch";
                 default: return "English";
@@ -144,34 +144,34 @@
                 case LanguageID.persian:
                     switch (id)
                     {
-                        case Data.BuildingID.townhall: return "قلعه";
-                        case Data.BuildingID.goldmine: return "معدن طلا";
-                        case Data.BuildingID.goldstorage: return "انبار طلا";
-                        case Data.BuildingID.elixirmine: return "اکسیر ساز";
-                        case Data.BuildingID.elixirstorage: return "منبع اکسیر";
+                        case Data.BuildingID.townhall: return "????";
+                        case Data.BuildingID.goldmine: return "???? ???";
+                        case Data.BuildingID.goldstorage: return "????? ???";
+                        case Data.BuildingID.elixirmine: return "????? ???";
+                        case Data.BuildingID.elixirstorage: return "???? ?????";
                         case Data.BuildingID.darkelixirmine: return "Dark Elixir Drill";
                         case Data.BuildingID.darkelixirstorage: return "Dark Elixir Storage";
-                        case Data.BuildingID.buildershut: return "ایستگاه ساخت";
-                        case Data.BuildingID.armycamp: return "کمپ نظامی";
-                        case Data.BuildingID.barracks: return "سرباز خانه";
+                        case Data.BuildingID.buildershut: return "??????? ????";
+                        case Data.BuildingID.armycamp: return "??? ?????";
+                        case Data.BuildingID.barracks: return "????? ????";
                         case Data.BuildingID.darkbarracks: return "Dark Barracks";
-                        case Data.BuildingID.wall: return "دیوار";
-                        case Data.BuildingID.cannon: return "توپ";
-                        case Data.BuildingID.archertower: return "برج کماندار";
-                        case Data.BuildingID.mortor: return "خمپاره انداز";
-                        case Data.BuildingID.airdefense: return "ضد هوایی";
-                        case Data.BuildingID.wizardtower: return "برج جادوگر";
+                        case Data.BuildingID.wall: return "?????";
+                        case Data.BuildingID.cannon: return "???";
+                        case Data.BuildingID.archertower: return "??? ???????";
+                        case Data.BuildingID.mortor: return "?????? ?????";
+                        case Data.BuildingID.airdefense: return "?? ?????";
+                        case Data.BuildingID.wizardtower: return "??? ??????";
                         case Data.BuildingID.hiddentesla: return "Hidden Tesla";
                         case Data.BuildingID.bombtower: return "Bomb Tower";
                         case Data.BuildingID.xbow: return "X Bow";
-                        case Data.BuildingID.infernotower: return "برج جهنمی";
+                        case Data.BuildingID.infernotower: return "??? ?????";
                         case Data.BuildingID.decoration: return "Decoration";
                         case Data.BuildingID.obstacle:
                             switch (level)
                             {
-                                case 1: case 2: case 3: return "درخت";
-                                case 4: case 5: return "سنگ";
-                                default: return "مانع";
+                                case 1: case 2: case 3: return "????";
+                                case 4: case 5: return "???";
+                                default: return "????";
                             }
                         case Data.BuildingID.boomb: return "Boomb";
                         case Data.BuildingID.springtrap: return "Spring Trap";
@@ -179,10 +179,10 @@
                         case Data.BuildingID.giantbomb: return "Giant Bomb";
                         case Data.BuildingID.seekingairmine: return "Seeking Air Mine";
                         case Data.BuildingID.skeletontrap: return "Skeleton Trap";
-                        case Data.BuildingID.clancastle: return "مرکز قبیله";
-                        case Data.BuildingID.spellfactory: return "کارخانه جادو";
+                        case Data.BuildingID.clancastle: return "???? ?????";
+                        case Data.BuildingID.spellfactory: return "??????? ????";
                         case Data.BuildingID.darkspellfactory: return "Dark Spell Factory";
-                        case Data.BuildingID.laboratory: return "آزمایشگاه";
+                        case Data.BuildingID.laboratory: return "?????????";
                     }
                     break;
             }
@@ -228,18 +228,18 @@
                 case LanguageID.persian:
                     switch (id)
                     {
-                        case Data.UnitID.barbarian: return "سرباز";
-                        case Data.UnitID.archer: return "کماندار";
-                        case Data.UnitID.goblin: return "گوبلین";
-                        case Data.UnitID.healer: return "درمانگر";
-                        case Data.UnitID.wallbreaker: return "دیوار شکن";
-                        case Data.UnitID.giant: return "غول";
-                        case Data.UnitID.miner: return "معدنچی";
-                        case Data.UnitID.balloon: return "بالن";
-                        case Data.UnitID.wizard: return "جادوگر";
-                        case Data.UnitID.dragon: return "کماندار اژدها";
-                        case Data.UnitID.pekka: return "شوالیه";
-                        case Data.UnitID.babydragon: return "ترمیناتور";
+                        case Data.UnitID.barbarian: return "?????";
+                        case Data.UnitID.archer: return "???????";
+                        case Data.UnitID.goblin: return "??????";
+                        case Data.UnitID.healer: return "???????";
+                        case Data.UnitID.wallbreaker: return "????? ???";
+                        case Data.UnitID.giant: return "???";
+                        case Data.UnitID.miner: return "??????";
+                        case Data.UnitID.balloon: return "????";
+                        case Data.UnitID.wizard: return "??????";
+                        case Data.UnitID.dragon: return "??????? ?????";
+                        case Data.UnitID.pekka: return "??????";
+                        case Data.UnitID.babydragon: return "?????????";
                         case Data.UnitID.electrodragon: return "Electro Dragon";
                         case Data.UnitID.yeti: return "Yeti";
                         case Data.UnitID.dragonrider: return "Dragon Rider";
@@ -284,17 +284,17 @@
                 case LanguageID.persian:
                     switch (id)
                     {
-                        case Data.SpellID.lightning: return "صاعقه";
-                        case Data.SpellID.healing: return "شفا";
-                        case Data.SpellID.rage: return "خشم";
-                        case Data.SpellID.jump: return "پرش";
-                        case Data.SpellID.freeze: return "انجماد";
-                        case Data.SpellID.invisibility: return "نامرعی";
+                        case Data.SpellID.lightning: return "?????";
+                        case Data.SpellID.healing: return "???";
+                        case Data.SpellID.rage: return "???";
+                        case Data.SpellID.jump: return "???";
+                        case Data.SpellID.freeze: return "??????";
+                        case Data.SpellID.invisibility: return "??????";
                         case Data.SpellID.recall: return "Recall";
-                        case Data.SpellID.earthquake: return "زمین لرزه";
-                        case Data.SpellID.haste: return "عجله";
-                        case Data.SpellID.skeleton: return "اسلت";
-                        case Data.SpellID.bat: return "خفاش";
+                        case Data.SpellID.earthquake: return "???? ????";
+                        case Data.SpellID.haste: return "????";
+                        case Data.SpellID.skeleton: return "????";
+                        case Data.SpellID.bat: return "????";
                     }
                     break;
             }

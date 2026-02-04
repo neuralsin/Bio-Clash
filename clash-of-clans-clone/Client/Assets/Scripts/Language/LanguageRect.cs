@@ -9,7 +9,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Awake()
         {
-            if (Language.instanse.IsRTL)
+            if (Language.instance.IsRTL)
             {
                 RectTransform rect = GetComponent<RectTransform>();
                 if(rect != null)

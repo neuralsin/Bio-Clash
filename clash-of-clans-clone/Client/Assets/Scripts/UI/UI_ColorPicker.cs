@@ -14,7 +14,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private CUIColorPicker _colorPicker = null;
 
         private bool _active = false; public bool isActive { get { return _active; } }
-        private static UI_ColorPicker _instance = null; public static UI_ColorPicker instanse { get { return _instance; } }
+        private static UI_ColorPicker _instance = null; public static UI_ColorPicker instance { get { return _instance; } }
 
         public delegate void ColorPickCallback(bool result, Color color);
         private ColorPickCallback _callback = null;

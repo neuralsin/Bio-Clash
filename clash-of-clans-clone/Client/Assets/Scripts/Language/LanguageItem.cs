@@ -14,7 +14,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Awake()
         {
-            _button.interactable = Language.instanse.language != id;
+            _button.interactable = Language.instance.language != id;
         }
 
         private void Start()
@@ -24,7 +24,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Clicked()
         {
-            LanguageSwitch.instanse.Switch(id);
+            LanguageSwitch.instance.Switch(id);
         }
 
     }

@@ -7,7 +7,7 @@ namespace DevelopersHub.ClashOfWhatecer
     public class AssetsBank : MonoBehaviour
     {
 
-        private static AssetsBank _instance = null; public static AssetsBank instanse { get { return _instance; } }
+        private static AssetsBank _instance = null; public static AssetsBank instance { get { return _instance; } }
 
         private void Awake()
         {
@@ -103,9 +103,9 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public static Sprite GetBuildingIcon(Data.BuildingID id, int level = 1)
         {
-            if(instanse != null)
+            if(instance != null)
             {
-                return instanse._GetBuildingIcon(id, level);
+                return instance._GetBuildingIcon(id, level);
             }
             return null;
         }
@@ -173,9 +173,9 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public static Sprite GetUnitIcon(Data.UnitID id)
         {
-            if (instanse != null)
+            if (instance != null)
             {
-                return instanse._GetUnitIcon(id);
+                return instance._GetUnitIcon(id);
             }
             return null;
         }
@@ -217,9 +217,9 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public static Sprite GetSpellIcon(Data.SpellID id)
         {
-            if (instanse != null)
+            if (instance != null)
             {
-                return instanse._GetSpellIcon(id);
+                return instance._GetSpellIcon(id);
             }
             return null;
         }
@@ -245,9 +245,9 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public static Sprite GetLanguageIcon(Language.LanguageID id)
         {
-            if (instanse != null)
+            if (instance != null)
             {
-                return instanse._GetLanguageIcon(id);
+                return instance._GetLanguageIcon(id);
             }
             return null;
         }

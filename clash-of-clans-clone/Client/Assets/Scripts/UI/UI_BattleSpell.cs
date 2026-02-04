@@ -57,7 +57,7 @@ namespace DevelopersHub.ClashOfWhatecer
         public void Select()
         {
             _selectEffects.SetActive(true);
-            UI_Battle.instanse.SpellSelected(id);
+            UI_Battle.instance.SpellSelected(id);
         }
 
         public void Deselect()

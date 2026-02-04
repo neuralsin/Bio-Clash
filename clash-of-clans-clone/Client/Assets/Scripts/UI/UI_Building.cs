@@ -28,15 +28,15 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Clicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Shop.instanse.PlaceBuilding(_id);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Shop.instance.PlaceBuilding(_id);
         }
 
         public void Initialize(bool haveWorker)
         {
-            Data.ServerBuilding building = Player.instanse.GetServerBuilding(_id, 1);
-            _titleText.text = Language.instanse.GetBuildingName(_id);
-            if (Language.instanse.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
+            Data.ServerBuilding building = Player.instance.GetServerBuilding(_id, 1);
+            _titleText.text = Language.instance.GetBuildingName(_id);
+            if (Language.instance.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
             {
                 _titleText.horizontalAlignment = HorizontalAlignmentOptions.Right;
             }
@@ -51,13 +51,13 @@ namespace DevelopersHub.ClashOfWhatecer
                 _button.interactable = haveWorker;
                 int townHallLevel = 1;
                 int count = 0;
-                for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+                for (int i = 0; i < Player.instance.data.buildings.Count; i++)
                 {
-                    if (Player.instanse.data.buildings[i].id == Data.BuildingID.townhall)
+                    if (Player.instance.data.buildings[i].id == Data.BuildingID.townhall)
                     {
-                        townHallLevel = Player.instanse.data.buildings[i].level;
+                        townHallLevel = Player.instance.data.buildings[i].level;
                     }
-                    if (Player.instanse.data.buildings[i].id == _id)
+                    if (Player.instance.data.buildings[i].id == _id)
                     {
                         count++;
                     }
@@ -83,17 +83,17 @@ namespace DevelopersHub.ClashOfWhatecer
                 if (building.requiredGold > 0)
                 {
                     _resourceText.text = building.requiredGold.ToString();
-                    _resourceIcon.sprite = AssetsBank.instanse.goldIcon;
+                    _resourceIcon.sprite = AssetsBank.instance.goldIcon;
                 }
                 else if (building.requiredElixir > 0)
                 {
                     _resourceText.text = building.requiredElixir.ToString();
-                    _resourceIcon.sprite = AssetsBank.instanse.elixirIcon;
+                    _resourceIcon.sprite = AssetsBank.instance.elixirIcon;
                 }
                 else if (building.requiredDarkElixir > 0)
                 {
                     _resourceText.text = building.requiredDarkElixir.ToString();
-                    _resourceIcon.sprite = AssetsBank.instanse.darkIcon;
+                    _resourceIcon.sprite = AssetsBank.instance.darkIcon;
                 }
                 else
                 {
@@ -110,9 +110,9 @@ namespace DevelopersHub.ClashOfWhatecer
                         }
                     }
                     _resourceText.text = count >= 5 ? "none" : building.requiredGems.ToString();
-                    _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
+                    _resourceIcon.sprite = AssetsBank.instance.gemsIcon;
                 }
-                if (building.requiredGold <= Player.instanse.gold && building.requiredElixir <= Player.instanse.elixir && building.requiredDarkElixir <= Player.instanse.darkElixir && building.requiredGems <= Player.instanse.data.gems)
+                if (building.requiredGold <= Player.instance.gold && building.requiredElixir <= Player.instance.elixir && building.requiredDarkElixir <= Player.instance.darkElixir && building.requiredGems <= Player.instance.data.gems)
                 {
                     _resourceText.color = Color.white;
                 }
@@ -128,7 +128,7 @@ namespace DevelopersHub.ClashOfWhatecer
                 _timeText.text = "0";
                 _resourceText.text = "0";
                 _countText.text = "0/0";
-                _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
+                _resourceIcon.sprite = AssetsBank.instance.gemsIcon;
                 _button.interactable = false;
             }
             _resourceText.ForceMeshUpdate(true);
@@ -138,8 +138,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Info()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Info.instanse.OpenBuildingInfo(_id, 1);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Info.instance.OpenBuildingInfo(_id, 1);
         }
 
     }

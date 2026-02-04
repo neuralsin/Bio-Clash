@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using DevelopersHub.RealtimeNetworking.Client;
     using System;
@@ -102,12 +102,12 @@
 
         private void Close()
         {
-            UI_Main.instanse._grid.Clear();
-            Player.instanse.SyncData(Player.instanse.data);
+            UI_Main.instance._grid.Clear();
+            Player.instance.SyncData(Player.instance.data);
             isStarted = false;
             readyToStart = false;
             SetStatus(false);
-            UI_Main.instanse.SetStatus(true);
+            UI_Main.instance.SetStatus(true);
         }
 
         public void Find()
@@ -115,7 +115,7 @@
             readyToStart = false;
             _findButton.gameObject.SetActive(false);
             _closeButton.gameObject.SetActive(false);
-            UI_Search.instanse.Find();
+            UI_Search.instance.Find();
         }
 
         List<Data.Building> startbuildings = new List<Data.Building>();
@@ -124,10 +124,10 @@
         public void NoTarget()
         {
             Close();
-            switch (Language.instanse.language)
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "در حال حاضر هدفی برای حمله پیدا نشد." }, new string[] { "باشه" });
+                    MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "?? ??? ???? ???? ???? ???? ???? ???." }, new string[] { "????" });
                     break;
                 default:
                     MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "There is no target to attack at this moment. Please try again later." }, new string[] { "OK" });
@@ -149,16 +149,16 @@
             _playerNameText.text = Data.DecodeString(player.name);
             _playerNameText.ForceMeshUpdate(true);
             
-            for (int i = 0; i < Player.instanse.data.units.Count; i++)
+            for (int i = 0; i < Player.instance.data.units.Count; i++)
             {
-                if (!Player.instanse.data.units[i].ready)
+                if (!Player.instance.data.units[i].ready)
                 {
                     continue;
                 }
                 int k = -1;
                 for (int j = 0; j < units.Count; j++)
                 {
-                    if (units[j].id == Player.instanse.data.units[i].id)
+                    if (units[j].id == Player.instance.data.units[i].id)
                     {
                         k = j;
                         break;
@@ -168,24 +168,24 @@
                 {
                     k = units.Count;
                     UI_BattleUnit bu = Instantiate(unitsPrefab, battleItemsGrid);
-                    bu.Initialize(Player.instanse.data.units[i].id);
+                    bu.Initialize(Player.instance.data.units[i].id);
                     RectTransform rect = bu.GetComponent<RectTransform>();
                     rect.sizeDelta = new Vector2(itemHeight, itemHeight);
                     units.Add(bu);
                 }
-                units[k].Add(Player.instanse.data.units[i].databaseID);
+                units[k].Add(Player.instance.data.units[i].databaseID);
             }
 
-            for (int i = 0; i < Player.instanse.data.spells.Count; i++)
+            for (int i = 0; i < Player.instance.data.spells.Count; i++)
             {
-                if (!Player.instanse.data.spells[i].ready)
+                if (!Player.instance.data.spells[i].ready)
                 {
                     continue;
                 }
                 int k = -1;
                 for (int j = 0; j < spells.Count; j++)
                 {
-                    if (spells[j].id == Player.instanse.data.spells[i].id)
+                    if (spells[j].id == Player.instance.data.spells[i].id)
                     {
                         k = j;
                         break;
@@ -195,20 +195,20 @@
                 {
                     k = spells.Count;
                     UI_BattleSpell bs = Instantiate(spellsPrefab, battleItemsGrid);
-                    bs.Initialize(Player.instanse.data.spells[i].id);
+                    bs.Initialize(Player.instance.data.spells[i].id);
                     RectTransform rect = bs.GetComponent<RectTransform>();
                     rect.sizeDelta = new Vector2(itemHeight, itemHeight);
                     spells.Add(bs);
                 }
-                spells[k].Add(Player.instanse.data.spells[i].databaseID);
+                spells[k].Add(Player.instance.data.spells[i].databaseID);
             }
 
             if (units.Count <= 0)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "هیچ سربازی برای حمله ندارید." }, new string[] { "باشه" });
+                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "??? ?????? ???? ???? ??????." }, new string[] { "????" });
                         break;
                     default:
                         MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "You do not have any units for battle." }, new string[] { "OK" });
@@ -281,10 +281,10 @@
                 battleBuildings.Add(building);
             }
 
-            switch (Language.instanse.language)
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    _timerDescription.text = "زمان تا شروع حمله:";
+                    _timerDescription.text = "???? ?? ???? ????:";
                     break;
                 default:
                     _timerDescription.text = "Battle Starts In:";
@@ -297,10 +297,10 @@
             ClearBuildingsOnGrid();
             ClearUnitsOnGrid();
 
-            UI_Main.instanse._grid.Clear();
+            UI_Main.instance._grid.Clear();
             for (int i = 0; i < battleBuildings.Count; i++)
             {
-                var prefab = UI_Main.instanse.GetBuildingPrefab(battleBuildings[i].building.id);
+                var prefab = UI_Main.instance.GetBuildingPrefab(battleBuildings[i].building.id);
                 if (prefab.Item1 != null)
                 {
                     BuildingOnGrid building = new BuildingOnGrid();
@@ -321,7 +321,7 @@
                     building.id = battleBuildings[i].building.databaseID;
                     building.index = i;
                     buildingsOnGrid.Add(building);
-                    UI_Main.instanse._grid.buildings.Add(building.building);
+                    UI_Main.instance._grid.buildings.Add(building.building);
                 }
 
                 battleBuildings[i].building.x += Data.battleGridOffset;
@@ -337,16 +337,16 @@
             if(_battleType == Data.BattleType.normal)
             {
                 int townHallLevel = 1;
-                for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+                for (int i = 0; i < Player.instance.data.buildings.Count; i++)
                 {
-                    if(Player.instanse.data.buildings[i].id == Data.BuildingID.townhall)
+                    if(Player.instance.data.buildings[i].id == Data.BuildingID.townhall)
                     {
-                        townHallLevel = Player.instanse.data.buildings[i].level;
+                        townHallLevel = Player.instance.data.buildings[i].level;
                     }
                 }
                 int cost = Data.GetBattleSearchCost(townHallLevel);
                 _findCostText.text = cost.ToString();
-                if (cost > Player.instanse.gold)
+                if (cost > Player.instance.gold)
                 {
                     _findButton.interactable = false;
                     _findCostText.color = Color.red;
@@ -372,7 +372,7 @@
             _percentageText.ForceMeshUpdate(true);
             UpdateLoots();
 
-            var trophies = Data.GetBattleTrophies(Player.instanse.data.trophies, player.trophies);
+            var trophies = Data.GetBattleTrophies(Player.instance.data.trophies, player.trophies);
             _winTrophiesText.text = trophies.Item1.ToString();
             _winTrophiesText.ForceMeshUpdate(true);
             _looseTrophiesText.text = "-" + trophies.Item2.ToString();
@@ -406,14 +406,14 @@
 
         private void StartBattle()
         {
-            if (SoundManager.instanse.musicSource.clip != SoundManager.instanse.battleMusic)
+            if (SoundManager.instance.musicSource.clip != SoundManager.instance.battleMusic)
             {
-                SoundManager.instanse.PlayMusic(SoundManager.instanse.battleMusic);
+                SoundManager.instance.PlayMusic(SoundManager.instance.battleMusic);
             }
-            switch (Language.instanse.language)
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    _timerDescription.text = "زمان تا پایان حمله:";
+                    _timerDescription.text = "???? ?? ????? ????:";
                     break;
                 default:
                     _timerDescription.text = "Battle Ends In:";
@@ -467,10 +467,10 @@
             _endStar3.SetActive(stars > 2);
             if(stars > 0)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        _endText.text = "پیروزی";
+                        _endText.text = "??????";
                         break;
                     default:
                         _endText.text = "Victory";
@@ -479,10 +479,10 @@
             }
             else
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        _endText.text = "شکست";
+                        _endText.text = "????";
                         break;
                     default:
                         _endText.text = "Defeat";
@@ -568,7 +568,7 @@
         [SerializeField] private RectTransform battleItemsGridRoot = null;
         [SerializeField] public UI_BattleUnit unitsPrefab = null;
         [SerializeField] public UI_BattleSpell spellsPrefab = null;
-        private static UI_Battle _instance = null; public static UI_Battle instanse { get { return _instance; } }
+        private static UI_Battle _instance = null; public static UI_Battle instance { get { return _instance; } }
         private bool _active = false; public bool isActive { get { return _active; } }
 
         [HideInInspector] public int selectedUnit = -1;
@@ -637,7 +637,7 @@
             {
                 if (selectedUnit >= 0 && units[selectedUnit].count > 0 && battle.CanAddUnit(x, y))
                 {
-                    SoundManager.instanse.PlaySound(SoundManager.instanse.placeUnitSound);
+                    SoundManager.instance.PlaySound(SoundManager.instance.placeUnitSound);
                     if (!isStarted)
                     {
                         if (!readyToStart)
@@ -756,13 +756,13 @@
                             {
                                 for (int i = toAddUnits.Count - 1; i >= 0; i--)
                                 {
-                                    for (int j = 0; j < Player.instanse.data.units.Count; j++)
+                                    for (int j = 0; j < Player.instance.data.units.Count; j++)
                                     {
-                                        if (Player.instanse.data.units[j].databaseID == toAddUnits[i].id)
+                                        if (Player.instance.data.units[j].databaseID == toAddUnits[i].id)
                                         {
-                                            battle.AddUnit(Player.instanse.data.units[j], toAddUnits[i].x, toAddUnits[i].y, UnitSpawnCallBack, UnitAttackCallBack, UnitDiedCallBack, UnitDamageCallBack, UnitHealCallBack, UnitTargetSelectedCallBack);
+                                            battle.AddUnit(Player.instance.data.units[j], toAddUnits[i].x, toAddUnits[i].y, UnitSpawnCallBack, UnitAttackCallBack, UnitDiedCallBack, UnitDamageCallBack, UnitHealCallBack, UnitTargetSelectedCallBack);
                                             Data.BattleFrameUnit bfu = new Data.BattleFrameUnit();
-                                            bfu.id = Player.instanse.data.units[j].databaseID;
+                                            bfu.id = Player.instance.data.units[j].databaseID;
                                             bfu.x = toAddUnits[i].x;
                                             bfu.y = toAddUnits[i].y;
                                             battleFrame.units.Add(bfu);
@@ -777,12 +777,12 @@
                             {
                                 for (int i = toAddSpells.Count - 1; i >= 0; i--)
                                 {
-                                    for (int j = 0; j < Player.instanse.data.spells.Count; j++)
+                                    for (int j = 0; j < Player.instance.data.spells.Count; j++)
                                     {
-                                        if (Player.instanse.data.spells[j].databaseID == toAddSpells[i].id)
+                                        if (Player.instance.data.spells[j].databaseID == toAddSpells[i].id)
                                         {
-                                            Data.Spell spell = Player.instanse.data.spells[j];
-                                            Player.instanse.AssignServerSpell(ref spell);
+                                            Data.Spell spell = Player.instance.data.spells[j];
+                                            Player.instance.AssignServerSpell(ref spell);
                                             battle.AddSpell(spell, toAddSpells[i].x, toAddSpells[i].y, SpellSpawnCallBack, SpellPalseCallBack, SpellEndCallBack);
                                             Data.BattleFrameSpell bfs = new Data.BattleFrameSpell();
                                             bfs.id = spell.databaseID;
@@ -885,8 +885,8 @@
 
         public static Vector3 BattlePositionToWorldPosotion(Battle.BattleVector2 position)
         {
-            Vector3 result = new Vector3(position.x * UI_Main.instanse._grid.cellSize, position.y * UI_Main.instanse._grid.cellSize, 0);
-            result = UI_Main.instanse._grid.xDirection * result.x + UI_Main.instanse._grid.yDirection * result.y;
+            Vector3 result = new Vector3(position.x * UI_Main.instance._grid.cellSize, position.y * UI_Main.instance._grid.cellSize, 0);
+            result = UI_Main.instance._grid.xDirection * result.x + UI_Main.instance._grid.yDirection * result.y;
             return result;
         }
 
@@ -923,7 +923,7 @@
                     {
                         buildingsOnGrid[i].building.healthBar.gameObject.SetActive(true);
                         buildingsOnGrid[i].building.healthBar.bar.fillAmount = battle._buildings[buildingsOnGrid[i].index].health / battle._buildings[buildingsOnGrid[i].index].building.health;
-                        buildingsOnGrid[i].building.healthBar.rect.anchoredPosition = GetUnitBarPosition(UI_Main.instanse._grid.GetEndPosition(buildingsOnGrid[i].building));
+                        buildingsOnGrid[i].building.healthBar.rect.anchoredPosition = GetUnitBarPosition(UI_Main.instance._grid.GetEndPosition(buildingsOnGrid[i].building));
                     }
                 }
             }
@@ -931,8 +931,8 @@
 
         private Vector2 GetUnitBarPosition(Vector3 position)
         {
-            Vector3 planDownLeft = CameraController.instanse.planDownLeft;
-            Vector3 planTopRight = CameraController.instanse.planTopRight;
+            Vector3 planDownLeft = CameraController.instance.planDownLeft;
+            Vector3 planTopRight = CameraController.instance.planTopRight;
 
             float w = planTopRight.x - planDownLeft.x;
             float h = planTopRight.y - planDownLeft.y;
@@ -949,9 +949,9 @@
         {
             Vector3 position = BattlePositionToWorldPosotion(target);
             //Vector3 position = new Vector3(target.x, 0, target.y);
-            position = UI_Main.instanse._grid.transform.TransformPoint(position);
+            position = UI_Main.instance._grid.transform.TransformPoint(position);
             UI_SpellEffect effect = Instantiate(spellEffectPrefab, position, Quaternion.identity);
-            effect.Initialize(id, databaseID, radius * UI_Main.instanse._grid.cellSize);
+            effect.Initialize(id, databaseID, radius * UI_Main.instance._grid.cellSize);
             spellEffects.Add(effect);
         }
 
@@ -996,7 +996,7 @@
                 BattleUnit prefab = GetUnitPrefab(battle._units[u].unit.id);
                 if (prefab)
                 {
-                    BattleUnit unit = Instantiate(prefab, UI_Main.instanse._grid.transform);
+                    BattleUnit unit = Instantiate(prefab, UI_Main.instance._grid.transform);
                     unit.transform.localPosition = BattlePositionToWorldPosotion(battle._units[u].positionOnGrid);
                     //unit.transform.rotation = Quaternion.LookRotation(new Vector3(0, unit.transform.position.y, 0) - unit.transform.position);
                     unit.transform.localEulerAngles = Vector3.zero;
@@ -1053,7 +1053,7 @@
                     if (unitsOnGrid[u].projectilePrefab && unitsOnGrid[u].shootPoint && unitsOnGrid[u].data.attackRange > 0f && unitsOnGrid[u].data.rangedSpeed > 0f)
                     {
                         UI_Projectile projectile = Instantiate(unitsOnGrid[u].projectilePrefab);
-                        projectile.Initialize(unitsOnGrid[u].shootPoint.position, buildingsOnGrid[b].building.shootTarget, unitsOnGrid[u].data.rangedSpeed * UI_Main.instanse._grid.cellSize);
+                        projectile.Initialize(unitsOnGrid[u].shootPoint.position, buildingsOnGrid[b].building.shootTarget, unitsOnGrid[u].data.rangedSpeed * UI_Main.instance._grid.cellSize);
                     }
                     unitsOnGrid[u].Attack(buildingsOnGrid[b].building.transform.position);
                 }
@@ -1150,7 +1150,7 @@
                     if (projectile != null && muzzle != null)
                     {
                         projectile = Instantiate(projectile, muzzle.position, Quaternion.LookRotation(unitsOnGrid[u].transform.position - muzzle.position, Vector3.up));
-                        projectile.Initialize(muzzle.position, unitsOnGrid[u].targetPoint != null ? unitsOnGrid[u].targetPoint : unitsOnGrid[u].transform, buildingsOnGrid[b].building.data.rangedSpeed * UI_Main.instanse._grid.cellSize, UI_Projectile.GetCutveHeight(buildingsOnGrid[b].building.id));
+                        projectile.Initialize(muzzle.position, unitsOnGrid[u].targetPoint != null ? unitsOnGrid[u].targetPoint : unitsOnGrid[u].transform, buildingsOnGrid[b].building.data.rangedSpeed * UI_Main.instance._grid.cellSize, UI_Projectile.GetCutveHeight(buildingsOnGrid[b].building.id));
                     }
                 }
             }

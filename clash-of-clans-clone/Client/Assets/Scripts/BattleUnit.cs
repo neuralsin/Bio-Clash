@@ -54,8 +54,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void Initialize(int index, long id, Data.Unit unit)
         {
-            positionOffset.x = UnityEngine.Random.Range(UI_Main.instanse._grid.cellSize * -0.45f, UI_Main.instanse._grid.cellSize * 0.45f);
-            positionOffset.y = UnityEngine.Random.Range(UI_Main.instanse._grid.cellSize * -0.45f, UI_Main.instanse._grid.cellSize * 0.45f);
+            positionOffset.x = UnityEngine.Random.Range(UI_Main.instance._grid.cellSize * -0.45f, UI_Main.instance._grid.cellSize * 0.45f);
+            positionOffset.y = UnityEngine.Random.Range(UI_Main.instance._grid.cellSize * -0.45f, UI_Main.instance._grid.cellSize * 0.45f);
             data = unit;
             _id = id;
             i = index;

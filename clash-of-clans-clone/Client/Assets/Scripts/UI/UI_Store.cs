@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using TMPro;
     using UnityEngine;
@@ -18,7 +18,7 @@
         [SerializeField] private UI_ShieldPack[] shieldPacks = null;
         [SerializeField] private UI_ResourcePack[] resourcePacks = null;
         private bool _active = false; public bool isActive { get { return _active; } }
-        private static UI_Store _instance = null; public static UI_Store instanse { get { return _instance; } }
+        private static UI_Store _instance = null; public static UI_Store instance { get { return _instance; } }
         private bool waitingSync = false;
 
         private void Awake()
@@ -65,10 +65,10 @@
 
         public void Sync()
         {
-            _goldText.text = Player.instanse.gold.ToString();
-            _elixirText.text = Player.instanse.elixir.ToString();
-            _darkText.text = Player.instanse.darkElixir.ToString();
-            _gemsText.text = Player.instanse.data.gems.ToString();
+            _goldText.text = Player.instance.gold.ToString();
+            _elixirText.text = Player.instance.elixir.ToString();
+            _darkText.text = Player.instance.darkElixir.ToString();
+            _gemsText.text = Player.instance.data.gems.ToString();
             if (waitingSync)
             {
                 waitingSync = false;
@@ -101,17 +101,17 @@
 
         public void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _active = false;
             _elements.SetActive(false);
         }
 
         public void GemPurchased()
         {
-            switch (Language.instanse.language)
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "بسته مورد نظر با موفقیت خریداری شد." }, new string[] { "باشه" });
+                    MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "???? ???? ??? ?? ?????? ??????? ??." }, new string[] { "????" });
                     break;
                 default:
                     MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Target pack purchased successfully." }, new string[] { "OK" });
@@ -131,10 +131,10 @@
             }
             if (success)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "سپر دفاعی مورد نظر با موفقیت خریداری و فعال شد." }, new string[] { "باشه" });
+                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "??? ????? ???? ??? ?? ?????? ??????? ? ???? ??." }, new string[] { "????" });
                         break;
                     default:
                         MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Target shield purchased and activated successfully." }, new string[] { "OK" });
@@ -156,7 +156,7 @@
             if (success)
             {
                 waitingSync = true;
-                Player.instanse.RushSyncRequest();
+                Player.instance.RushSyncRequest();
             }
         }
 

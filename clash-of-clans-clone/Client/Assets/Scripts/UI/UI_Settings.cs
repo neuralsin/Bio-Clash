@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer 
+namespace DevelopersHub.ClashOfWhatecer 
 { 
     using System.Collections;
     using System.Collections.Generic;
@@ -29,7 +29,7 @@
         [SerializeField] private Image _soundMute = null;
         [SerializeField] private Image _soundUnmute = null;
 
-        private static UI_Settings _instance = null; public static UI_Settings instanse { get { return _instance; } }
+        private static UI_Settings _instance = null; public static UI_Settings instance { get { return _instance; } }
         private bool _active = false; public bool isActive { get { return _active; } }
         private string email = "";
 
@@ -55,11 +55,11 @@
 
         private void RenameClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            switch (Language.instanse.language)
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    MessageBox.Open(4, 0.8f, true, MessageResponded, new string[] { "نام را وارد کنید." }, new string[] { "تأیید", "لغو" }, null, new string[] { "" });
+                    MessageBox.Open(4, 0.8f, true, MessageResponded, new string[] { "??? ?? ???? ????." }, new string[] { "?????", "???" }, null, new string[] { "" });
                     break;
                 default:
                     MessageBox.Open(4, 0.8f, true, MessageResponded, new string[] { "Enter the name." }, new string[] { "Confirm", "Cancel" }, null, new string[] { "" });
@@ -69,13 +69,13 @@
 
         private void PrivacyPolicyClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_PrivacyPolicy.instanse.Open();
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_PrivacyPolicy.instance.Open();
         }
 
         private void EditEmail()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _emailInput.interactable = true;
             _saveButton.gameObject.SetActive(true);
             _editButton.gameObject.SetActive(false);
@@ -84,9 +84,9 @@
 
         public void Open()
         {
-            _languageIcon.sprite = AssetsBank.GetLanguageIcon(Language.instanse.language);
-            _languageText.text = Language.instanse.GetLanguageName(Language.instanse.language);
-            if (Language.instanse.IsRTL)
+            _languageIcon.sprite = AssetsBank.GetLanguageIcon(Language.instance.language);
+            _languageText.text = Language.instance.GetLanguageName(Language.instance.language);
+            if (Language.instance.IsRTL)
             {
                 _languageText.horizontalAlignment = HorizontalAlignmentOptions.Right;
             }
@@ -99,7 +99,7 @@
             _saveButton.gameObject.SetActive(false);
             _editButton.gameObject.SetActive(true);
             _cancelButton.gameObject.SetActive(false);
-            _emailInput.text = Player.instanse.data.email;
+            _emailInput.text = Player.instance.data.email;
             _emailInput.interactable = false;
 
             UpdateSoundButtons();
@@ -158,7 +158,7 @@
                     status = 1;
                 }
                 PlayerPrefs.SetInt("sound_mute", status);
-                SoundManager.instanse.soundMute = (status == 1);
+                SoundManager.instance.soundMute = (status == 1);
             }
             catch (System.Exception)
             {
@@ -185,7 +185,7 @@
                     status = 1;
                 }
                 PlayerPrefs.SetInt("music_mute", status);
-                SoundManager.instanse.musicMute = (status == 1);
+                SoundManager.instance.musicMute = (status == 1);
             }
             catch (System.Exception)
             {
@@ -196,32 +196,32 @@
 
         public void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _active = false;
             _elements.SetActive(false);
         }
 
         private void SwitchLanguage()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            LanguageSwitch.instanse.Open();
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            LanguageSwitch.instance.Open();
         }
 
         private void CancelEmail()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _saveButton.gameObject.SetActive(false);
             _editButton.gameObject.SetActive(true);
             _cancelButton.gameObject.SetActive(false);
-            _emailInput.text = Player.instanse.data.email;
+            _emailInput.text = Player.instance.data.email;
             _emailInput.interactable = false;
         }
 
         private void SaveEmail()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             email = _emailInput.text.Trim();
-            if (!string.IsNullOrEmpty(email) && email != Player.instanse.data.email)
+            if (!string.IsNullOrEmpty(email) && email != Player.instance.data.email)
             {
                 Loading.Open();
                 _saveButton.interactable = false;
@@ -240,10 +240,10 @@
             Loading.Close();
             if (response == 1)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(2, 0.8f, true, MessageResponded, new string[] { "لطفاً کد تأیید را وارد کنید. این کد در صندوق دریافت و یا اسپم ایمیل شما موجود است." }, new string[] { "تأیید", "لغو" }, null, new string[] { "" });
+                        MessageBox.Open(2, 0.8f, true, MessageResponded, new string[] { "????? ?? ????? ?? ???? ????. ??? ?? ?? ????? ?????? ? ?? ???? ????? ??? ????? ???." }, new string[] { "?????", "???" }, null, new string[] { "" });
                         break;
                     default:
                         MessageBox.Open(2, 0.8f, true, MessageResponded, new string[] { "Please enter the confirmation code. You can find it in your email address inbox or spams." }, new string[] { "Confirm", "Cancel" }, null, new string[] { "" });
@@ -254,10 +254,10 @@
             {
                 _cancelButton.interactable = true;
                 _saveButton.interactable = true;
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "ایمیل به یک حساب دیگر متصل است." }, new string[] { "باشه" });
+                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "????? ?? ?? ???? ???? ???? ???." }, new string[] { "????" });
                         break;
                     default:
                         MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Email is in sync with another account." }, new string[] { "OK" });
@@ -268,10 +268,10 @@
             {
                 _cancelButton.interactable = true;
                 _saveButton.interactable = true;
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "کد معتبر نمی باشد." }, new string[] { "باشه" });
+                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "?? ????? ??? ????." }, new string[] { "????" });
                         break;
                     default:
                         MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Code is not valid." }, new string[] { "OK" });
@@ -284,17 +284,17 @@
         {
             if (response == 1)
             {
-                Player.instanse.data.email = email;
+                Player.instance.data.email = email;
                 Open();
             }
             else if (response == 3)
             {
                 _cancelButton.interactable = true;
                 _saveButton.interactable = true;
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "ایمیل به یک حساب دیگر متصل است." }, new string[] { "باشه" });
+                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "????? ?? ?? ???? ???? ???? ???." }, new string[] { "????" });
                         break;
                     default:
                         MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Email is in sync with another account." }, new string[] { "OK" });
@@ -305,10 +305,10 @@
             {
                 _cancelButton.interactable = true;
                 _saveButton.interactable = true;
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "کد معتبر نمی باشد." }, new string[] { "باشه" });
+                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "?? ????? ??? ????." }, new string[] { "????" });
                         break;
                     default:
                         MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Code is not valid." }, new string[] { "OK" });
@@ -368,10 +368,10 @@
                     string str = MessageBox.GetInputValue(layoutIndex, 0).Trim();
                     if(str.Length > 20)
                     {
-                        switch (Language.instanse.language)
+                        switch (Language.instance.language)
                         {
                             case Language.LanguageID.persian:
-                                MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "نام نباید از 20 کاراکتر بیشتر باشد." }, new string[] { "باشه" });
+                                MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "??? ????? ?? 20 ??????? ????? ????." }, new string[] { "????" });
                                 break;
                             default:
                                 MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Name length is longer that 20 characters." }, new string[] { "OK" });
@@ -388,10 +388,10 @@
                     }
                     else
                     {
-                        switch (Language.instanse.language)
+                        switch (Language.instance.language)
                         {
                             case Language.LanguageID.persian:
-                                MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "نام مورد نظر قابل قبول نیست." }, new string[] { "باشه" });
+                                MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "??? ???? ??? ???? ???? ????." }, new string[] { "????" });
                                 break;
                             default:
                                 MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Name is not valid." }, new string[] { "OK" });
@@ -408,11 +408,11 @@
 
         private void LogOut()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            switch (Language.instanse.language)
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "از حساب کاربری خارج میشوید؟ در صورتی که حساب را به ایمیل متصل نکرده باشید، تمام اطلاعات خود را از دست میدهید." }, new string[] { "خروج", "لغو" });
+                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "?? ???? ?????? ???? ??????? ?? ????? ?? ???? ?? ?? ????? ???? ????? ?????? ???? ??????? ??? ?? ?? ??? ??????." }, new string[] { "????", "???" });
                     break;
                 default:
                     MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "Log out of your account? If you haven't binded your account to an email then all your progress will be lost." }, new string[] { "Log Out", "Cancel" });

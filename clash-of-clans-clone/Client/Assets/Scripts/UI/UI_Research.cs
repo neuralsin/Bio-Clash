@@ -14,7 +14,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private GridLayoutGroup _listLayout = null;
         [SerializeField] private UI_ResearchUnit _unitPrefab = null;
         [SerializeField] private UI_ResearchSpell _spellPrefab = null;
-        private static UI_Research _instance = null; public static UI_Research instanse { get { return _instance; } }
+        private static UI_Research _instance = null; public static UI_Research instance { get { return _instance; } }
         private bool _active = false; public bool isActive { get { return _active; } }
 
         private List<UI_ResearchUnit> units = new List<UI_ResearchUnit>();
@@ -33,16 +33,16 @@ namespace DevelopersHub.ClashOfWhatecer
             float height = ((Screen.height * _listRoot.anchorMax.y) - (space * 4f)) / 3f;
             _listLayout.spacing = new Vector2(space, space);
             _listLayout.cellSize = new Vector2(height * 0.9f, height);
-            for (int i = 0; i < UI_Train.instanse.unitsList.Length; i++)
+            for (int i = 0; i < UI_Train.instance.unitsList.Length; i++)
             {
                 UI_ResearchUnit unit = Instantiate(_unitPrefab, _listLayout.transform);
-                unit.id = UI_Train.instanse.unitsList[i];
+                unit.id = UI_Train.instance.unitsList[i];
                 units.Add(unit);
             }
-            for (int i = 0; i < UI_Spell.instanse.spellsList.Length; i++)
+            for (int i = 0; i < UI_Spell.instance.spellsList.Length; i++)
             {
                 UI_ResearchSpell spell = Instantiate(_spellPrefab, _listLayout.transform);
-                spell.id = UI_Spell.instanse.spellsList[i];
+                spell.id = UI_Spell.instance.spellsList[i];
                 spells.Add(spell);
             }
         }
@@ -107,7 +107,7 @@ namespace DevelopersHub.ClashOfWhatecer
         private void Close()
         {
             SetStatus(false);
-            UI_Main.instanse.SetStatus(true);
+            UI_Main.instance.SetStatus(true);
         }
 
     }

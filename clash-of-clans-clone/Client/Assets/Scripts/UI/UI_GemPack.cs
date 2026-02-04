@@ -19,7 +19,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Clicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             // ToDo: Purchase Product
         }
 

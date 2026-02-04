@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -11,9 +11,9 @@
     {
 
         public Data.Player data = new Data.Player();
-        private static Player _instance = null; public static Player instanse { get { return _instance; } }
+        private static Player _instance = null; public static Player instance { get { return _instance; } }
         public Data.InitializationData initializationData = new Data.InitializationData();
-        private bool _inBattle = false; public static bool inBattle { get { return instanse._inBattle; } set { instanse._inBattle = value; } }
+        private bool _inBattle = false; public static bool inBattle { get { return instance._inBattle; } set { instance._inBattle = value; } }
 
         public Data.ServerBuilding GetServerBuilding(Data.BuildingID id, int level)
         {
@@ -146,7 +146,7 @@
                             bytesLength = packet.ReadInt();
                             bytes = packet.ReadBytes(bytesLength);
                             _unreadBattleReports = packet.ReadInt();
-                            UI_Main.instanse.ChangeUnreadBattleReports(_unreadBattleReports);
+                            UI_Main.instance.ChangeUnreadBattleReports(_unreadBattleReports);
                             initializationData = Data.Desrialize<Data.InitializationData>(Data.Decompress(bytes));
                             bool versionValid = false;
                             bool isThereNewerVersion = true;
@@ -161,10 +161,10 @@
                             }
                             if(!versionValid)
                             {
-                                switch (Language.instanse.language)
+                                switch (Language.instance.language)
                                 {
                                     case Language.LanguageID.persian:
-                                        MessageBox.Open(1, 0.9f, false, MessageResponded, new string[] { "این ورژن منقضی شده. لطفاً ورژن جدید بازی را دانلود کنید." }, new string[] { "خروج" });
+                                        MessageBox.Open(1, 0.9f, false, MessageResponded, new string[] { "??? ???? ????? ???. ????? ???? ???? ???? ?? ?????? ????." }, new string[] { "????" });
                                         break;
                                     default:
                                         MessageBox.Open(1, 0.9f, false, MessageResponded, new string[] { "This version is expired. Please download the new version of the game." }, new string[] { "Exit" });
@@ -176,10 +176,10 @@
                                 if(isThereNewerVersion)
                                 {
                                     /*
-                                    switch (Language.instanse.language)
+                                    switch (Language.instance.language)
                                     {
                                         case Language.LanguageID.persian:
-                                            MessageBox.Open(1, 0.9f, false, MessageResponded, new string[] { "ورژن جدیدی از بازی منتشر شده و پیشنهاد میشود بازی را بروزرسانی کنید." }, new string[] { "باشه" });
+                                            MessageBox.Open(1, 0.9f, false, MessageResponded, new string[] { "???? ????? ?? ???? ????? ??? ? ??????? ????? ???? ?? ????????? ????." }, new string[] { "????" });
                                             break;
                                         default:
                                             MessageBox.Open(1, 0.9f, false, MessageResponded, new string[] { "There is a new version available. We recommend you to update the game." }, new string[] { "OK" });
@@ -196,10 +196,10 @@
                         }
                         else
                         {
-                            switch (Language.instanse.language)
+                            switch (Language.instance.language)
                             {
                                 case Language.LanguageID.persian:
-                                    MessageBox.Open(0, 0.8f, false, MessageResponded, new string[] { "احراز حویت شما با خطا مواجه شد." }, new string[] { "باشه" });
+                                    MessageBox.Open(0, 0.8f, false, MessageResponded, new string[] { "????? ???? ??? ?? ??? ????? ??." }, new string[] { "????" });
                                     break;
                                 default:
                                     MessageBox.Open(0, 0.8f, false, MessageResponded, new string[] { "Failed to authenticate your account." }, new string[] { "OK" });
@@ -220,10 +220,10 @@
                             SyncData(playerSyncData);
                             if (playerSyncData.banned)
                             {
-                                switch (Language.instanse.language)
+                                switch (Language.instance.language)
                                 {
                                     case Language.LanguageID.persian:
-                                        MessageBox.Open(1, 0.9f, false, MessageResponded, new string[] { "حساب شما مسدود شده است. لطفاً جهت کسب اطلاعات بیشتر با ما تماس بگیرید." }, new string[] { "خروج" });
+                                        MessageBox.Open(1, 0.9f, false, MessageResponded, new string[] { "???? ??? ????? ??? ???. ????? ??? ??? ??????? ????? ?? ?? ???? ??????." }, new string[] { "????" });
                                         break;
                                     default:
                                         MessageBox.Open(1, 0.9f, false, MessageResponded, new string[] { "Your account has been banned. Please contact us for more information." }, new string[] { "Exit" });
@@ -267,9 +267,9 @@
                         int replaceX = packet.ReadInt();
                         int replaceY = packet.ReadInt();
                         long replaceID = packet.ReadLong();
-                        for (int i = 0; i < UI_Main.instanse._grid.buildings.Count; i++)
+                        for (int i = 0; i < UI_Main.instance._grid.buildings.Count; i++)
                         {
-                            if (UI_Main.instanse._grid.buildings[i].databaseID == replaceID)
+                            if (UI_Main.instance._grid.buildings[i].databaseID == replaceID)
                             {
                                 switch (replaceResponse)
                                 {
@@ -277,8 +277,8 @@
                                         Debug.Log("No building");
                                         break;
                                     case 1:
-                                        UI_Main.instanse._grid.buildings[i].PlacedOnGrid(replaceX, replaceY, true);
-                                        if (UI_Main.instanse._grid.buildings[i] != Building.selectedInstanse)
+                                        UI_Main.instance._grid.buildings[i].PlacedOnGrid(replaceX, replaceY, true);
+                                        if (UI_Main.instance._grid.buildings[i] != Building.selectedinstance)
                                         {
 
                                         }
@@ -288,7 +288,7 @@
                                         Debug.Log("Place taken");
                                         break;
                                 }
-                                UI_Main.instanse._grid.buildings[i].waitingReplaceResponse = false;
+                                UI_Main.instance._grid.buildings[i].waitingReplaceResponse = false;
                                 break;
                             }
                         }
@@ -296,24 +296,24 @@
                     case RequestsID.COLLECT:
                         long db = packet.ReadLong();
                         int collected = packet.ReadInt();
-                        for (int i = 0; i < UI_Main.instanse._grid.buildings.Count; i++)
+                        for (int i = 0; i < UI_Main.instance._grid.buildings.Count; i++)
                         {
-                            if (db == UI_Main.instanse._grid.buildings[i].data.databaseID)
+                            if (db == UI_Main.instance._grid.buildings[i].data.databaseID)
                             {
-                                UI_Main.instanse._grid.buildings[i].collecting = false;
-                                switch (UI_Main.instanse._grid.buildings[i].id)
+                                UI_Main.instance._grid.buildings[i].collecting = false;
+                                switch (UI_Main.instance._grid.buildings[i].id)
                                 {
                                     case Data.BuildingID.goldmine:
-                                        UI_Main.instanse._grid.buildings[i].data.goldStorage -= collected;
+                                        UI_Main.instance._grid.buildings[i].data.goldStorage -= collected;
                                         break;
                                     case Data.BuildingID.elixirmine:
-                                        UI_Main.instanse._grid.buildings[i].data.elixirStorage -= collected;
+                                        UI_Main.instance._grid.buildings[i].data.elixirStorage -= collected;
                                         break;
                                     case Data.BuildingID.darkelixirmine:
-                                        UI_Main.instanse._grid.buildings[i].data.darkStorage -= collected;
+                                        UI_Main.instance._grid.buildings[i].data.darkStorage -= collected;
                                         break;
                                 }
-                                UI_Main.instanse._grid.buildings[i].AdjustUI();
+                                UI_Main.instance._grid.buildings[i].AdjustUI();
                                 break;
                             }
                         }
@@ -324,7 +324,7 @@
                         databaseID = packet.ReadLong();
                         string re = packet.ReadString();
                         Data.ServerBuilding sr = Data.Desrialize<Data.ServerBuilding>(re);
-                        UI_BuildingUpgrade.instanse.Open(sr, databaseID);
+                        UI_BuildingUpgrade.instance.Open(sr, databaseID);
                         */
                         break;
                     case RequestsID.UPGRADE:
@@ -407,7 +407,7 @@
                             bytes = packet.ReadBytes(bytesLength);
                             opponent = Data.Desrialize<Data.OpponentData>(Data.Decompress(bytes));
                         }
-                        UI_Search.instanse.FindResponded(target, opponent);
+                        UI_Search.instance.FindResponded(target, opponent);
                         break;
                     case RequestsID.BATTLESTART:
                         bool matched = packet.ReadBool();
@@ -424,7 +424,7 @@
                             bytes = packet.ReadBytes(bytesLength);
                             buildings = Data.Desrialize<List<Data.BattleStartBuildingData>>(Data.Decompress(bytes));
                         }
-                        UI_Battle.instanse.StartBattleConfirm(confirmed, buildings, wt, lt);
+                        UI_Battle.instance.StartBattleConfirm(confirmed, buildings, wt, lt);
                         break;
                     case RequestsID.BATTLEEND:
                         int stars = packet.ReadInt();
@@ -434,7 +434,7 @@
                         int lootedDark = packet.ReadInt();
                         int trophies = packet.ReadInt();
                         int frame = packet.ReadInt();
-                        UI_Battle.instanse.BattleEnded(stars, unitsDeployed, lootedGold, lootedElixir, lootedDark, trophies, frame);
+                        UI_Battle.instance.BattleEnded(stars, unitsDeployed, lootedGold, lootedElixir, lootedDark, trophies, frame);
                         break;
                     case RequestsID.OPENCLAN:
                         bool haveClan = packet.ReadBool();
@@ -452,47 +452,47 @@
                                 warMembers = Data.Desrialize<List<Data.ClanMember>>(Data.Decompress(bytes));
                             }
                         }
-                        UI_Clan.instanse.ClanOpen(clan, warMembers);
+                        UI_Clan.instance.ClanOpen(clan, warMembers);
                         break;
                     case RequestsID.GETCLANS:
                         bytesLength = packet.ReadInt();
                         bytes = packet.ReadBytes(bytesLength);
                         Data.ClansList clans = Data.Desrialize<Data.ClansList>(Data.Decompress(bytes));
-                        UI_Clan.instanse.ClansListOpen(clans);
+                        UI_Clan.instance.ClansListOpen(clans);
                         break;
                     case RequestsID.CREATECLAN:
                         response = packet.ReadInt();
-                        UI_Clan.instanse.CreateResponse(response);
+                        UI_Clan.instance.CreateResponse(response);
                         break;
                     case RequestsID.JOINCLAN:
                         response = packet.ReadInt();
-                        UI_Clan.instanse.JoinResponse(response);
+                        UI_Clan.instance.JoinResponse(response);
                         break;
                     case RequestsID.LEAVECLAN:
                         response = packet.ReadInt();
-                        UI_Clan.instanse.LeaveResponse(response);
+                        UI_Clan.instance.LeaveResponse(response);
                         break;
                     case RequestsID.EDITCLAN:
                         response = packet.ReadInt();
-                        UI_Clan.instanse.EditResponse(response);
+                        UI_Clan.instance.EditResponse(response);
                         break;
                     case RequestsID.OPENWAR:
                         bytesLength = packet.ReadInt();
                         bytes = packet.ReadBytes(bytesLength);
                         Data.ClanWarData war = Data.Desrialize<Data.ClanWarData>(Data.Decompress(bytes));
-                        UI_Clan.instanse.WarOpen(war);
+                        UI_Clan.instance.WarOpen(war);
                         break;
                     case RequestsID.STARTWAR:
                         response = packet.ReadInt();
-                        UI_Clan.instanse.WarStartResponse(response);
+                        UI_Clan.instance.WarStartResponse(response);
                         break;
                     case RequestsID.CANCELWAR:
                         response = packet.ReadInt();
-                        UI_Clan.instanse.WarSearchCancelResponse(response);
+                        UI_Clan.instance.WarSearchCancelResponse(response);
                         break;
                     case RequestsID.WARSTARTED:
                         databaseID = packet.ReadInt();
-                        UI_Clan.instanse.WarStarted(databaseID);
+                        UI_Clan.instance.WarStarted(databaseID);
                         break;
                     case RequestsID.WARATTACK:
                         databaseID = packet.ReadLong();
@@ -503,12 +503,12 @@
                             bytes = packet.ReadBytes(bytesLength);
                             warOpponent = Data.Desrialize<Data.OpponentData>(Data.Decompress(bytes));
                         }
-                        UI_Clan.instanse.AttackResponse(databaseID, warOpponent);
+                        UI_Clan.instance.AttackResponse(databaseID, warOpponent);
                         break;
                     case RequestsID.WARREPORTLIST:
                         string warReportsData = packet.ReadString();
                         List<Data.ClanWarData> warReports = Data.Desrialize<List<Data.ClanWarData>>(warReportsData);
-                        UI_Clan.instanse.OpenWarHistoryList(warReports);
+                        UI_Clan.instance.OpenWarHistoryList(warReports);
                         break;
                     case RequestsID.WARREPORT:
                         bool hasReport = packet.ReadBool();
@@ -519,13 +519,13 @@
                             bytes = packet.ReadBytes(bytesLength);
                             warReport = Data.Desrialize<Data.ClanWarData>(Data.Decompress(bytes));
                         }
-                        UI_Clan.instanse.WarOpen(warReport, true);
+                        UI_Clan.instance.WarOpen(warReport, true);
                         break;
                     case RequestsID.JOINREQUESTS:
                         bytesLength = packet.ReadInt();
                         bytes = packet.ReadBytes(bytesLength);
                         List<Data.JoinRequest> requests = Data.Desrialize<List<Data.JoinRequest>>(Data.Decompress(bytes));
-                        UI_Clan.instanse.OpenRequestsList(requests);
+                        UI_Clan.instance.OpenRequestsList(requests);
                         break;
                     case RequestsID.JOINRESPONSE:
                         response = packet.ReadInt();
@@ -537,24 +537,24 @@
                         break;
                     case RequestsID.SENDCHAT:
                         response = packet.ReadInt();
-                        UI_Chat.instanse.ChatSendResponse(response);
+                        UI_Chat.instance.ChatSendResponse(response);
                         break;
                     case RequestsID.GETCHATS:
                         bytesLength = packet.ReadInt();
                         bytes = packet.ReadBytes(bytesLength);
                         List<Data.CharMessage> messages = Data.Desrialize<List<Data.CharMessage>>(Data.Decompress(bytes));
                         int chatType = packet.ReadInt();
-                        UI_Chat.instanse.ChatSynced(messages, (Data.ChatType)chatType);
+                        UI_Chat.instance.ChatSynced(messages, (Data.ChatType)chatType);
                         break;
                     case RequestsID.EMAILCODE:
                         response = packet.ReadInt();
                         int expTime = packet.ReadInt();
-                        UI_Settings.instanse.EmailSendResponse(response, expTime);
+                        UI_Settings.instance.EmailSendResponse(response, expTime);
                         break;
                     case RequestsID.EMAILCONFIRM:
                         response = packet.ReadInt();
                         string confEmail = packet.ReadString();
-                        UI_Settings.instanse.EmailConfirmResponse(response, confEmail);
+                        UI_Settings.instance.EmailConfirmResponse(response, confEmail);
                         break;
                     case RequestsID.KICKMEMBER:
                         databaseID = packet.ReadLong();
@@ -562,14 +562,14 @@
                         if (response == -1)
                         {
                             string kicker = packet.ReadString();
-                            if (UI_Clan.instanse.isActive)
+                            if (UI_Clan.instance.isActive)
                             {
-                                UI_Clan.instanse.Close();
+                                UI_Clan.instance.Close();
                             }
                         }
                         else
                         {
-                            UI_Clan.instanse.kickResponse(databaseID, response);
+                            UI_Clan.instance.kickResponse(databaseID, response);
                         }
                         break;
                     case RequestsID.BREW:
@@ -627,7 +627,7 @@
                                 initializationData.research.Add(research);
                             }
                         }
-                        UI_Research.instanse.ResearchResponse(response, research);
+                        UI_Research.instance.ResearchResponse(response, research);
                         break;
                     case RequestsID.PROMOTEMEMBER:
                         databaseID = packet.ReadLong();
@@ -639,7 +639,7 @@
                         }
                         else
                         {
-                            UI_Clan.instanse.PromoteResponse(databaseID, response);
+                            UI_Clan.instance.PromoteResponse(databaseID, response);
                         }
                         break;
                     case RequestsID.DEMOTEMEMBER:
@@ -652,7 +652,7 @@
                         }
                         else
                         {
-                            UI_Clan.instanse.DemoteResponse(databaseID, response);
+                            UI_Clan.instance.DemoteResponse(databaseID, response);
                         }
                         break;
                     case RequestsID.SCOUT:
@@ -663,7 +663,7 @@
                             bytesLength = packet.ReadInt();
                             bytes = packet.ReadBytes(bytesLength);
                             Data.Player scoutTarget = Data.Desrialize<Data.Player>(Data.Decompress(bytes));
-                            UI_Scout.instanse.Open(scoutTarget, (Data.BattleType)scoutType, null);
+                            UI_Scout.instance.Open(scoutTarget, (Data.BattleType)scoutType, null);
                         }
                         break;
                     case RequestsID.BUYGEM:
@@ -672,7 +672,7 @@
                         {
                             int gemPack = packet.ReadInt();
                             RushSyncRequest();
-                            UI_Store.instanse.GemPurchased();
+                            UI_Store.instance.GemPurchased();
                         }
                         break;
                     case RequestsID.BUYSHIELD:
@@ -681,22 +681,22 @@
                         {
                             int shieldPack = packet.ReadInt();
                             RushSyncRequest();
-                            UI_Store.instanse.ShieldPurchased(true, shieldPack);
+                            UI_Store.instance.ShieldPurchased(true, shieldPack);
                         }
                         else
                         {
-                            UI_Store.instanse.ShieldPurchased(false, 0);
+                            UI_Store.instance.ShieldPurchased(false, 0);
                         }
                         break;
                     case RequestsID.REPORTCHAT:
                         response = packet.ReadInt();
-                        UI_Chat.instanse.ReportResult(response);
+                        UI_Chat.instance.ReportResult(response);
                         break;
                     case RequestsID.PLAYERSRANK:
                         bytesLength = packet.ReadInt();
                         bytes = packet.ReadBytes(bytesLength);
                         Data.PlayersRanking players = Data.Desrialize<Data.PlayersRanking>(Data.Decompress(bytes));
-                        UI_PlayersRanking.instanse.OpenResponse(players);
+                        UI_PlayersRanking.instance.OpenResponse(players);
                         break;
                     case RequestsID.BOOST:
                         response = packet.ReadInt();
@@ -708,11 +708,11 @@
                         if (response == 1)
                         {
                             RushSyncRequest();
-                            UI_Store.instanse.ResourcePurchased(true, resPack);
+                            UI_Store.instance.ResourcePurchased(true, resPack);
                         }
                         else
                         {
-                            UI_Store.instanse.ResourcePurchased(false, resPack);
+                            UI_Store.instance.ResourcePurchased(false, resPack);
                         }
                         break;
                     case RequestsID.BATTLEREPORTS:
@@ -725,10 +725,10 @@
                             reports = Data.Desrialize<List<Data.BattleReportItem>>(Data.Decompress(bytes));
                             if (reports != null && reports.Count > 0)
                             {
-                                UI_Main.instanse.ChangeUnreadBattleReports(0);
+                                UI_Main.instance.ChangeUnreadBattleReports(0);
                             }
                         }
-                        UI_BattleReports.instanse.OpenResponse(reports);
+                        UI_BattleReports.instance.OpenResponse(reports);
                         break;
                     case RequestsID.BATTLEREPORT:
                         response = packet.ReadInt();
@@ -740,7 +740,7 @@
                             bytesLength = packet.ReadInt();
                             bytes = packet.ReadBytes(bytesLength);
                             Data.Player reportP = Data.Desrialize<Data.Player>(Data.Decompress(bytes));
-                            UI_BattleReports.instanse.PlayReply(report, reportP);
+                            UI_BattleReports.instance.PlayReply(report, reportP);
                         }
                         break;
                     case RequestsID.RENAME:
@@ -749,6 +749,22 @@
                         {
                             RushSyncRequest();
                         }
+                        break;
+                    case RequestsID.FITNESS_STATS:
+                        float[] stats = new float[8];
+                        for(int i=0; i<8; i++) 
+                        {
+                            stats[i] = packet.ReadFloat();
+                        }
+                        int streak = packet.ReadInt();
+                        int recovery = packet.ReadInt();
+                        if(FitnessManager.instance != null)
+                            FitnessManager.instance.UpdateFromSync(stats, streak, recovery);
+                        break;
+                    case RequestsID.FITNESS_RECOVERY:
+                        int rec = packet.ReadInt();
+                        if(FitnessManager.instance != null) 
+                            FitnessManager.instance.recoveryScore = rec;
                         break;
                 }
             }
@@ -836,25 +852,25 @@
 
             UpdateResourcesUI();
 
-            UI_Main.instanse._usernameText.text = Data.DecodeString(data.name);
-            UI_Main.instanse._trophiesText.text = data.trophies.ToString();
-            UI_Main.instanse._levelText.text = data.level.ToString();
-            UI_Main.instanse._xpText.text = data.xp.ToString();
+            UI_Main.instance._usernameText.text = Data.DecodeString(data.name);
+            UI_Main.instance._trophiesText.text = data.trophies.ToString();
+            UI_Main.instance._levelText.text = data.level.ToString();
+            UI_Main.instance._xpText.text = data.xp.ToString();
             
             int reqXp = Data.GetNexLevelRequiredXp(data.level);
-            UI_Main.instanse._xpBar.fillAmount = (reqXp > 0 ? ((float)data.xp / (float)reqXp) : 0);
+            UI_Main.instance._xpBar.fillAmount = (reqXp > 0 ? ((float)data.xp / (float)reqXp) : 0);
 
-            if (UI_Main.instanse.isActive && !UI_WarLayout.instanse.isActive && !UI_Scout.instanse.isActive)
+            if (UI_Main.instance.isActive && !UI_WarLayout.instance.isActive && !UI_Scout.instance.isActive)
             {
-                UI_Main.instanse.DataSynced();
-                if (UI_Main.instanse._grid.unidentifiedBuildings != null && UI_Main.instanse._grid.unidentifiedBuildings.Count > 0)
+                UI_Main.instance.DataSynced();
+                if (UI_Main.instance._grid.unidentifiedBuildings != null && UI_Main.instance._grid.unidentifiedBuildings.Count > 0)
                 {
-                    for (int i = 0; i < UI_Main.instanse._grid.unidentifiedBuildings.Count; i++)
+                    for (int i = 0; i < UI_Main.instance._grid.unidentifiedBuildings.Count; i++)
                     {
-                        _gold -= UI_Main.instanse._grid.unidentifiedBuildings[i].placeGoldCost;
-                        _elixir -= UI_Main.instanse._grid.unidentifiedBuildings[i].placeElixirCost;
-                        _darkElixir -= UI_Main.instanse._grid.unidentifiedBuildings[i].placeDarkElixirCost;
-                        data.gems -= UI_Main.instanse._grid.unidentifiedBuildings[i].placeGemCost;
+                        _gold -= UI_Main.instance._grid.unidentifiedBuildings[i].placeGoldCost;
+                        _elixir -= UI_Main.instance._grid.unidentifiedBuildings[i].placeElixirCost;
+                        _darkElixir -= UI_Main.instance._grid.unidentifiedBuildings[i].placeDarkElixirCost;
+                        data.gems -= UI_Main.instance._grid.unidentifiedBuildings[i].placeGemCost;
                     }
                     _gold = Mathf.Clamp(_gold, 0, _maxGold);
                     _elixir = Mathf.Clamp(_elixir, 0, _maxElixir);
@@ -862,38 +878,38 @@
                     UpdateResourcesUI();
                 }
             }
-            else if (UI_WarLayout.instanse.isActive)
+            else if (UI_WarLayout.instance.isActive)
             {
-                UI_WarLayout.instanse.DataSynced();
+                UI_WarLayout.instance.DataSynced();
             }
-            else if (UI_Train.instanse.isActive)
+            else if (UI_Train.instance.isActive)
             {
-                UI_Train.instanse.Sync();
+                UI_Train.instance.Sync();
             }
-            else if (UI_Spell.instanse.isOpen)
+            else if (UI_Spell.instance.isOpen)
             {
-                UI_Spell.instanse.Sync();
+                UI_Spell.instance.Sync();
             }
-            if (UI_Store.instanse.isActive)
+            if (UI_Store.instance.isActive)
             {
-                UI_Store.instanse.Sync();
+                UI_Store.instance.Sync();
             }
-            UI_Main.instanse._usernameText.ForceMeshUpdate(true);
-            UI_Main.instanse._trophiesText.ForceMeshUpdate(true);
-            UI_Main.instanse._levelText.ForceMeshUpdate(true);
-            UI_Main.instanse._xpText.ForceMeshUpdate(true);
+            UI_Main.instance._usernameText.ForceMeshUpdate(true);
+            UI_Main.instance._trophiesText.ForceMeshUpdate(true);
+            UI_Main.instance._levelText.ForceMeshUpdate(true);
+            UI_Main.instance._xpText.ForceMeshUpdate(true);
         }
 
         private void UpdateResourcesUI()
         {
-            UI_Main.instanse._goldText.text = _gold.ToString();
-            UI_Main.instanse._elixirText.text = _elixir.ToString();
-            UI_Main.instanse._darkText.text = _darkElixir.ToString();
-            UI_Main.instanse._gemsText.text = data.gems.ToString();
+            UI_Main.instance._goldText.text = _gold.ToString();
+            UI_Main.instance._elixirText.text = _elixir.ToString();
+            UI_Main.instance._darkText.text = _darkElixir.ToString();
+            UI_Main.instance._gemsText.text = data.gems.ToString();
 
-            UI_Main.instanse._goldBar.fillAmount = (_maxGold > 0 ? ((float)_gold / (float)_maxGold) : 0);
-            UI_Main.instanse._elixirBar.fillAmount = (_maxElixir > 0 ? ((float)_elixir / (float)_maxElixir) : 0);
-            UI_Main.instanse._darkBar.fillAmount = (_maxDarkElixir > 0 ? ((float)_darkElixir / (float)_maxDarkElixir) : 0);
+            UI_Main.instance._goldBar.fillAmount = (_maxGold > 0 ? ((float)_gold / (float)_maxGold) : 0);
+            UI_Main.instance._elixirBar.fillAmount = (_maxElixir > 0 ? ((float)_elixir / (float)_maxElixir) : 0);
+            UI_Main.instance._darkBar.fillAmount = (_maxDarkElixir > 0 ? ((float)_darkElixir / (float)_maxDarkElixir) : 0);
         }
 
         public void RushSyncRequest()
@@ -911,10 +927,10 @@
             connected = false;
             if (_callDisconnectError)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(0, 0.8f, false, MessageResponded, new string[] { "اتصال به سرور برقرار نشد. لطفاً اینترنت خود را چک و مجدداً تلاش کنید." }, new string[] { "تلاش مجدد" });
+                        MessageBox.Open(0, 0.8f, false, MessageResponded, new string[] { "????? ?? ???? ?????? ???. ????? ??????? ??? ?? ?? ? ?????? ???? ????." }, new string[] { "???? ????" });
                         break;
                     default:
                         MessageBox.Open(0, 0.8f, false, MessageResponded, new string[] { "Failed to connect to server. Please check you internet connection and try again." }, new string[] { "Try Again" });

@@ -15,7 +15,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private Button _findButton = null;
         [SerializeField] private TextMeshProUGUI _costText = null;
 
-        private static UI_Search _instance = null; public static UI_Search instanse { get { return _instance; } }
+        private static UI_Search _instance = null; public static UI_Search instance { get { return _instance; } }
         private bool _active = true; public bool isActive { get { return _active; } }
         private long lastTarget = 0;
 
@@ -45,14 +45,14 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             SetStatus(false);
-            UI_Main.instanse.SetStatus(true);
+            UI_Main.instance.SetStatus(true);
         }
 
         public void Find()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _findButton.interactable = false;
             Packet packet = new Packet();
             packet.Write((int)Player.RequestsID.BATTLEFIND);
@@ -62,13 +62,13 @@ namespace DevelopersHub.ClashOfWhatecer
         private void Check()
         {
             int townHallLevel = 1;
-            for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+            for (int i = 0; i < Player.instance.data.buildings.Count; i++)
             {
-                if (Player.instanse.data.buildings[i].id == Data.BuildingID.townhall) { townHallLevel = Player.instanse.data.buildings[i].level; break; }
+                if (Player.instance.data.buildings[i].id == Data.BuildingID.townhall) { townHallLevel = Player.instance.data.buildings[i].level; break; }
             }
             int cost = Data.GetBattleSearchCost(townHallLevel);
             _costText.text = cost.ToString();
-            if (cost > Player.instanse.gold)
+            if (cost > Player.instance.gold)
             {
                 _findButton.interactable = false;
                 _costText.color = Color.red;
@@ -85,19 +85,19 @@ namespace DevelopersHub.ClashOfWhatecer
             if(target > 0 && opponent != null && target != lastTarget)
             {
                 SetStatus(false);
-                bool attack = UI_Battle.instanse.Display(opponent.data, opponent.buildings, target, Data.BattleType.normal);
+                bool attack = UI_Battle.instance.Display(opponent.data, opponent.buildings, target, Data.BattleType.normal);
                 if (attack)
                 {
                     lastTarget = target;
                 }
                 else
                 {
-                    UI_Main.instanse.SetStatus(true);
+                    UI_Main.instance.SetStatus(true);
                 }
             }
             else
             {
-                UI_Battle.instanse.NoTarget();
+                UI_Battle.instance.NoTarget();
                 Debug.Log("No target found.");
             }
         }

@@ -245,6 +245,9 @@ namespace DevelopersHub.ClashOfWhatecer
             
             // Load saved fitness data
             LoadFitnessData();
+            
+            // Sync with server to get latest valid stats
+            SyncFitnessFromServer();
         }
 
         /// <summary>
@@ -602,11 +605,89 @@ namespace DevelopersHub.ClashOfWhatecer
             Sender.TCP_Send(packet);
         }
 
+        public void UpdateFromSync(float[] volumes, int streak, int recovery)
+        {
+            if (volumes.Length != 8) return;
+            
+            for (int i = 0; i < 8; i++)
+            {
+                muscleVolumes[i] = volumes[i];
+                if (muscleCurrencies[i] != null)
+                {
+                    muscleCurrencies[i].volume = volumes[i];
+                }
+            }
+            workoutStreak = streak;
+            recoveryScore = recovery;
+            
+            // Save to local
+            SaveFitnessData();
+            Debug.Log("✅ Fitness Stats Synced from Server");
+        }
+
         public void SyncFitnessFromServer()
         {
             Packet packet = new Packet();
             packet.Write((int)Player.RequestsID.FITNESS_STATS);
             Sender.TCP_Send(packet);
+        }
+
+        // ============================================================
+        // BATTLE INTEGRATION - ATTACK POWER FROM FITNESS
+        // ============================================================
+        
+        /// <summary>
+        /// Get the attack power multiplier based on total fitness volume.
+        /// Higher total volume = more damage in battles.
+        /// Base is 1.0x, can scale up to 2.5x at max fitness.
+        /// </summary>
+        public float GetAttackPowerMultiplier()
+        {
+            float totalVolume = GetTotalVolume();
+            
+            // Scaling: 0 volume = 1.0x, 100,000 volume = 2.0x, 500,000+ = 2.5x
+            if (totalVolume <= 0) return 1.0f;
+            if (totalVolume >= 500000) return 2.5f;
+            
+            // Linear scaling from 1.0 to 2.5 over 500,000 volume
+            return 1.0f + (totalVolume / 500000f) * 1.5f;
+        }
+
+        /// <summary>
+        /// Get the total volume across all muscle groups (excluding cardio).
+        /// Used for attack power calculations.
+        /// </summary>
+        public float GetTotalVolume()
+        {
+            float total = 0;
+            for (int i = 0; i < 7; i++) // Exclude cardio (index 7)
+            {
+                total += muscleVolumes[i];
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// Get the fitness level (1-50) based on total volume.
+        /// Used for matchmaking and display.
+        /// </summary>
+        public int GetTotalFitnessLevel()
+        {
+            float totalVolume = GetTotalVolume();
+            
+            // Every 10,000 volume = 1 level, max 50
+            int level = Mathf.FloorToInt(totalVolume / 10000f) + 1;
+            return Mathf.Clamp(level, 1, 50);
+        }
+
+        /// <summary>
+        /// Get defense multiplier based on recovery score.
+        /// Higher recovery = less damage taken.
+        /// </summary>
+        public float GetDefenseMultiplier()
+        {
+            // Recovery 100 = 1.3x defense, Recovery 0 = 0.7x defense
+            return 0.7f + (recoveryScore / 100f) * 0.6f;
         }
     }
 }

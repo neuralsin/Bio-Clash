@@ -20,7 +20,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private UI_Unit _unitPrefab = null;
         [SerializeField] private Data.UnitID[] _unitsAvailable = null; public Data.UnitID[] unitsList { get { return _unitsAvailable; } }
 
-        private static UI_Train _instance = null; public static UI_Train instanse { get { return _instance; } }
+        private static UI_Train _instance = null; public static UI_Train instance { get { return _instance; } }
         private bool _active = false; public bool isActive { get { return _active; } }
         private List<UI_UnitsTraining> trainigItems = new List<UI_UnitsTraining>(); public int trainigItemsCount { get { return trainigItems.Count; } }
         private List<UI_Unit> uiUnits = new List<UI_Unit>();
@@ -52,11 +52,11 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             for (int i = 0; i < uiUnits.Count; i++)
             {
-                for (int j = 0; j < Player.instanse.initializationData.serverUnits.Count; j++)
+                for (int j = 0; j < Player.instance.initializationData.serverUnits.Count; j++)
                 {
-                    if (uiUnits[i].id == Player.instanse.initializationData.serverUnits[j].id)
+                    if (uiUnits[i].id == Player.instance.initializationData.serverUnits[j].id)
                     {
-                        uiUnits[i].Initialize(Player.instanse.initializationData.serverUnits[j]);
+                        uiUnits[i].Initialize(Player.instance.initializationData.serverUnits[j]);
                         break;
                     }
                 }
@@ -86,48 +86,48 @@ namespace DevelopersHub.ClashOfWhatecer
         public void Open()
         {
             ClearTrainingItems();
-            UI_Main.instanse.SetStatus(false);
+            UI_Main.instance.SetStatus(false);
             Initialize();
             Sync();
             _elements.SetActive(true);
             _active = true;
-            Player.instanse.RushSyncRequest();
+            Player.instance.RushSyncRequest();
         }
 
         private void UpdateTrainingList()
         {
-            for (int i = 0; i < Player.instanse.data.units.Count; i++)
+            for (int i = 0; i < Player.instance.data.units.Count; i++)
             {
-                if (Player.instanse.data.units[i].ready == false)
+                if (Player.instance.data.units[i].ready == false)
                 {
                     int x1 = -1;
                     int x2 = -1;
                     for (int j = 0; j < trainigItems.Count; j++)
                     {
-                        if (trainigItems[j] && Player.instanse.data.units[i].databaseID == trainigItems[j].databaseID)
+                        if (trainigItems[j] && Player.instance.data.units[i].databaseID == trainigItems[j].databaseID)
                         {
                             x1 = j;
                             break;
                         }
-                        if (trainigItems[j] && trainigItems[j].databaseID <= 0 && Player.instanse.data.units[i].id == trainigItems[j].id)
+                        if (trainigItems[j] && trainigItems[j].databaseID <= 0 && Player.instance.data.units[i].id == trainigItems[j].id)
                         {
                             x2 = j;
                         }
                     }
                     if (x1 >= 0)
                     {
-                        trainigItems[x1].Initialize(Player.instanse.data.units[i]);
+                        trainigItems[x1].Initialize(Player.instance.data.units[i]);
                     }
                     else
                     {
                         if (x2 >= 0)
                         {
-                            trainigItems[x2].Initialize(Player.instanse.data.units[i]);
+                            trainigItems[x2].Initialize(Player.instance.data.units[i]);
                         }
                         else
                         {
                             UI_UnitsTraining unit = Instantiate(_trainPrefab, _trainGrid.transform);
-                            unit.Initialize(Player.instanse.data.units[i]);
+                            unit.Initialize(Player.instance.data.units[i]);
                             RectTransform rect = unit.GetComponent<RectTransform>();
                             rect.sizeDelta = new Vector2(trainingItemHeight, trainingItemHeight);
                             trainigItems.Add(unit);
@@ -148,11 +148,11 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             ClearTrainingItems();
             _elements.SetActive(false);
             _active = false;
-            UI_Main.instanse.SetStatus(true);
+            UI_Main.instance.SetStatus(true);
         }
 
         public void Sync()
@@ -165,10 +165,10 @@ namespace DevelopersHub.ClashOfWhatecer
                 occupied += uiUnits[i].housing;
             }
 
-            for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+            for (int i = 0; i < Player.instance.data.buildings.Count; i++)
             {
-                if(Player.instanse.data.buildings[i].id != Data.BuildingID.armycamp) { continue; }
-                available += Player.instanse.data.buildings[i].capacity;
+                if(Player.instance.data.buildings[i].id != Data.BuildingID.armycamp) { continue; }
+                available += Player.instance.data.buildings[i].capacity;
             }
 
             _availableHousing = available;
@@ -186,9 +186,9 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             for (int i = trainigItems.Count - 1; i >= 0; i--)
             {
-                for (int j = Player.instanse.data.units.Count - 1; j >= 0; j--)
+                for (int j = Player.instance.data.units.Count - 1; j >= 0; j--)
                 {
-                    if (Player.instanse.data.units[j].databaseID == trainigItems[i].databaseID)
+                    if (Player.instance.data.units[j].databaseID == trainigItems[i].databaseID)
                     {
                         RemoveTrainingItem(trainigItems[i]);
                         break;

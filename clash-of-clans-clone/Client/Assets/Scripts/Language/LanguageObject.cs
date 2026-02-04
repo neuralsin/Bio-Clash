@@ -25,7 +25,7 @@ namespace DevelopersHub.ClashOfWhatecer
                     {
                         for (int j = 0; j < items[i].objects.Length; j++)
                         {
-                            items[i].objects[j].SetActive(Language.instanse.language == items[i].language);
+                            items[i].objects[j].SetActive(Language.instance.language == items[i].language);
                         }
                     }
                 }

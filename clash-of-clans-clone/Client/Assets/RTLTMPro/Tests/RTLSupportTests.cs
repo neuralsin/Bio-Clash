@@ -1,4 +1,4 @@
-﻿//using System.Collections;
+//using System.Collections;
 //using System.Collections.Generic;
 //using System.Security.Policy;
 //using NUnit.Framework;
@@ -13,8 +13,8 @@
 //        [Test]
 //        public void ArabicTextIsSuccessfulyConverted()
 //        {
-//            const string input = "هَذَا النَّص العربي";
-//            const string expected = "ﻲﺑﺮﻌﻟا ﺺﱠﻨﻟا اَﺬَﻫ";
+//            const string input = "????? ?????? ??????";
+//            const string expected = "?????? ????? ?????";
 
 //            string result = RTLSupport.FixRTL(input, false, false, false);
 
@@ -24,8 +24,8 @@
 //        [Test]
 //        public void FarsiTextIsSuccessfulyConverted()
 //        {
-//            const string input = "متن فارسی";
-//            const string expected = "ﯽﺳرﺎﻓ ﻦﺘﻣ";
+//            const string input = "??? ?????";
+//            const string expected = "????? ???";
 
 //            string result = RTLSupport.FixRTL(input, false, false, true);
 
@@ -35,8 +35,8 @@
 //        [Test]
 //        public void TashkeelIsMaintainedInBeginingOfText()
 //        {
-//            const string input = "ِصبا";
-//            const string expected = "ِﺎﺒﺻ";;
+//            const string input = "????";
+//            const string expected = "????";;
 
 //            string result = RTLSupport.FixRTL(input, false, false, false);
 
@@ -46,8 +46,8 @@
 //        [Test]
 //        public void TashkeelIsMaintainedInMiddleOfText()
 //        {
-//            const string input = "مَرد";
-//            const string expected = "دﺮَﻣ";
+//            const string input = "????";
+//            const string expected = "????";
 
 //            string result = RTLSupport.FixRTL(input, false, false, false);
 
@@ -57,8 +57,8 @@
 //        [Test]
 //        public void TashkeelIsMaintainedInEndOfText()
 //        {
-//            const string input = "صبحِ";
-//            const string expected = "ِﺢﺒﺻ";
+//            const string input = "????";
+//            const string expected = "????";
 
 //            string result = RTLSupport.FixRTL(input, false, false, false);
 

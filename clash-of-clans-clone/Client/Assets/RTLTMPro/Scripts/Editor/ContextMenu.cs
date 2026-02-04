@@ -1,4 +1,4 @@
-﻿using TMPro;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -177,7 +177,7 @@ namespace RTLTMPro
             goRectTransform.anchorMin = Vector2.zero;
             goRectTransform.anchorMax = Vector2.one;
 
-            textMeshPro.text = "دکمه";
+            textMeshPro.text = "????";
             textMeshPro.enableAutoSizing = true;
             textMeshPro.fontSizeMin = 10;
             textMeshPro.fontSizeMax = 100;

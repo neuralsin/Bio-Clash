@@ -13,7 +13,7 @@ namespace DevelopersHub.ClashOfWhatecer
     public class UI_Fitness : MonoBehaviour
     {
         private static UI_Fitness _instance;
-        public static UI_Fitness instanse { get { return _instance; } }
+        public static UI_Fitness instance { get { return _instance; } }
 
         [Header("Main Panel")]
         [SerializeField] public GameObject _panel = null;
@@ -263,7 +263,7 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             yield return new WaitForSeconds(0.3f);
             _panel.SetActive(false);
-            UI_Main.instanse.SetStatus(true);
+            UI_Main.instance.SetStatus(true);
         }
 
         private void LogWorkout()
@@ -326,8 +326,8 @@ namespace DevelopersHub.ClashOfWhatecer
             RefreshStats();
 
             // Play success sound
-            if (SoundManager.instanse != null)
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instance != null)
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             
             StartCoroutine(PunchScale(_panel.transform)); // Punch whole panel
             
@@ -351,8 +351,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
             RefreshStats();
             
-            if (SoundManager.instanse != null)
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instance != null)
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
         }
 
         public void RefreshStats()
@@ -453,8 +453,8 @@ namespace DevelopersHub.ClashOfWhatecer
             // Update recovery based on health
             UpdateRecoveryFromHealth();
 
-            if (SoundManager.instanse != null)
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instance != null)
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             Debug.Log($"💚 Health logged: Sleep {_todaySleepHours}h, Water {_todayWaterLiters}L, Steps {_todaySteps}");
         }
 
@@ -608,8 +608,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
             UpdateWorkoutSessionUI();
             
-            if (SoundManager.instanse != null)
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instance != null)
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             Debug.Log("🏋️ Workout started!");
         }
 
@@ -643,8 +643,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
             UpdateWorkoutSessionUI();
             
-            if (SoundManager.instanse != null)
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instance != null)
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             Debug.Log($"✅ Workout finished! Duration: {minutes}:{seconds:D2}, Volume: {_sessionTotalVolume}kg");
         }
 
@@ -675,8 +675,8 @@ namespace DevelopersHub.ClashOfWhatecer
             }
 
             UpdateWorkoutSessionUI();
-            if (SoundManager.instanse != null)
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instance != null)
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
         }
 
         /// <summary>
@@ -765,8 +765,8 @@ namespace DevelopersHub.ClashOfWhatecer
             UpdateExerciseList();
             UpdateWorkoutSessionUI();
 
-            if (SoundManager.instanse != null)
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instance != null)
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                 
             StartCoroutine(PunchScale(_logButton.transform)); // Punch log button
             

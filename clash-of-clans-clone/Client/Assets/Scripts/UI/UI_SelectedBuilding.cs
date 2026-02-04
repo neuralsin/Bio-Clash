@@ -28,19 +28,19 @@ namespace DevelopersHub.ClashOfWhatecer
             _buildingName.anchorMin = Vector3.zero;
             _buildingName.anchorMax = Vector3.zero;
             buildingNameSize = new Vector2(Screen.height * buildingNameHeight * buildingNameAspect, Screen.height * buildingNameHeight);
-            _buildingName.sizeDelta = buildingNameSize * CameraController.instanse.zoomScale;
+            _buildingName.sizeDelta = buildingNameSize * CameraController.instance.zoomScale;
         }
 
         private void Update()
         {
-            if (Building.selectedInstanse != null)
+            if (Building.selectedinstance != null)
             {
-                _buildingName.sizeDelta = buildingNameSize / CameraController.instanse.zoomScale;
+                _buildingName.sizeDelta = buildingNameSize / CameraController.instance.zoomScale;
 
-                Vector3 end = UI_Main.instanse._grid.GetEndPosition(Building.selectedInstanse);
+                Vector3 end = UI_Main.instance._grid.GetEndPosition(Building.selectedinstance);
 
-                Vector3 planDownLeft = CameraController.instanse.planDownLeft;
-                Vector3 planTopRight = CameraController.instanse.planTopRight;
+                Vector3 planDownLeft = CameraController.instance.planDownLeft;
+                Vector3 planTopRight = CameraController.instance.planTopRight;
 
                 float w = planTopRight.x - planDownLeft.x;
                 float h = planTopRight.y - planDownLeft.y;

@@ -42,19 +42,19 @@ namespace DevelopersHub.ClashOfWhatecer
             _normalPanel.SetActive(false);
             _maxPanel.SetActive(false);
             _researchingPanel.SetActive(false);
-            _titleText.text = Language.instanse.GetSpellName(_id);
-            if (Language.instanse.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
+            _titleText.text = Language.instance.GetSpellName(_id);
+            if (Language.instance.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
             {
                 _titleText.horizontalAlignment = HorizontalAlignmentOptions.Right;
             }
             int dataIndex = -1;
             int researchIndex = -1;
             int level = 1;
-            for (int i = 0; i < Player.instanse.initializationData.research.Count; i++)
+            for (int i = 0; i < Player.instance.initializationData.research.Count; i++)
             {
-                if (Player.instanse.initializationData.research[i].type == Data.ResearchType.spell && Player.instanse.initializationData.research[i].globalID == _id.ToString())
+                if (Player.instance.initializationData.research[i].type == Data.ResearchType.spell && Player.instance.initializationData.research[i].globalID == _id.ToString())
                 {
-                    researchIndex = i; level = Player.instanse.initializationData.research[i].level; break;
+                    researchIndex = i; level = Player.instance.initializationData.research[i].level; break;
                 }
             }
             Sprite icon = AssetsBank.GetSpellIcon(_id);
@@ -62,9 +62,9 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 _icon.sprite = icon;
             }
-            for (int i = 0; i < Player.instanse.initializationData.serverSpells.Count; i++)
+            for (int i = 0; i < Player.instance.initializationData.serverSpells.Count; i++)
             {
-                if (Player.instanse.initializationData.serverSpells[i].id == _id && Player.instanse.initializationData.serverSpells[i].level == level + 1)
+                if (Player.instance.initializationData.serverSpells[i].id == _id && Player.instance.initializationData.serverSpells[i].level == level + 1)
                 {
                     dataIndex = i; break;
                 }
@@ -73,7 +73,7 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 if (researchIndex >= 0)
                 {
-                    if (Player.instanse.initializationData.research[researchIndex].end <= Player.instanse.data.nowTime)
+                    if (Player.instance.initializationData.research[researchIndex].end <= Player.instance.data.nowTime)
                     {
                         SetupItem(level, dataIndex);
                     }
@@ -81,7 +81,7 @@ namespace DevelopersHub.ClashOfWhatecer
                     {
                         _timeText.text = "";
                         _button.interactable = false;
-                        _endResearch = Player.instanse.initializationData.research[researchIndex].end;
+                        _endResearch = Player.instance.initializationData.research[researchIndex].end;
                         _researchingPanel.SetActive(true);
                         researching = true;
                     }
@@ -101,33 +101,33 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void SetupItem(int level, int dataIndex)
         {
-            _reqTimeText.text = Tools.SecondsToTimeFormat(Player.instanse.initializationData.serverSpells[dataIndex].researchTime);
+            _reqTimeText.text = Tools.SecondsToTimeFormat(Player.instance.initializationData.serverSpells[dataIndex].researchTime);
             _levelText.text = "+" + level.ToString();
-            if (Player.instanse.initializationData.serverSpells[dataIndex].researchGold > 0)
+            if (Player.instance.initializationData.serverSpells[dataIndex].researchGold > 0)
             {
-                _resourceIcon.sprite = AssetsBank.instanse.goblinIcon;
-                _resourceText.text = Player.instanse.initializationData.serverSpells[dataIndex].researchGold.ToString();
+                _resourceIcon.sprite = AssetsBank.instance.goblinIcon;
+                _resourceText.text = Player.instance.initializationData.serverSpells[dataIndex].researchGold.ToString();
             }
-            else if (Player.instanse.initializationData.serverSpells[dataIndex].researchElixir > 0)
+            else if (Player.instance.initializationData.serverSpells[dataIndex].researchElixir > 0)
             {
-                _resourceIcon.sprite = AssetsBank.instanse.elixirIcon;
-                _resourceText.text = Player.instanse.initializationData.serverSpells[dataIndex].researchElixir.ToString();
+                _resourceIcon.sprite = AssetsBank.instance.elixirIcon;
+                _resourceText.text = Player.instance.initializationData.serverSpells[dataIndex].researchElixir.ToString();
             }
-            else if (Player.instanse.initializationData.serverSpells[dataIndex].researchDarkElixir > 0)
+            else if (Player.instance.initializationData.serverSpells[dataIndex].researchDarkElixir > 0)
             {
-                _resourceIcon.sprite = AssetsBank.instanse.darkIcon;
-                _resourceText.text = Player.instanse.initializationData.serverSpells[dataIndex].researchDarkElixir.ToString();
+                _resourceIcon.sprite = AssetsBank.instance.darkIcon;
+                _resourceText.text = Player.instance.initializationData.serverSpells[dataIndex].researchDarkElixir.ToString();
             }
             else
             {
-                _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
-                _resourceText.text = Player.instanse.initializationData.serverSpells[dataIndex].researchGems.ToString();
+                _resourceIcon.sprite = AssetsBank.instance.gemsIcon;
+                _resourceText.text = Player.instance.initializationData.serverSpells[dataIndex].researchGems.ToString();
             }
-            if (!Data.IsSpellUnlocked(_id, Player.instanse.spellFactoryLevel, Player.instanse.darkBarracksLevel))
+            if (!Data.IsSpellUnlocked(_id, Player.instance.spellFactoryLevel, Player.instance.darkBarracksLevel))
             {
                 _button.interactable = false;
             }
-            if (_button.interactable && (Player.instanse.initializationData.serverSpells[dataIndex].researchGems > Player.instanse.data.gems || Player.instanse.initializationData.serverSpells[dataIndex].researchDarkElixir > Player.instanse.darkElixir || Player.instanse.initializationData.serverSpells[dataIndex].researchGold > Player.instanse.gold || Player.instanse.initializationData.serverSpells[dataIndex].researchElixir > Player.instanse.elixir))
+            if (_button.interactable && (Player.instance.initializationData.serverSpells[dataIndex].researchGems > Player.instance.data.gems || Player.instance.initializationData.serverSpells[dataIndex].researchDarkElixir > Player.instance.darkElixir || Player.instance.initializationData.serverSpells[dataIndex].researchGold > Player.instance.gold || Player.instance.initializationData.serverSpells[dataIndex].researchElixir > Player.instance.elixir))
             {
                 _button.interactable = false;
             }
@@ -148,9 +148,9 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             if (researching)
             {
-                if (_endResearch > Player.instanse.data.nowTime)
+                if (_endResearch > Player.instance.data.nowTime)
                 {
-                    _timeText.text = Tools.SecondsToTimeFormat(_endResearch - Player.instanse.data.nowTime);
+                    _timeText.text = Tools.SecondsToTimeFormat(_endResearch - Player.instance.data.nowTime);
                 }
                 else
                 {
@@ -162,7 +162,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Info()
         {
-            UI_Info.instanse.OpenSpellInfo(_id);
+            UI_Info.instance.OpenSpellInfo(_id);
         }
 
     }

@@ -24,7 +24,7 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             _globalID = building.id;
             _id = building.databaseID;
-            _name.text = Language.instanse.GetBuildingName(building.id);
+            _name.text = Language.instance.GetBuildingName(building.id);
             Sprite icon = AssetsBank.GetBuildingIcon(building.id);
             if (icon != null)
             {
@@ -44,16 +44,16 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Clicked()
         {
-            if (UI_WarLayout.instanse.placingItem != null)
+            if (UI_WarLayout.instance.placingItem != null)
             {
-                UI_WarLayout.instanse.placingItem.SetActive(true);
-                UI_WarLayout.instanse.placingItem = null;
-                UI_Build.instanse.Cancel();
+                UI_WarLayout.instance.placingItem.SetActive(true);
+                UI_WarLayout.instance.placingItem = null;
+                UI_Build.instance.Cancel();
             }
             int n = -1;
-            for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+            for (int i = 0; i < Player.instance.data.buildings.Count; i++)
             {
-                if(Player.instanse.data.buildings[i].databaseID == _id)
+                if(Player.instance.data.buildings[i].databaseID == _id)
                 {
                     n = i;
                     break;
@@ -61,19 +61,19 @@ namespace DevelopersHub.ClashOfWhatecer
             }
             if(n >= 0)
             {
-                var prefab = UI_Main.instanse.GetBuildingPrefab(Player.instanse.data.buildings[n].id);
+                var prefab = UI_Main.instance.GetBuildingPrefab(Player.instance.data.buildings[n].id);
                 if (prefab.Item1 != null)
                 {
-                    UI_WarLayout.instanse.placingID = Player.instanse.data.buildings[n].databaseID;
+                    UI_WarLayout.instance.placingID = Player.instance.data.buildings[n].databaseID;
                     Vector3 position = Vector3.zero;
                     Building building = Instantiate(prefab.Item1, position, Quaternion.identity);
-                    building.data = Player.instanse.data.buildings[n];
+                    building.data = Player.instance.data.buildings[n];
                     building.rows = prefab.Item2.rows;
                     building.columns = prefab.Item2.columns;
                     building.databaseID = 0;
                     if (preferedX < 0 || preferedY < 0)
                     {
-                        Vector2Int point = UI_Main.instanse._grid.GetBestBuildingPlace(prefab.Item2.rows, prefab.Item2.columns);
+                        Vector2Int point = UI_Main.instance._grid.GetBestBuildingPlace(prefab.Item2.rows, prefab.Item2.columns);
                         preferedX = point.x;
                         preferedY = point.y;
                     }
@@ -82,11 +82,11 @@ namespace DevelopersHub.ClashOfWhatecer
                     {
                         building._baseArea.gameObject.SetActive(true);
                     }
-                    Building.buildInstanse = building;
-                    CameraController.instanse.isPlacingBuilding = true;
-                    UI_WarLayout.instanse.placingItem = gameObject;
-                    UI_WarLayout.instanse.placingItem.SetActive(false);
-                    UI_Build.instanse.SetStatus(true);
+                    Building.buildinstance = building;
+                    CameraController.instance.isPlacingBuilding = true;
+                    UI_WarLayout.instance.placingItem = gameObject;
+                    UI_WarLayout.instance.placingItem.SetActive(false);
+                    UI_Build.instance.SetStatus(true);
                 }
             }
         }

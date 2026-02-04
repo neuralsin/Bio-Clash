@@ -21,7 +21,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private Data.BuildingID[] _buildingsAvailable = null;
 
         private bool _active = false; public bool isActive { get { return _active; } }
-        private static UI_Shop _instance = null; public static UI_Shop instanse { get { return _instance; } }
+        private static UI_Shop _instance = null; public static UI_Shop instance { get { return _instance; } }
         private List<UI_Building> ui_buildings = new List<UI_Building>();
 
         private void Awake()
@@ -64,23 +64,23 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             if (status)
             {
-                _goldText.text = Player.instanse.gold.ToString();
-                _elixirText.text = Player.instanse.elixir.ToString();
-                _darkText.text = Player.instanse.darkElixir.ToString();
-                _gemsText.text = Player.instanse.data.gems.ToString();
+                _goldText.text = Player.instance.gold.ToString();
+                _elixirText.text = Player.instance.elixir.ToString();
+                _darkText.text = Player.instance.darkElixir.ToString();
+                _gemsText.text = Player.instance.data.gems.ToString();
                 _buildingsGrid.anchoredPosition = new Vector2(0, _buildingsGrid.anchoredPosition.y);
 
                 int _workers = 0;
                 int _busyWorkers = 0;
-                if (Player.instanse.data.buildings != null && Player.instanse.data.buildings.Count > 0)
+                if (Player.instance.data.buildings != null && Player.instance.data.buildings.Count > 0)
                 {
-                    for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+                    for (int i = 0; i < Player.instance.data.buildings.Count; i++)
                     {
-                        if (Player.instanse.data.buildings[i].isConstructing)
+                        if (Player.instance.data.buildings[i].isConstructing)
                         {
                             _busyWorkers += 1;
                         }
-                        if(Player.instanse.data.buildings[i].id != Data.BuildingID.buildershut)
+                        if(Player.instance.data.buildings[i].id != Data.BuildingID.buildershut)
                         {
                             continue;
                         }
@@ -102,12 +102,12 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public bool PlaceBuilding(Data.BuildingID id, int x = -1, int y = -1)
         {
-            var prefab = UI_Main.instanse.GetBuildingPrefab(id);
+            var prefab = UI_Main.instance.GetBuildingPrefab(id);
             if (prefab.Item1 != null)
             {
                 if(x < 0 || y < 0)
                 {
-                    Vector2Int point = UI_Main.instanse._grid.GetBestBuildingPlace(prefab.Item2.rows, prefab.Item2.columns);
+                    Vector2Int point = UI_Main.instance._grid.GetBestBuildingPlace(prefab.Item2.rows, prefab.Item2.columns);
                     x = point.x;
                     y = point.y;
                 }
@@ -125,14 +125,16 @@ namespace DevelopersHub.ClashOfWhatecer
 
                 int sbi = -1;
 
-                for (int i = 0; i < Player.instanse.initializationData.serverBuildings.Count; i++)
+                for (int i = 0; i < Player.instance.initializationData.serverBuildings.Count; i++)
                 {
-                    if(Player.instanse.initializationData.serverBuildings[i].id != id.ToString() || Player.instanse.initializationData.serverBuildings[i].level != 1) { continue; }
-                    data.columns = Player.instanse.initializationData.serverBuildings[i].columns;
-                    data.rows = Player.instanse.initializationData.serverBuildings[i].rows;
-                    data.buildTime = Player.instanse.initializationData.serverBuildings[i].buildTime;
+                    if(Player.instance.initializationData.serverBuildings[i].id != id.ToString() || Player.instance.initializationData.serverBuildings[i].level != 1) { continue; }
+                    data.columns = Player.instance.initializationData.serverBuildings[i].columns;
+                    data.rows = Player.instance.initializationData.serverBuildings[i].rows;
+                    data.buildTime = Player.instance.initializationData.serverBuildings[i].buildTime;
                     sbi = i;
-                    havrResources = Player.instanse.data.gems >= Player.instanse.initializationData.serverBuildings[i].requiredGems && Player.instanse.elixir >= Player.instanse.initializationData.serverBuildings[i].requiredElixir && Player.instanse.gold >= Player.instanse.initializationData.serverBuildings[i].requiredGold && Player.instanse.darkElixir >= Player.instanse.initializationData.serverBuildings[i].requiredDarkElixir;
+                    // BIO-CLASH: Bypass legacy resource costs for fitness economy
+                    // Buildings are free to place - only check gems if required
+                    havrResources = Player.instance.data.gems >= Player.instance.initializationData.serverBuildings[i].requiredGems;
                     break;
                 }
 
@@ -141,8 +143,8 @@ namespace DevelopersHub.ClashOfWhatecer
                     return false;
                 }
 
-                UI_Shop.instanse.SetStatus(false);
-                UI_Main.instanse.SetStatus(true);
+                UI_Shop.instance.SetStatus(false);
+                UI_Main.instance.SetStatus(true);
 
                 Building building = Instantiate(prefab.Item1, position, Quaternion.identity);
                 building.rows = data.rows;
@@ -159,9 +161,9 @@ namespace DevelopersHub.ClashOfWhatecer
                     building._baseArea.gameObject.SetActive(true);
                 }
 
-                Building.buildInstanse = building;
-                CameraController.instanse.isPlacingBuilding = true;
-                UI_Build.instanse.SetStatus(true);
+                Building.buildinstance = building;
+                CameraController.instance.isPlacingBuilding = true;
+                UI_Build.instance.SetStatus(true);
                 return true;
             }
             return false;
@@ -169,9 +171,9 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void CloseShop()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             SetStatus(false);
-            UI_Main.instanse.SetStatus(true);
+            UI_Main.instance.SetStatus(true);
         }
 
     }

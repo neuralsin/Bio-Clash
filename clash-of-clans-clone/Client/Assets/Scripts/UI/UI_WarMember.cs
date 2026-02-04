@@ -89,7 +89,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Select()
         {
-            UI_Clan.instanse.SelectWarMember(this);
+            UI_Clan.instance.SelectWarMember(this);
         }
 
     }

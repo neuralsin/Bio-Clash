@@ -1,4 +1,4 @@
-﻿using AStarPathfinding;
+using AStarPathfinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +80,36 @@ namespace DevelopersHub.ClashOfWhatecer
                 }
             }
             return (lootedGold, lootedElixir, lootedDark, totalGold, totalElixir, totalDark);
+        }
+
+        /// <summary>
+        /// BIO-CLASH: Get fitness XP earned from this battle.
+        /// XP is based on destruction percentage and stars earned.
+        /// This replaces legacy Gold/Elixir loot with fitness progression.
+        /// </summary>
+        public int GetFitnessXPFromBattle()
+        {
+            int baseXP = 0;
+            
+            // Stars contribute significant XP
+            baseXP += stars * 100; // 100 XP per star (max 300)
+            
+            // Destruction percentage adds bonus XP
+            baseXP += (int)(percentage * 200); // 0-200 XP based on destruction
+            
+            // Town hall destruction bonus
+            if (townhallDestroyed)
+            {
+                baseXP += 150;
+            }
+            
+            // Complete destruction bonus
+            if (completelyDestroyed)
+            {
+                baseXP += 100;
+            }
+            
+            return baseXP; // Max possible: 300 + 200 + 150 + 100 = 750 XP per battle
         }
 
         public int stars { get { int s = 0; if (townhallDestroyed) { s++; } if (fiftyPercentDestroyed) { s++; } if (completelyDestroyed) { s++; } return s; } }
@@ -1597,6 +1627,14 @@ namespace DevelopersHub.ClashOfWhatecer
                     damage += (_units[index].unit.damage * _spells[i].spell.server.pulsesValue);
                 }
             }
+            
+            // BIO-CLASH: Apply fitness attack power multiplier
+            // Higher total workout volume = more damage
+            if (FitnessManager.instance != null)
+            {
+                damage *= FitnessManager.instance.GetAttackPowerMultiplier();
+            }
+            
             return damage;
         }
 

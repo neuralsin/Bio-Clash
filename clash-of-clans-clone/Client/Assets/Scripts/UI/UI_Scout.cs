@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using System;
     using System.Collections;
@@ -27,7 +27,7 @@
         [SerializeField] private Button _replayButton = null;
 
         private Player.Panel _backPanel = Player.Panel.main;
-        private static UI_Scout _instance = null; public static UI_Scout instanse { get { return _instance; } }
+        private static UI_Scout _instance = null; public static UI_Scout instance { get { return _instance; } }
         private bool _active = false; public bool isActive { get { return _active; } }
         private Data.Player _player = null;
         private Data.BattleType _type = Data.BattleType.normal;
@@ -64,18 +64,18 @@
                 _panelReport.SetActive(false);
                 PlaceBuildings();
             }
-            if (UI_Clan.instanse.isActive)
+            if (UI_Clan.instance.isActive)
             {
                 _backPanel = Player.Panel.clan;
-                UI_Clan.instanse.Close();
+                UI_Clan.instance.Close();
             }
             else
             {
                 _backPanel = Player.Panel.main;
             }
-            if (UI_Main.instanse.isActive)
+            if (UI_Main.instance.isActive)
             {
-                UI_Main.instanse.SetStatus(false);
+                UI_Main.instance.SetStatus(false);
             }
             _active = true;
             _elements.SetActive(true);
@@ -83,14 +83,14 @@
 
         private void PlaceBuildings()
         {
-            UI_Main.instanse._grid.Clear();
+            UI_Main.instance._grid.Clear();
             for (int i = 0; i < _player.buildings.Count; i++)
             {
                 if(_type == Data.BattleType.war && (_player.buildings[i].warX < 0 || _player.buildings[i].warY < 0))
                 {
                     continue;
                 }
-                var prefab = UI_Main.instanse.GetBuildingPrefab(_player.buildings[i].id);
+                var prefab = UI_Main.instance.GetBuildingPrefab(_player.buildings[i].id);
                 if (prefab.Item1 != null)
                 {
                     Building building = Instantiate(prefab.Item1, Vector3.zero, Quaternion.identity);
@@ -111,10 +111,10 @@
                     {
                         building._baseArea.gameObject.SetActive(false);
                     }
-                    UI_Main.instanse._grid.buildings.Add(building);
+                    UI_Main.instance._grid.buildings.Add(building);
                 }
             }
-            UI_Main.instanse._grid.RefreshBuildings();
+            UI_Main.instance._grid.RefreshBuildings();
         }
 
         private void PlayReply()
@@ -163,16 +163,16 @@
             ClearBuildingsOnGrid();
             ClearUnitsOnGrid();
             ClearUnits();
-            UI_Main.instanse._grid.Clear();
-            Player.instanse.SyncData(Player.instanse.data);
+            UI_Main.instance._grid.Clear();
+            Player.instance.SyncData(Player.instance.data);
             if (_backPanel == Player.Panel.clan)
             {
-                UI_Main.instanse.SetStatus(true);
-                UI_Clan.instanse.Open();
+                UI_Main.instance.SetStatus(true);
+                UI_Clan.instance.Open();
             }
             else
             {
-                UI_Main.instanse.SetStatus(true);
+                UI_Main.instance.SetStatus(true);
             }
             _elements.SetActive(false);
         }
@@ -274,10 +274,10 @@
             ClearBuildingsOnGrid();
             ClearUnitsOnGrid();
 
-            UI_Main.instanse._grid.Clear();
+            UI_Main.instance._grid.Clear();
             for (int i = 0; i < battleBuildings.Count; i++)
             {
-                var prefab = UI_Main.instanse.GetBuildingPrefab(battleBuildings[i].building.id);
+                var prefab = UI_Main.instance.GetBuildingPrefab(battleBuildings[i].building.id);
                 if (prefab.Item1 != null)
                 {
                     UI_Battle.BuildingOnGrid building = new UI_Battle.BuildingOnGrid();
@@ -291,7 +291,7 @@
                     {
                         building.building._baseArea.gameObject.SetActive(false);
                     }
-                    building.building.healthBar = Instantiate(UI_Battle.instanse.healthBarPrefab, healthBarGrid);
+                    building.building.healthBar = Instantiate(UI_Battle.instance.healthBarPrefab, healthBarGrid);
                     building.building.healthBar.bar.fillAmount = 1;
                     building.building.healthBar.gameObject.SetActive(false);
 
@@ -299,7 +299,7 @@
                     building.id = battleBuildings[i].building.databaseID;
                     building.index = i;
                     buildingsOnGrid.Add(building);
-                    UI_Main.instanse._grid.buildings.Add(building.building);
+                    UI_Main.instance._grid.buildings.Add(building.building);
                 }
                 battleBuildings[i].building.x += Data.battleGridOffset;
                 battleBuildings[i].building.y += Data.battleGridOffset;
@@ -313,11 +313,11 @@
             if (_type == Data.BattleType.normal)
             {
                 int townHallLevel = 1;
-                for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+                for (int i = 0; i < Player.instance.data.buildings.Count; i++)
                 {
-                    if (Player.instanse.data.buildings[i].id == Data.BuildingID.townhall)
+                    if (Player.instance.data.buildings[i].id == Data.BuildingID.townhall)
                     {
-                        townHallLevel = Player.instanse.data.buildings[i].level;
+                        townHallLevel = Player.instance.data.buildings[i].level;
                     }
                 }
             }
@@ -329,7 +329,7 @@
             _percentageText.text = Mathf.RoundToInt((float)(battle.percentage * 100f)).ToString() + "%";
             //UpdateLoots();
 
-            //var trophies = Data.GetBattleTrophies(Player.instanse.data.trophies, player.trophies);
+            //var trophies = Data.GetBattleTrophies(Player.instance.data.trophies, player.trophies);
             //_winTrophiesText.text = trophies.Item1.ToString();
             //_looseTrophiesText.text = "-" + trophies.Item2.ToString();
 
@@ -475,7 +475,7 @@
                     {
                         buildingsOnGrid[i].building.healthBar.gameObject.SetActive(true);
                         buildingsOnGrid[i].building.healthBar.bar.fillAmount = battle._buildings[buildingsOnGrid[i].index].health / battle._buildings[buildingsOnGrid[i].index].building.health;
-                        buildingsOnGrid[i].building.healthBar.rect.anchoredPosition = GetUnitBarPosition(UI_Main.instanse._grid.GetEndPosition(buildingsOnGrid[i].building));
+                        buildingsOnGrid[i].building.healthBar.rect.anchoredPosition = GetUnitBarPosition(UI_Main.instance._grid.GetEndPosition(buildingsOnGrid[i].building));
                     }
                 }
             }
@@ -483,8 +483,8 @@
 
         private Vector2 GetUnitBarPosition(Vector3 position)
         {
-            Vector3 planDownLeft = CameraController.instanse.planDownLeft;
-            Vector3 planTopRight = CameraController.instanse.planTopRight;
+            Vector3 planDownLeft = CameraController.instance.planDownLeft;
+            Vector3 planTopRight = CameraController.instance.planTopRight;
 
             float w = planTopRight.x - planDownLeft.x;
             float h = planTopRight.y - planDownLeft.y;
@@ -500,8 +500,8 @@
         public void SpellSpawnCallBack(long databaseID, Data.SpellID id, Battle.BattleVector2 target, float radius)
         {
             Vector3 position = new Vector3(target.x, 0, target.y);
-            position = UI_Main.instanse._grid.transform.TransformPoint(position);
-            UI_SpellEffect effect = Instantiate(UI_Battle.instanse.spellEffectPrefab, position, Quaternion.identity);
+            position = UI_Main.instance._grid.transform.TransformPoint(position);
+            UI_SpellEffect effect = Instantiate(UI_Battle.instance.spellEffectPrefab, position, Quaternion.identity);
             effect.Initialize(id, databaseID, radius);
             spellEffects.Add(effect);
         }
@@ -544,16 +544,16 @@
             }
             if (u >= 0)
             {
-                BattleUnit prefab = UI_Battle.instanse.GetUnitPrefab(battle._units[u].unit.id);
+                BattleUnit prefab = UI_Battle.instance.GetUnitPrefab(battle._units[u].unit.id);
                 if (prefab)
                 {
-                    BattleUnit unit = Instantiate(prefab, UI_Main.instanse._grid.transform);
+                    BattleUnit unit = Instantiate(prefab, UI_Main.instance._grid.transform);
                     unit.transform.localPosition = UI_Battle.BattlePositionToWorldPosotion(battle._units[u].positionOnGrid);
                     //unit.transform.rotation = Quaternion.LookRotation(new Vector3(0, unit.transform.position.y, 0) - unit.transform.position);
                     unit.transform.localEulerAngles = Vector3.zero;
                     unit.positionTarget = unit.transform.localPosition;
                     unit.Initialize(u, battle._units[u].unit.databaseID, battle._units[u].unit);
-                    unit.healthBar = Instantiate(UI_Battle.instanse.healthBarPrefab, healthBarGrid);
+                    unit.healthBar = Instantiate(UI_Battle.instance.healthBarPrefab, healthBarGrid);
                     unit.healthBar.bar.fillAmount = 1;
                     unit.healthBar.gameObject.SetActive(false);
                     unitsOnGrid.Add(unit);

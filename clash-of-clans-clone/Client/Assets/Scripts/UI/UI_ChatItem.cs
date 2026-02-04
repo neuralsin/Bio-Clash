@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -41,19 +41,19 @@
 
         private void OptionsClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             options = !options;
             _options.SetActive(options);
-            UI_Chat.instanse.RefreshList();
+            UI_Chat.instance.RefreshList();
         }
 
         private void ReportClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            switch (Language.instanse.language)
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "گزارش سوء استفاده یا فحاشی؟" }, new string[] { "بله", "خیر" });
+                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "????? ??? ??????? ?? ??????" }, new string[] { "???", "???" });
                     break;
                 default:
                     MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "Report abuse or profanity?" }, new string[] { "Yes", "No" });
@@ -79,16 +79,16 @@
 
         private void CancelClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             options = false;
             _options.SetActive(false);
-            UI_Chat.instanse.RefreshList();
+            UI_Chat.instance.RefreshList();
         }
 
         public void Inirialize(Data.CharMessage data)
         {
             _data = data;
-            if(data.accountID == Player.instanse.data.id)
+            if(data.accountID == Player.instance.data.id)
             {
                 _background.color = _yourColor;
             }
@@ -100,7 +100,7 @@
             _nameText.ForceMeshUpdate(true);
             _messageText.text = Data.DecodeString(_data.message);
             _messageText.ForceMeshUpdate(true);
-            DateTime time = Player.instanse.data.nowTime;
+            DateTime time = Player.instance.data.nowTime;
             DateTime.TryParse(_data.time, out time);
             _timeText.text = time.ToString();
             _timeText.ForceMeshUpdate(true);
@@ -108,11 +108,11 @@
 
         public void UpdareColor()
         {
-            if (_data.accountID == Player.instanse.data.id)
+            if (_data.accountID == Player.instance.data.id)
             {
                 _background.color = _yourColor;
             }
-            else if (_data.clanID > 0 && _data.clanID == Player.instanse.data.clanID)
+            else if (_data.clanID > 0 && _data.clanID == Player.instance.data.clanID)
             {
                 _background.color = _allyColor;
             }

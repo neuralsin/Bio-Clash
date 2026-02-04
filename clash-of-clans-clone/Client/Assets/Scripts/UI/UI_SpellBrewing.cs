@@ -47,17 +47,17 @@ namespace DevelopersHub.ClashOfWhatecer
             _bar.fillAmount = 0;
             _spell = null;
             int level = 1;
-            for (int i = 0; i < Player.instanse.initializationData.research.Count; i++)
+            for (int i = 0; i < Player.instance.initializationData.research.Count; i++)
             {
-                if (Player.instanse.initializationData.research[i].type == Data.ResearchType.spell && Player.instanse.initializationData.research[i].globalID == id.ToString())
+                if (Player.instance.initializationData.research[i].type == Data.ResearchType.spell && Player.instance.initializationData.research[i].globalID == id.ToString())
                 {
-                    level = Player.instanse.initializationData.research[i].level;
+                    level = Player.instance.initializationData.research[i].level;
                     break;
                 }
             }
-            for (int i = 0; i < Player.instanse.initializationData.serverSpells.Count; i++)
+            for (int i = 0; i < Player.instance.initializationData.serverSpells.Count; i++)
             {
-                if (Player.instanse.initializationData.serverSpells[i].id == id && Player.instanse.initializationData.serverSpells[i].level == level)
+                if (Player.instance.initializationData.serverSpells[i].id == id && Player.instance.initializationData.serverSpells[i].level == level)
                 {
                     _spell = new Data.Spell();
                     _spell.id = id;
@@ -66,8 +66,8 @@ namespace DevelopersHub.ClashOfWhatecer
                     _spell.level = level;
                     _spell.databaseID = 0;
                     _spell.brewedTime = 0;
-                    _spell.brewTime = Player.instanse.initializationData.serverSpells[i].brewTime;
-                    if (Player.instanse.data.gems >= Player.instanse.initializationData.serverSpells[i].requiredGems && Player.instanse.elixir >= Player.instanse.initializationData.serverSpells[i].requiredElixir && Player.instanse.gold >= Player.instanse.initializationData.serverSpells[i].requiredGold && Player.instanse.darkElixir >= Player.instanse.initializationData.serverSpells[i].requiredDarkElixir)
+                    _spell.brewTime = Player.instance.initializationData.serverSpells[i].brewTime;
+                    if (Player.instance.data.gems >= Player.instance.initializationData.serverSpells[i].requiredGems && Player.instance.elixir >= Player.instance.initializationData.serverSpells[i].requiredElixir && Player.instance.gold >= Player.instance.initializationData.serverSpells[i].requiredGold && Player.instance.darkElixir >= Player.instance.initializationData.serverSpells[i].requiredDarkElixir)
                     {
                         haveResources = true;
                     }
@@ -95,12 +95,12 @@ namespace DevelopersHub.ClashOfWhatecer
                 return;
             }
             _remove = true;
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             Packet paket = new Packet();
             paket.Write((int)Player.RequestsID.CANCELBREW);
             paket.Write(_spell.databaseID);
             Sender.TCP_Send(paket);
-            UI_Spell.instanse.RemoveTrainingItem(index);
+            UI_Spell.instance.RemoveTrainingItem(index);
         }
 
         private void Update()
@@ -123,15 +123,15 @@ namespace DevelopersHub.ClashOfWhatecer
                 if (_spell.brewTime <= 0 || _spell.brewedTime >= _spell.brewTime)
                 {
                     _bar.fillAmount = 1f;
-                    for (int i = Player.instanse.data.spells.Count - 1; i >= 0; i--)
+                    for (int i = Player.instance.data.spells.Count - 1; i >= 0; i--)
                     {
-                        if (Player.instanse.data.spells[i].databaseID == databaseID)
+                        if (Player.instance.data.spells[i].databaseID == databaseID)
                         {
-                            Player.instanse.data.spells[i].ready = true;
+                            Player.instance.data.spells[i].ready = true;
                             break;
                         }
                     }
-                    UI_Spell.instanse.RemoveTrainingItem(index);
+                    UI_Spell.instance.RemoveTrainingItem(index);
                 }
             }
         }

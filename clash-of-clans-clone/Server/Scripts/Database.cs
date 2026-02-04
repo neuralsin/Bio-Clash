@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Threading.Tasks;
@@ -116,6 +116,39 @@ namespace DevelopersHub.RealtimeNetworking.Server
                 {
                     command.ExecuteNonQuery();
                 }
+
+                // =========================================================
+                // BIO-CLASH: FITNESS DATABASE SCHEMA
+                // =========================================================
+                
+                // 1. Fitness Logs (History of every workout)
+                query = @"CREATE TABLE IF NOT EXISTS fitness_logs (
+                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            account_id BIGINT NOT NULL,
+                            muscle_group INT NOT NULL,
+                            volume FLOAT NOT NULL,
+                            reps INT NOT NULL,
+                            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                          );";
+                using (MySqlCommand command = new MySqlCommand(query, connection)) { command.ExecuteNonQuery(); }
+
+                // 2. Player Fitness (Current aggregated stats)
+                query = @"CREATE TABLE IF NOT EXISTS player_fitness (
+                            account_id BIGINT PRIMARY KEY,
+                            muscle_0 FLOAT DEFAULT 0, -- Chest
+                            muscle_1 FLOAT DEFAULT 0, -- Back
+                            muscle_2 FLOAT DEFAULT 0, -- Shoulders
+                            muscle_3 FLOAT DEFAULT 0, -- Biceps
+                            muscle_4 FLOAT DEFAULT 0, -- Triceps
+                            muscle_5 FLOAT DEFAULT 0, -- Legs
+                            muscle_6 FLOAT DEFAULT 0, -- Core
+                            muscle_7 FLOAT DEFAULT 0, -- Cardio
+                            recovery_score INT DEFAULT 100,
+                            streak_days INT DEFAULT 0,
+                            last_workout DATETIME
+                          );";
+                using (MySqlCommand command = new MySqlCommand(query, connection)) { command.ExecuteNonQuery(); }
+
                 connection.Close();
             }
         }
@@ -3102,7 +3135,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
             Packet packet = new Packet();
             packet.Write((int)Terminal.RequestsID.WARREPORTLIST);
             List<Data.ClanWarData> response = await GetWarReportsListAsync(account_id);
-            string data = await Data.SerializeAsync<List<Data.ClanWarData>>(response);
+            string data = await Data.SerializeAsync<Data.ClanWarData>(response);
             packet.Write(data);
             Sender.TCP_Send(id, packet);
         }
@@ -3597,7 +3630,17 @@ namespace DevelopersHub.RealtimeNetworking.Server
                                 }
                                 else
                                 {
-                                    if (SpendResources(connection, account_id, building.requiredGold, building.requiredElixir, building.requiredGems, building.requiredDarkElixir))
+                                    // BIO-CLASH: Bypass legacy resource costs for fitness economy
+                                    // Buildings are now free to place - progression gated by fitness requirements on upgrades
+                                    bool canPlace = true;
+                                    
+                                    // Only spend gems if required (gems are still used for speed-ups)
+                                    if (building.requiredGems > 0)
+                                    {
+                                        canPlace = SpendResources(connection, account_id, 0, 0, building.requiredGems, 0);
+                                    }
+                                    
+                                    if (canPlace)
                                     {
                                         if (time > 0)
                                         {
@@ -3616,7 +3659,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
                                     }
                                     else
                                     {
-                                        response = 2;
+                                        response = 2; // Not enough gems
                                     }
                                 }
                             }
@@ -3780,22 +3823,68 @@ namespace DevelopersHub.RealtimeNetworking.Server
             return response;
         }
 
-        public async static void UpgradeBuilding(int id, long buildingID)
+        public async static void UpgradeBuilding(int id, long databaseID)
         {
-            Packet packet = new Packet();
-            packet.Write((int)Terminal.RequestsID.UPGRADE);
             long account_id = Server.clients[id].account;
-            Data.Building building = await GetBuildingAsync(buildingID, account_id);
+
+            // =========================================================
+            // BIO-CLASH: SERVER-SIDE FITNESS VALIDATION
+            // =========================================================
+            // We must retrieve the building type and level first to check requirements
+            int buildingLevel = 0;
+            string buildingIdStr = "";
+            bool buildingFound = false;
+            
+            using (MySqlConnection connection = GetMysqlConnection())
+            {
+                string query = $"SELECT global_id, level FROM buildings WHERE id = {databaseID} AND account_id = {account_id}";
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            buildingIdStr = reader["global_id"].ToString();
+                            int.TryParse(reader["level"].ToString(), out buildingLevel);
+                            buildingFound = true;
+                        }
+                    }
+                }
+                connection.Close();
+            }
+
+            if (buildingFound)
+            {
+                // Validate Fitness Requirements
+                bool fitnessApproved = await Fitness.CanUpgradeBuilding(account_id, buildingIdStr, buildingLevel);
+                if (!fitnessApproved)
+                {
+                    // Send "No Resources" error (Client treats error 2 as resource fail)
+                    Packet p = new Packet();
+                    p.Write((int)Terminal.RequestsID.UPGRADE);
+                    p.Write(2); 
+                    Sender.TCP_Send(id, p);
+                    return; // REJECT UPGRADE
+                }
+            }
+            // =========================================================
+
+            Data.Building building = await GetBuildingAsync(databaseID, account_id);
             if (building == null)
             {
+                Packet packet = new Packet();
+                packet.Write((int)Terminal.RequestsID.UPGRADE);
                 packet.Write(0);
+                Sender.TCP_Send(id, packet);
             }
             else
             {
-                int response = await UpgradeBuildingAsync(account_id, buildingID, building.level, building.id.ToString());
+                int response = await UpgradeBuildingAsync(account_id, databaseID, building.level, building.id.ToString());
+                Packet packet = new Packet();
+                packet.Write((int)Terminal.RequestsID.UPGRADE);
                 packet.Write(response);
+                Sender.TCP_Send(id, packet);
             }
-            Sender.TCP_Send(id, packet);
         }
 
         private async static Task<int> UpgradeBuildingAsync(long account_id, long buildingID, int level, string globalID)
@@ -4116,7 +4205,17 @@ namespace DevelopersHub.RealtimeNetworking.Server
 
                     if (capacity - occupied >= unit.housing)
                     {
-                        if (SpendResources(connection, account_id, unit.requiredGold, unit.requiredElixir, unit.requiredGems, unit.requiredDarkElixir))
+                        // BIO-CLASH: Bypass legacy resource costs for fitness economy
+                        // Units are now free to train - army strength determined by fitness
+                        bool canTrain = true;
+                        
+                        // Only spend gems if required
+                        if (unit.requiredGems > 0)
+                        {
+                            canTrain = SpendResources(connection, account_id, 0, 0, unit.requiredGems, 0);
+                        }
+                        
+                        if (canTrain)
                         {
                             query = String.Format("INSERT INTO units (global_id, level, account_id) VALUES('{0}', {1}, {2})", globalID, level, account_id);
                             using (MySqlCommand command = new MySqlCommand(query, connection))
@@ -4127,7 +4226,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
                         }
                         else
                         {
-                            response = 2;
+                            response = 2; // Not enough gems
                         }
                     }
                     else
@@ -4405,10 +4504,9 @@ namespace DevelopersHub.RealtimeNetworking.Server
                             }
                         }
                     }
-                    if (SpendResources(connection, account_id, Data.GetBattleSearchCost(townHallLevel), 0, 0, 0) == false)
-                    {
-                        id = 0;
-                    }
+                    // BIO-CLASH: Bypass legacy Gold cost for battle search
+                    // Battles are now free to search - combat strength determined by fitness
+                    // (Battle search cost removed for fitness economy)
                 }
                 connection.Close();
             }
@@ -8003,7 +8101,15 @@ namespace DevelopersHub.RealtimeNetworking.Server
                         Data.ServerUnit unit = GetServerUnit(connection, global_id, research.level + 1);
                         if (unit != null)
                         {
-                            if (SpendResources(connection, account_id, unit.researchGold, unit.researchElixir, unit.researchGems, unit.researchDarkElixir))
+                            // BIO-CLASH: Bypass legacy resource costs for research
+                            // Research is now free - progression gated by fitness requirements
+                            bool canResearch = true;
+                            if (unit.researchGems > 0)
+                            {
+                                canResearch = SpendResources(connection, account_id, 0, 0, unit.researchGems, 0);
+                            }
+                            
+                            if (canResearch)
                             {
                                 time = unit.researchTime;
                                 AddXP(connection, account_id, unit.researchXp);
@@ -8011,7 +8117,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
                             }
                             else
                             {
-                                response = 2;
+                                response = 2; // Not enough gems
                             }
                         }
                     }
@@ -8020,7 +8126,14 @@ namespace DevelopersHub.RealtimeNetworking.Server
                         Data.ServerSpell spell = GetServerSpell(connection, global_id, research.level + 1);
                         if (spell != null)
                         {
-                            if (SpendResources(connection, account_id, spell.researchGold, spell.researchElixir, spell.researchGems, spell.researchDarkElixir))
+                            // BIO-CLASH: Bypass legacy resource costs for spell research
+                            bool canResearch = true;
+                            if (spell.researchGems > 0)
+                            {
+                                canResearch = SpendResources(connection, account_id, 0, 0, spell.researchGems, 0);
+                            }
+                            
+                            if (canResearch)
                             {
                                 time = spell.researchTime;
                                 AddXP(connection, account_id, spell.researchXp);
@@ -8028,7 +8141,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
                             }
                             else
                             {
-                                response = 2;
+                                response = 2; // Not enough gems
                             }
                         }
                     }

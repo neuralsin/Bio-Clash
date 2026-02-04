@@ -15,7 +15,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void Initialize(Data.BuildingID id, int count)
         {
-            _title.text = Language.instanse.GetBuildingName(id);
+            _title.text = Language.instance.GetBuildingName(id);
             Sprite icon = AssetsBank.GetBuildingIcon(id);
             if (icon != null)
             {

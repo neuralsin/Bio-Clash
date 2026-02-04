@@ -30,16 +30,24 @@ namespace DevelopersHub.ClashOfWhatecer
                 Debug.Log("✅ FitnessManager created automatically");
             }
 
-            // Find main canvas if not assigned
+            // BIO-CLASH: Cache expensive FindObjectOfType calls
+            // These are only called once in Awake, results are reused
             if (mainCanvas == null)
             {
                 mainCanvas = FindObjectOfType<Canvas>();
+                if (mainCanvas != null)
+                {
+                    Debug.Log("📦 Cached Canvas reference");
+                }
             }
 
-            // Find UI_Main if not assigned
             if (uiMain == null)
             {
                 uiMain = FindObjectOfType<UI_Main>();
+                if (uiMain != null)
+                {
+                    Debug.Log("📦 Cached UI_Main reference");
+                }
             }
 
             // Create Fitness UI panel if needed
@@ -49,13 +57,21 @@ namespace DevelopersHub.ClashOfWhatecer
             }
         }
 
+        // Cached reference for UI_Fitness to avoid repeated FindObjectOfType calls
+        private static UI_Fitness _cachedFitnessUI = null;
+
         /// <summary>
         /// Creates the Fitness UI panel programmatically with all components.
         /// </summary>
         private void CreateFitnessUIPanel()
         {
-            // Check if UI_Fitness already exists
-            if (FindObjectOfType<UI_Fitness>() != null)
+            // Check if UI_Fitness already exists using cached reference
+            if (_cachedFitnessUI == null)
+            {
+                _cachedFitnessUI = FindObjectOfType<UI_Fitness>();
+            }
+            
+            if (_cachedFitnessUI != null)
             {
                 Debug.Log("UI_Fitness already exists in scene");
                 return;

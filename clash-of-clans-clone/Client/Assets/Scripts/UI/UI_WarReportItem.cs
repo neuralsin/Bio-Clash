@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using DevelopersHub.RealtimeNetworking.Client;
     using System.Collections;
@@ -15,7 +15,7 @@
         [SerializeField] private TextMeshProUGUI _stars = null;
         [SerializeField] private Image _background = null;
         [SerializeField] private GameObject _victory = null;
-        [SerializeField] private GameObject _defeate = null;
+        [SerializeField] private GameObject _defeat = null;
         [SerializeField] private GameObject _draw = null;
 
         Data.ClanWarData _data = null;
@@ -28,32 +28,32 @@
         public void Initialize(Data.ClanWarData data)
         {
             _data = data;
-            _victory.SetActive(data.winnerID == Player.instanse.data.clanID);
-            _defeate.SetActive(data.winnerID != Player.instanse.data.clanID);
+            _victory.SetActive(data.winnerID == Player.instance.data.clanID);
+            _defeat.SetActive(data.winnerID != Player.instance.data.clanID);
             _draw.SetActive(data.winnerID <= 0);
             if (data.winnerID <= 0)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
-                    case Language.LanguageID.persian: _result.text = "مساوی"; break;
+                    case Language.LanguageID.persian: _result.text = "?????"; break;
                     default: _result.text = "Draw"; break;
                 }
                 _background.color = Color.gray;
             }
-            else if (data.winnerID == Player.instanse.data.clanID)
+            else if (data.winnerID == Player.instance.data.clanID)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
-                    case Language.LanguageID.persian: _result.text = "پیروزی"; break;
+                    case Language.LanguageID.persian: _result.text = "??????"; break;
                     default: _result.text = "Victory"; break;
                 }
                 _background.color = Color.green;
             }
             else
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
-                    case Language.LanguageID.persian: _result.text = "شکست"; break;
+                    case Language.LanguageID.persian: _result.text = "????"; break;
                     default: _result.text = "Defeat"; break;
                 }
                 _background.color = Color.red;

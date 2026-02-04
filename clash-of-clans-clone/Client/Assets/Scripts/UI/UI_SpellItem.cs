@@ -35,8 +35,8 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             _housingUnit = spell.housing;
             _housingText.text = spell.housing.ToString();
-            _titleText.text = Language.instanse.GetSpellName(_id);
-            if (Language.instanse.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
+            _titleText.text = Language.instance.GetSpellName(_id);
+            if (Language.instance.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
             {
                 _titleText.horizontalAlignment = HorizontalAlignmentOptions.Right;
             }
@@ -49,15 +49,15 @@ namespace DevelopersHub.ClashOfWhatecer
             int spellFactoryLevel = 0;
             int darkSpellFactoryLevel = 0;
 
-            for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+            for (int i = 0; i < Player.instance.data.buildings.Count; i++)
             {
-                if (Player.instanse.data.buildings[i].id == Data.BuildingID.spellfactory)
+                if (Player.instance.data.buildings[i].id == Data.BuildingID.spellfactory)
                 {
-                    spellFactoryLevel = Player.instanse.data.buildings[i].level;
+                    spellFactoryLevel = Player.instance.data.buildings[i].level;
                 }
-                else if (Player.instanse.data.buildings[i].id == Data.BuildingID.darkspellfactory)
+                else if (Player.instance.data.buildings[i].id == Data.BuildingID.darkspellfactory)
                 {
-                    darkSpellFactoryLevel = Player.instanse.data.buildings[i].level;
+                    darkSpellFactoryLevel = Player.instance.data.buildings[i].level;
                 }
                 if (spellFactoryLevel > 0 && darkSpellFactoryLevel > 0)
                 {
@@ -71,26 +71,26 @@ namespace DevelopersHub.ClashOfWhatecer
             if (spell.requiredGold > 0)
             {
                 _resourceText.text = spell.requiredGold.ToString();
-                _resourceIcon.sprite = AssetsBank.instanse.goldIcon;
-                haveResources = (spell.requiredGold <= Player.instanse.gold);
+                _resourceIcon.sprite = AssetsBank.instance.goldIcon;
+                haveResources = (spell.requiredGold <= Player.instance.gold);
             }
             else if (spell.requiredElixir > 0)
             {
                 _resourceText.text = spell.requiredElixir.ToString();
-                _resourceIcon.sprite = AssetsBank.instanse.elixirIcon;
-                haveResources = (spell.requiredElixir <= Player.instanse.elixir);
+                _resourceIcon.sprite = AssetsBank.instance.elixirIcon;
+                haveResources = (spell.requiredElixir <= Player.instance.elixir);
             }
             else if (spell.requiredDarkElixir > 0)
             {
                 _resourceText.text = spell.requiredDarkElixir.ToString();
-                _resourceIcon.sprite = AssetsBank.instanse.darkIcon;
-                haveResources = (spell.requiredDarkElixir <= Player.instanse.darkElixir);
+                _resourceIcon.sprite = AssetsBank.instance.darkIcon;
+                haveResources = (spell.requiredDarkElixir <= Player.instance.darkElixir);
             }
             else
             {
                 _resourceText.text = spell.requiredGems.ToString();
-                _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
-                haveResources = (spell.requiredGems <= Player.instanse.data.gems);
+                _resourceIcon.sprite = AssetsBank.instance.gemsIcon;
+                haveResources = (spell.requiredGems <= Player.instance.data.gems);
             }
             _resourceText.color = haveResources ? Color.white : Color.red;
             _button.interactable = canBrew && haveResources;
@@ -98,8 +98,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Clicked()
         {
-            UI_Spell.instanse.StartBrewingSpell(id);
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            UI_Spell.instance.StartBrewingSpell(id);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             Packet paket = new Packet();
             paket.Write((int)Player.RequestsID.BREW);
             paket.Write(_id.ToString());
@@ -109,9 +109,9 @@ namespace DevelopersHub.ClashOfWhatecer
         public void Sync()
         {
             count = 0;
-            for (int i = 0; i < Player.instanse.data.spells.Count; i++)
+            for (int i = 0; i < Player.instance.data.spells.Count; i++)
             {
-                if (Player.instanse.data.spells[i].id == _id && Player.instanse.data.spells[i].ready)
+                if (Player.instance.data.spells[i].id == _id && Player.instance.data.spells[i].ready)
                 {
                     count++;
                 }
@@ -122,8 +122,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Info()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Info.instanse.OpenSpellInfo(_id);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Info.instance.OpenSpellInfo(_id);
         }
 
     }

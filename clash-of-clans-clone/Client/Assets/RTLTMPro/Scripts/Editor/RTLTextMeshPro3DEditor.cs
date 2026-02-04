@@ -1,4 +1,4 @@
-﻿using TMPro.EditorUtilities;
+using TMPro.EditorUtilities;
 using UnityEditor;
 using UnityEngine;
 

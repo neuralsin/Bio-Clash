@@ -17,7 +17,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public GridLayout grid = null;
 
-        private static BuildGrid _instance = null; public static BuildGrid instanse { get { return _instance; } set { _instance = value; } }
+        private static BuildGrid _instance = null; public static BuildGrid instance { get { return _instance; } set { _instance = value; } }
         [HideInInspector] public List<Building> buildings = new List<Building>();
         [HideInInspector] public List<Building> unidentifiedBuildings = new List<Building>();
         [HideInInspector] public float cellSize = 1;
@@ -79,8 +79,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Start()
         {
-            Building.buildInstanse = null;
-            Building.selectedInstanse = null;
+            Building.buildinstance = null;
+            Building.selectedinstance = null;
         }
 
         public void Clear()

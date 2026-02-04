@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using DevelopersHub.RealtimeNetworking.Client;
     using System.Collections;
@@ -25,7 +25,7 @@
         [SerializeField] public TextMeshProUGUI _globalLockText = null;
         //[SerializeField] private GameObject _loadingPrefab = null;
 
-        private static UI_Chat _instance = null; public static UI_Chat instanse { get { return _instance; } }
+        private static UI_Chat _instance = null; public static UI_Chat instance { get { return _instance; } }
         private bool _active = false; public bool isActive { get { return _active; } }
 
         private List<UI_ChatItem> clanChats = new List<UI_ChatItem>();
@@ -126,7 +126,7 @@
             string message = _inputMessage.text.Trim().Replace("'", "''");
             if (!string.IsNullOrEmpty(message))
             {
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                 message = Data.EncodeString(message);
                 sending = true;
                 _inputMessage.interactable = false;
@@ -138,7 +138,7 @@
                 long target = 0;
                 if (type == Data.ChatType.clan)
                 {
-                    target = Player.instanse.data.clanID;
+                    target = Player.instance.data.clanID;
                 }
                 else
                 {
@@ -153,10 +153,10 @@
         {
             if(response == 2)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "دسترسی شما برای ارسال پیام مسدود شده است." }, new string[] { "باشه" });
+                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "?????? ??? ???? ????? ???? ????? ??? ???." }, new string[] { "????" });
                         break;
                     default:
                         MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "You are banned from sending message." }, new string[] { "OK" });
@@ -178,7 +178,7 @@
 
         private void Clan()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             type = Data.ChatType.clan;
             _chatGridGlobal.gameObject.SetActive(false);
             _chatGridClan.gameObject.SetActive(true);
@@ -192,7 +192,7 @@
 
         private void Global()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             type = Data.ChatType.global;
             _chatGridGlobal.gameObject.SetActive(true);
             _chatGridClan.gameObject.SetActive(false);
@@ -249,7 +249,7 @@
             _buttonClan.interactable = false;
             _buttonGlobal.interactable = false;
             _elements.SetActive(true);
-            if (Player.instanse.data.clanID > 0)
+            if (Player.instance.data.clanID > 0)
             {
                 _globalLockText.gameObject.SetActive(false);
                 type = Data.ChatType.clan;
@@ -278,7 +278,7 @@
             }
             else
             {
-                _buttonClan.interactable = (Player.instanse.data.clanID > 0);
+                _buttonClan.interactable = (Player.instance.data.clanID > 0);
                 _chatGridGlobal.gameObject.SetActive(true);
             }
             _inputMessage.interactable = true;
@@ -303,7 +303,7 @@
                 return;
             }
             _closing = true;
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _active = false;
             _chatGridGlobal.gameObject.SetActive(false);
             _chatGridClan.gameObject.SetActive(false);
@@ -329,10 +329,10 @@
         {
             if(response == 1)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "گزارش شما ثبت شد. این مورد توسط کارشناس ما بررسی میشود و در صورت مشاهده تخلف، با کاربر مورد نظر برخورد میگردد." }, new string[] { "باشه" });
+                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "????? ??? ??? ??. ??? ???? ???? ??????? ?? ????? ????? ? ?? ???? ?????? ????? ?? ????? ???? ??? ?????? ??????." }, new string[] { "????" });
                         break;
                     default:
                         MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Report submited successfully. This case will be checked by us and if any violation is observed, the intended user will be dealt with." }, new string[] { "OK" });
@@ -341,10 +341,10 @@
             }
             else if (response == 2)
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "تعداد گزارش های شما در 24 ساعت گذشته به حد مجاز رسیده است." }, new string[] { "باشه" });
+                        MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "????? ????? ??? ??? ?? 24 ???? ????? ?? ?? ???? ????? ???." }, new string[] { "????" });
                         break;
                     default:
                         MessageBox.Open(1, 0.8f, true, MessageResponded, new string[] { "Your number of reports in the last 24 hours has reached it's limit." }, new string[] { "OK" });

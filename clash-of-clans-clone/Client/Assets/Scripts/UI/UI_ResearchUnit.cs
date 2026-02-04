@@ -42,19 +42,19 @@ namespace DevelopersHub.ClashOfWhatecer
             _normalPanel.SetActive(false);
             _maxPanel.SetActive(false);
             _researchingPanel.SetActive(false);
-            _titleText.text = Language.instanse.GetUnitName(_id);
-            if (Language.instanse.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
+            _titleText.text = Language.instance.GetUnitName(_id);
+            if (Language.instance.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
             {
                 _titleText.horizontalAlignment = HorizontalAlignmentOptions.Right;
             }
             int dataIndex = -1;
             int researchIndex = -1;
             int level = 1;
-            for (int i = 0; i < Player.instanse.initializationData.research.Count; i++)
+            for (int i = 0; i < Player.instance.initializationData.research.Count; i++)
             {
-                if (Player.instanse.initializationData.research[i].type == Data.ResearchType.unit && Player.instanse.initializationData.research[i].globalID == _id.ToString())
+                if (Player.instance.initializationData.research[i].type == Data.ResearchType.unit && Player.instance.initializationData.research[i].globalID == _id.ToString())
                 {
-                    researchIndex = i; level = Player.instanse.initializationData.research[i].level; break;
+                    researchIndex = i; level = Player.instance.initializationData.research[i].level; break;
                 }
             }
             Sprite icon = AssetsBank.GetUnitIcon(_id);
@@ -62,9 +62,9 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 _icon.sprite = icon;
             }
-            for (int i = 0; i < Player.instanse.initializationData.serverUnits.Count; i++)
+            for (int i = 0; i < Player.instance.initializationData.serverUnits.Count; i++)
             {
-                if (Player.instanse.initializationData.serverUnits[i].id == _id && Player.instanse.initializationData.serverUnits[i].level == level + 1)
+                if (Player.instance.initializationData.serverUnits[i].id == _id && Player.instance.initializationData.serverUnits[i].level == level + 1)
                 {
                     dataIndex = i; break;
                 }
@@ -73,7 +73,7 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 if (researchIndex >= 0)
                 {
-                    if (Player.instanse.initializationData.research[researchIndex].end <= Player.instanse.data.nowTime)
+                    if (Player.instance.initializationData.research[researchIndex].end <= Player.instance.data.nowTime)
                     {
                         SetupItem(level, dataIndex);
                     }
@@ -81,7 +81,7 @@ namespace DevelopersHub.ClashOfWhatecer
                     {
                         _timeText.text = "";
                         _button.interactable = false;
-                        _endResearch = Player.instanse.initializationData.research[researchIndex].end;
+                        _endResearch = Player.instance.initializationData.research[researchIndex].end;
                         _researchingPanel.SetActive(true);
                         researching = true;
                     }
@@ -101,35 +101,23 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void SetupItem(int level, int dataIndex)
         {
-            _reqTimeText.text = Tools.SecondsToTimeFormat(Player.instanse.initializationData.serverUnits[dataIndex].researchTime);
+            _reqTimeText.text = Tools.SecondsToTimeFormat(Player.instance.initializationData.serverUnits[dataIndex].researchTime);
             _levelText.text = "+" + level.ToString();
-            if (Player.instanse.initializationData.serverUnits[dataIndex].researchGold > 0)
+            // BIO-CLASH: Bypass legacy resource costs for fitness economy
+            // Research is now free - only check gems if required
+            if (Player.instance.initializationData.serverUnits[dataIndex].researchGems > 0)
             {
-                _resourceIcon.sprite = AssetsBank.instanse.goblinIcon;
-                _resourceText.text = Player.instanse.initializationData.serverUnits[dataIndex].researchGold.ToString();
-            }
-            else if (Player.instanse.initializationData.serverUnits[dataIndex].researchElixir > 0)
-            {
-                _resourceIcon.sprite = AssetsBank.instanse.elixirIcon;
-                _resourceText.text = Player.instanse.initializationData.serverUnits[dataIndex].researchElixir.ToString();
-            }
-            else if (Player.instanse.initializationData.serverUnits[dataIndex].researchDarkElixir > 0)
-            {
-                _resourceIcon.sprite = AssetsBank.instanse.darkIcon;
-                _resourceText.text = Player.instanse.initializationData.serverUnits[dataIndex].researchDarkElixir.ToString();
+                _resourceIcon.sprite = AssetsBank.instance.gemsIcon;
+                _resourceText.text = Player.instance.initializationData.serverUnits[dataIndex].researchGems.ToString();
+                if (_button.interactable && Player.instance.initializationData.serverUnits[dataIndex].researchGems > Player.instance.data.gems)
+                {
+                    _button.interactable = false;
+                }
             }
             else
             {
-                _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
-                _resourceText.text = Player.instanse.initializationData.serverUnits[dataIndex].researchGems.ToString();
-            }
-            if (!Data.IsUnitUnlocked(_id, Player.instanse.barracksLevel, Player.instanse.darkBarracksLevel))
-            {
-                _button.interactable = false;
-            }
-            if (_button.interactable && (Player.instanse.initializationData.serverUnits[dataIndex].researchGems > Player.instanse.data.gems || Player.instanse.initializationData.serverUnits[dataIndex].researchDarkElixir > Player.instanse.darkElixir || Player.instanse.initializationData.serverUnits[dataIndex].researchGold > Player.instanse.gold || Player.instanse.initializationData.serverUnits[dataIndex].researchElixir > Player.instanse.elixir))
-            {
-                _button.interactable = false;
+                _resourceText.text = "FREE";
+                _resourceIcon.gameObject.SetActive(false);
             }
             _normalPanel.SetActive(true);
         }
@@ -148,9 +136,9 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             if (researching)
             {
-                if(_endResearch > Player.instanse.data.nowTime)
+                if(_endResearch > Player.instance.data.nowTime)
                 {
-                    _timeText.text = Tools.SecondsToTimeFormat(_endResearch - Player.instanse.data.nowTime);
+                    _timeText.text = Tools.SecondsToTimeFormat(_endResearch - Player.instance.data.nowTime);
                 }
                 else
                 {
@@ -162,7 +150,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Info()
         {
-            UI_Info.instanse.OpenUnitInfo(_id);
+            UI_Info.instance.OpenUnitInfo(_id);
         }
 
     }

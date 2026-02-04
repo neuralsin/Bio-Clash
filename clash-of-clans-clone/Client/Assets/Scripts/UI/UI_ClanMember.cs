@@ -59,7 +59,7 @@ namespace DevelopersHub.ClashOfWhatecer
             bool canBeKicked = false;
             bool canPromote = false;
             bool canDemote = false;
-            if (_data.rank != Player.instanse.data.clanRank && Player.instanse.data.clanRank > 0 && (_data.rank <= 0 || (_data.rank > 0 && Player.instanse.data.clanRank < _data.rank)))
+            if (_data.rank != Player.instance.data.clanRank && Player.instance.data.clanRank > 0 && (_data.rank <= 0 || (_data.rank > 0 && Player.instance.data.clanRank < _data.rank)))
             {
                 canBeKicked = haveKickPermission;
                 canPromote = havePromotePermossion;
@@ -69,9 +69,9 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 isInWar = true;
             }
-            _kickButton.gameObject.SetActive(member.id != Player.instanse.data.id && member.clanID == Player.instanse.data.clanID);
-            _PromoteButton.gameObject.SetActive(member.id != Player.instanse.data.id && member.clanID == Player.instanse.data.clanID);
-            _demoteButton.gameObject.SetActive(member.id != Player.instanse.data.id && member.clanID == Player.instanse.data.clanID);
+            _kickButton.gameObject.SetActive(member.id != Player.instance.data.id && member.clanID == Player.instance.data.clanID);
+            _PromoteButton.gameObject.SetActive(member.id != Player.instance.data.id && member.clanID == Player.instance.data.clanID);
+            _demoteButton.gameObject.SetActive(member.id != Player.instance.data.id && member.clanID == Player.instance.data.clanID);
             _kickButton.interactable = (!isInWar && canBeKicked);
             _PromoteButton.interactable = canPromote;
             _demoteButton.interactable = canDemote;
@@ -101,7 +101,7 @@ namespace DevelopersHub.ClashOfWhatecer
         private void PromoteClicked()
         {
             string message = "";
-            if (Player.instanse.data.clanRank == (int)Data.ClanRank.leader && _data.rank == (int)Data.ClanRank.leader + 1)
+            if (Player.instance.data.clanRank == (int)Data.ClanRank.leader && _data.rank == (int)Data.ClanRank.leader + 1)
             {
                 message = "Are you sure that you want to transfer leadership to " + Data.DecodeString(_data.name) + ".";
             }

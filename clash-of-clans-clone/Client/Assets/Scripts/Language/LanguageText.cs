@@ -20,7 +20,7 @@ namespace DevelopersHub.ClashOfWhatecer
                 {
                     for (int i = 0; i < translations.Length; i++)
                     {
-                        if (translations[i].language == Language.instanse.language)
+                        if (translations[i].language == Language.instance.language)
                         {
                             if (!string.IsNullOrEmpty(translations[i].text))
                             {
@@ -32,7 +32,7 @@ namespace DevelopersHub.ClashOfWhatecer
                 }
                 if (changeAlignment && text.horizontalAlignment == HorizontalAlignmentOptions.Left || text.horizontalAlignment == HorizontalAlignmentOptions.Right)
                 {
-                    text.horizontalAlignment = Language.instanse.IsRTL ? HorizontalAlignmentOptions.Right : HorizontalAlignmentOptions.Left;
+                    text.horizontalAlignment = Language.instance.IsRTL ? HorizontalAlignmentOptions.Right : HorizontalAlignmentOptions.Left;
                 }
             }
         }

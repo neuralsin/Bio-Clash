@@ -22,9 +22,9 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void Initialize()
         {
-            int tatgetGold = Player.instanse.maxGold - Player.instanse.gold;
-            int tatgetElixir = Player.instanse.maxElixir - Player.instanse.elixir;
-            int tatgetDark = Player.instanse.maxDarkElixir - Player.instanse.darkElixir;
+            int tatgetGold = Player.instance.maxGold - Player.instance.gold;
+            int tatgetElixir = Player.instance.maxElixir - Player.instance.elixir;
+            int tatgetDark = Player.instance.maxDarkElixir - Player.instance.darkElixir;
             switch (_pack)
             {
                 case Data.BuyResourcePack.gold_10:
@@ -77,7 +77,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
             int cost = Data.GetResourceGemCost(tatgetGold, tatgetElixir, tatgetDark);
             _priceText.text = cost.ToString();
-            if (Player.instanse.data.gems >= cost)
+            if (Player.instance.data.gems >= cost)
             {
                 SetStatus(cost > 0);
                 _priceText.color = Color.white;
@@ -91,8 +91,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Clicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Store.instanse.GoingToBuyResource(_pack);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Store.instance.GoingToBuyResource(_pack);
             Packet packet = new Packet();
             packet.Write((int)Player.RequestsID.BUYRESOURCE);
             packet.Write((int)_pack);

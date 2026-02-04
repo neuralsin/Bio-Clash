@@ -10,7 +10,7 @@ namespace DevelopersHub.ClashOfWhatecer
     public class CameraController : MonoBehaviour
     {
 
-        private static CameraController _instance = null; public static CameraController instanse { get { return _instance; } }
+        private static CameraController _instance = null; public static CameraController instance { get { return _instance; } }
 
         [SerializeField] private Camera _camera = null;
         [SerializeField] private float _moveSmooth = 5;
@@ -75,7 +75,7 @@ namespace DevelopersHub.ClashOfWhatecer
             _moving = false;
             _pivot.SetParent(_root);
             _target.SetParent(_pivot);
-            _root.position = new Vector3(UI_Main.instanse._grid.transform.position.x, UI_Main.instanse._grid.down + ((UI_Main.instanse._grid.up - UI_Main.instanse._grid.down) / 2f), UI_Main.instanse._grid.transform.position.z);
+            _root.position = new Vector3(UI_Main.instance._grid.transform.position.x, UI_Main.instance._grid.down + ((UI_Main.instance._grid.up - UI_Main.instance._grid.down) / 2f), UI_Main.instance._grid.transform.position.z);
             _root.eulerAngles = new Vector3(0, 0, 0);
             _pivot.localPosition = Vector3.zero;
             _pivot.localEulerAngles = Vector3.zero;
@@ -113,109 +113,109 @@ namespace DevelopersHub.ClashOfWhatecer
             data.position = position;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(data, results);
-            if (UI_Main.instanse.isActive)
+            if (UI_Main.instance.isActive)
             {
                 if (results.Count <= 0)
                 {
                     bool found = false;
                     Vector3 planePosition = CameraScreenPositionToWorldPosition(position);
-                    Vector3Int gridPos = UI_Main.instanse._grid.grid.WorldToCell(planePosition);
-                    for (int i = 0; i < UI_Main.instanse._grid.buildings.Count; i++)
+                    Vector3Int gridPos = UI_Main.instance._grid.grid.WorldToCell(planePosition);
+                    for (int i = 0; i < UI_Main.instance._grid.buildings.Count; i++)
                     {
-                        if (UI_Main.instanse._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), UI_Main.instanse._grid.buildings[i].currentX, UI_Main.instanse._grid.buildings[i].currentY, UI_Main.instanse._grid.buildings[i].rows, UI_Main.instanse._grid.buildings[i].columns))
+                        if (UI_Main.instance._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), UI_Main.instance._grid.buildings[i].currentX, UI_Main.instance._grid.buildings[i].currentY, UI_Main.instance._grid.buildings[i].rows, UI_Main.instance._grid.buildings[i].columns))
                         {
                             found = true;
-                            UI_Main.instanse._grid.buildings[i].Selected();
+                            UI_Main.instance._grid.buildings[i].Selected();
                             break;
                         }
                     }
                     if (!found)
                     {
-                        if (Building.selectedInstanse != null)
+                        if (Building.selectedinstance != null)
                         {
-                            Building.selectedInstanse.Deselected();
+                            Building.selectedinstance.Deselected();
                         }
                     }
                 }
                 else
                 {
-                    if (Building.selectedInstanse != null)
+                    if (Building.selectedinstance != null)
                     {
                         bool handled = false;
                         for (int i = 0; i < results.Count; i++)
                         {
-                            if (results[i].gameObject == UI_BuildingOptions.instanse.infoButton.gameObject)
+                            if (results[i].gameObject == UI_BuildingOptions.instance.infoButton.gameObject)
                             {
                                 handled = true;
-                                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-                                UI_Info.instanse.OpenBuildingInfo(Building.selectedInstanse.data.id, Building.selectedInstanse.data.level);
+                                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+                                UI_Info.instance.OpenBuildingInfo(Building.selectedinstance.data.id, Building.selectedinstance.data.level);
                             }
-                            else if (results[i].gameObject == UI_BuildingOptions.instanse.upgradeButton.gameObject)
+                            else if (results[i].gameObject == UI_BuildingOptions.instance.upgradeButton.gameObject)
                             {
                                 handled = true;
-                                UI_BuildingUpgrade.instanse.Open();
-                                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                                UI_BuildingUpgrade.instance.Open();
+                                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                             }
-                            else if (results[i].gameObject == UI_BuildingOptions.instanse.instantButton.gameObject)
+                            else if (results[i].gameObject == UI_BuildingOptions.instance.instantButton.gameObject)
                             {
                                 handled = true;
-                                int cost = Data.GetInstantBuildRequiredGems((int)(Building.selectedInstanse.data.constructionTime - Player.instanse.data.nowTime).TotalSeconds);
-                                if (cost <= Player.instanse.data.gems)
+                                int cost = Data.GetInstantBuildRequiredGems((int)(Building.selectedinstance.data.constructionTime - Player.instance.data.nowTime).TotalSeconds);
+                                if (cost <= Player.instance.data.gems)
                                 {
-                                    SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                                    SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                                     Packet packet = new Packet();
                                     packet.Write((int)Player.RequestsID.INSTANTBUILD);
-                                    Building.selectedInstanse.isCons = false;
-                                    Building.selectedInstanse.level = Building.selectedInstanse.level + 1;
-                                    Building.selectedInstanse.AdjustUI(true);
-                                    Building.selectedInstanse.lastChange = System.DateTime.Now;
-                                    packet.Write(Building.selectedInstanse.data.databaseID);
+                                    Building.selectedinstance.isCons = false;
+                                    Building.selectedinstance.level = Building.selectedinstance.level + 1;
+                                    Building.selectedinstance.AdjustUI(true);
+                                    Building.selectedinstance.lastChange = System.DateTime.Now;
+                                    packet.Write(Building.selectedinstance.data.databaseID);
                                     Sender.TCP_Send(packet);
                                 } 
                             }
-                            else if (results[i].gameObject == UI_BuildingOptions.instanse.trainButton.gameObject)
+                            else if (results[i].gameObject == UI_BuildingOptions.instance.trainButton.gameObject)
                             {
                                 handled = true;
-                                UI_Train.instanse.Open();
-                                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                                UI_Train.instance.Open();
+                                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                             }
-                            else if (results[i].gameObject == UI_BuildingOptions.instanse.clanButton.gameObject)
+                            else if (results[i].gameObject == UI_BuildingOptions.instance.clanButton.gameObject)
                             {
                                 handled = true;
-                                UI_Clan.instanse.Open();
-                                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                                UI_Clan.instance.Open();
+                                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                             }
-                            else if (results[i].gameObject == UI_BuildingOptions.instanse.spellButton.gameObject)
+                            else if (results[i].gameObject == UI_BuildingOptions.instance.spellButton.gameObject)
                             {
                                 handled = true;
-                                UI_Spell.instanse.SetStatus(true);
-                                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                                UI_Spell.instance.SetStatus(true);
+                                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                             }
-                            else if (results[i].gameObject == UI_BuildingOptions.instanse.researchButton.gameObject)
+                            else if (results[i].gameObject == UI_BuildingOptions.instance.researchButton.gameObject)
                             {
                                 handled = true;
-                                UI_Research.instanse.SetStatus(true);
-                                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                                UI_Research.instance.SetStatus(true);
+                                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                             }
-                            else if (results[i].gameObject == UI_BuildingOptions.instanse.removeButton.gameObject)
+                            else if (results[i].gameObject == UI_BuildingOptions.instance.removeButton.gameObject)
                             {
                                 handled = true;
                                 Packet packet = new Packet();
                                 packet.Write((int)Player.RequestsID.UPGRADE);
-                                packet.Write(Building.selectedInstanse.data.databaseID);
+                                packet.Write(Building.selectedinstance.data.databaseID);
                                 Sender.TCP_Send(packet);
-                                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                             }
-                            else if (results[i].gameObject == UI_BuildingOptions.instanse.boostButton.gameObject)
+                            else if (results[i].gameObject == UI_BuildingOptions.instance.boostButton.gameObject)
                             {
                                 handled = true;
-                                if (UI_BuildingOptions.instanse.canDo)
+                                if (UI_BuildingOptions.instance.canDo)
                                 {
                                     Packet packet = new Packet();
                                     packet.Write((int)Player.RequestsID.BOOST);
-                                    packet.Write(Building.selectedInstanse.data.databaseID);
+                                    packet.Write(Building.selectedinstance.data.databaseID);
                                     Sender.TCP_Send(packet);
-                                    SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+                                    SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                                 }
                             }
                             if (handled)
@@ -223,83 +223,83 @@ namespace DevelopersHub.ClashOfWhatecer
                                 break;
                             }
                         }
-                        Building.selectedInstanse.Deselected();
+                        Building.selectedinstance.Deselected();
                     }
                 }
             }
-            else if (UI_Battle.instanse.isActive)
+            else if (UI_Battle.instance.isActive)
             {
-                if (results.Count <= 0 && (UI_Battle.instanse.selectedUnit >= 0 || UI_Battle.instanse.selectedSpell >= 0))
+                if (results.Count <= 0 && (UI_Battle.instance.selectedUnit >= 0 || UI_Battle.instance.selectedSpell >= 0))
                 {
                     Vector3 planePosition = CameraScreenPositionToWorldPosition(position);
-                    Vector3Int gridPos = UI_Main.instanse._grid.grid.WorldToCell(planePosition);
+                    Vector3Int gridPos = UI_Main.instance._grid.grid.WorldToCell(planePosition);
                     if (gridPos.x >= (0 - Data.battleGridOffset) && gridPos.x < (Data.gridSize + Data.battleGridOffset) && gridPos.y >= (0 - Data.battleGridOffset) && gridPos.y < (Data.gridSize + Data.battleGridOffset))
                     {
-                        UI_Battle.instanse.PlaceUnit(Mathf.FloorToInt(gridPos.x), Mathf.FloorToInt(gridPos.y));
+                        UI_Battle.instance.PlaceUnit(Mathf.FloorToInt(gridPos.x), Mathf.FloorToInt(gridPos.y));
                     }
                 }
             }
-            else if (UI_WarLayout.instanse.isActive)
+            else if (UI_WarLayout.instance.isActive)
             {
                 if (results.Count <= 0)
                 {
                     bool found = false;
                     Vector3 planePosition = CameraScreenPositionToWorldPosition(position);
-                    Vector3Int gridPos = UI_Main.instanse._grid.grid.WorldToCell(planePosition);
-                    for (int i = 0; i < UI_Main.instanse._grid.buildings.Count; i++)
+                    Vector3Int gridPos = UI_Main.instance._grid.grid.WorldToCell(planePosition);
+                    for (int i = 0; i < UI_Main.instance._grid.buildings.Count; i++)
                     {
-                        if (UI_Main.instanse._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), UI_Main.instanse._grid.buildings[i].currentX, UI_Main.instanse._grid.buildings[i].currentY, UI_Main.instanse._grid.buildings[i].rows, UI_Main.instanse._grid.buildings[i].columns))
+                        if (UI_Main.instance._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), UI_Main.instance._grid.buildings[i].currentX, UI_Main.instance._grid.buildings[i].currentY, UI_Main.instance._grid.buildings[i].rows, UI_Main.instance._grid.buildings[i].columns))
                         {
                             found = true;
-                            UI_Main.instanse._grid.buildings[i].Selected();
+                            UI_Main.instance._grid.buildings[i].Selected();
                             break;
                         }
                     }
                     if (!found)
                     {
-                        if (Building.selectedInstanse != null)
+                        if (Building.selectedinstance != null)
                         {
-                            Building.selectedInstanse.Deselected();
+                            Building.selectedinstance.Deselected();
                         }
                     }
                 }
                 else
                 {
-                    if (Building.selectedInstanse != null)
+                    if (Building.selectedinstance != null)
                     {
-                        Building.selectedInstanse.Deselected();
+                        Building.selectedinstance.Deselected();
                     }
                 }
             }
-            else if (UI_Scout.instanse.isActive)
+            else if (UI_Scout.instance.isActive)
             {
                 if (results.Count <= 0)
                 {
                     bool found = false;
                     Vector3 planePosition = CameraScreenPositionToWorldPosition(position);
-                    Vector3Int gridPos = UI_Main.instanse._grid.grid.WorldToCell(planePosition);
-                    for (int i = 0; i < UI_Main.instanse._grid.buildings.Count; i++)
+                    Vector3Int gridPos = UI_Main.instance._grid.grid.WorldToCell(planePosition);
+                    for (int i = 0; i < UI_Main.instance._grid.buildings.Count; i++)
                     {
-                        if (UI_Main.instanse._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), UI_Main.instanse._grid.buildings[i].currentX, UI_Main.instanse._grid.buildings[i].currentY, UI_Main.instanse._grid.buildings[i].rows, UI_Main.instanse._grid.buildings[i].columns))
+                        if (UI_Main.instance._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), UI_Main.instance._grid.buildings[i].currentX, UI_Main.instance._grid.buildings[i].currentY, UI_Main.instance._grid.buildings[i].rows, UI_Main.instance._grid.buildings[i].columns))
                         {
                             found = true;
-                            UI_Main.instanse._grid.buildings[i].Selected();
+                            UI_Main.instance._grid.buildings[i].Selected();
                             break;
                         }
                     }
                     if (!found)
                     {
-                        if (Building.selectedInstanse != null)
+                        if (Building.selectedinstance != null)
                         {
-                            Building.selectedInstanse.Deselected();
+                            Building.selectedinstance.Deselected();
                         }
                     }
                 }
                 else
                 {
-                    if (Building.selectedInstanse != null)
+                    if (Building.selectedinstance != null)
                     {
-                        Building.selectedInstanse.Deselected();
+                        Building.selectedinstance.Deselected();
                     }
                 }
             }
@@ -316,9 +316,9 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void MoveStarted()
         {
-            if (_zooming == false && (UI_Main.instanse.isActive || UI_Battle.instanse.isActive || UI_WarLayout.instanse.isActive || UI_Scout.instanse.isActive) && UI_Chat.instanse.isActive == false && UI_Settings.instanse.isActive == false && UI_BuildingUpgrade.instanse.isActive == false && UI_Info.instanse.isActive == false && UI_Store.instanse.isActive == false)
+            if (_zooming == false && (UI_Main.instance.isActive || UI_Battle.instance.isActive || UI_WarLayout.instance.isActive || UI_Scout.instance.isActive) && UI_Chat.instance.isActive == false && UI_Settings.instance.isActive == false && UI_BuildingUpgrade.instance.isActive == false && UI_Info.instance.isActive == false && UI_Store.instance.isActive == false)
             {
-                if (UI_WarLayout.instanse.isActive)
+                if (UI_WarLayout.instance.isActive)
                 {
                     PointerEventData data = new PointerEventData(EventSystem.current);
                     data.position = inputs.Main.PointerPosition.ReadValue<Vector2>();
@@ -332,25 +332,25 @@ namespace DevelopersHub.ClashOfWhatecer
                 if (_building)
                 {
                     _buildBasePosition = CameraScreenPositionToWorldPosition(inputs.Main.PointerPosition.ReadValue<Vector2>());
-                    Vector3Int gridPos = UI_Main.instanse._grid.grid.WorldToCell(_buildBasePosition);
-                    if (UI_Main.instanse._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), Building.buildInstanse.currentX, Building.buildInstanse.currentY, Building.buildInstanse.rows, Building.buildInstanse.columns))
+                    Vector3Int gridPos = UI_Main.instance._grid.grid.WorldToCell(_buildBasePosition);
+                    if (UI_Main.instance._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), Building.buildinstance.currentX, Building.buildinstance.currentY, Building.buildinstance.rows, Building.buildinstance.columns))
                     {
-                        Building.buildInstanse.StartMovingOnGrid();
+                        Building.buildinstance.StartMovingOnGrid();
                         _movingBuilding = true;
                     }
                 }
 
-                if(Building.selectedInstanse != null && Building.selectedInstanse.id != Data.BuildingID.obstacle && !Building.selectedInstanse.scout && Building.selectedInstanse.databaseID > 0)
+                if(Building.selectedinstance != null && Building.selectedinstance.id != Data.BuildingID.obstacle && !Building.selectedinstance.scout && Building.selectedinstance.databaseID > 0)
                 {
                     _replaceBasePosition = CameraScreenPositionToWorldPosition(inputs.Main.PointerPosition.ReadValue<Vector2>());
-                    Vector3Int gridPos = UI_Main.instanse._grid.grid.WorldToCell(_replaceBasePosition);
-                    if (UI_Main.instanse._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), Building.selectedInstanse.currentX, Building.selectedInstanse.currentY, Building.selectedInstanse.rows, Building.selectedInstanse.columns))
+                    Vector3Int gridPos = UI_Main.instance._grid.grid.WorldToCell(_replaceBasePosition);
+                    if (UI_Main.instance._grid.IsGridPositionIsOnBuilding(new Vector2Int(gridPos.x, gridPos.y), Building.selectedinstance.currentX, Building.selectedinstance.currentY, Building.selectedinstance.rows, Building.selectedinstance.columns))
                     {
                         if (!_replacing)
                         {
                             _replacing = true;
                         }
-                        Building.selectedInstanse.StartMovingOnGrid();
+                        Building.selectedinstance.StartMovingOnGrid();
                         _replacingBuilding = true;
                     }
                 }
@@ -372,16 +372,16 @@ namespace DevelopersHub.ClashOfWhatecer
             if (_replacingBuilding)
             {
                 _replacingBuilding = false;
-                if (Building.selectedInstanse)
+                if (Building.selectedinstance)
                 {
-                    Building.selectedInstanse.SaveLocation(false);
+                    Building.selectedinstance.SaveLocation(false);
                 }
             }
         }
 
         private void ZoomStarted()
         {
-            if ((UI_Main.instanse.isActive || UI_Battle.instanse.isActive || UI_WarLayout.instanse.isActive || UI_Scout.instanse.isActive) && UI_Chat.instanse.isActive == false && UI_Settings.instanse.isActive == false && UI_BuildingUpgrade.instanse.isActive == false && UI_Info.instanse.isActive == false && UI_Store.instanse.isActive == false)
+            if ((UI_Main.instance.isActive || UI_Battle.instance.isActive || UI_WarLayout.instance.isActive || UI_Scout.instance.isActive) && UI_Chat.instance.isActive == false && UI_Settings.instance.isActive == false && UI_BuildingUpgrade.instance.isActive == false && UI_Info.instance.isActive == false && UI_Store.instance.isActive == false)
             {
                 _moveRootBasePosition = _root.position;
                 Vector2 touch0 = inputs.Main.TouchPosition0.ReadValue<Vector2>();
@@ -470,13 +470,13 @@ namespace DevelopersHub.ClashOfWhatecer
             if (_building && _movingBuilding)
             {
                 Vector3 pos = CameraScreenPositionToWorldPosition(inputs.Main.PointerPosition.ReadValue<Vector2>());
-                Building.buildInstanse.UpdateGridPosition(_buildBasePosition, pos);
+                Building.buildinstance.UpdateGridPosition(_buildBasePosition, pos);
             }
 
             if (_replacing && _replacingBuilding)
             {
                 Vector3 pos = CameraScreenPositionToWorldPosition(inputs.Main.PointerPosition.ReadValue<Vector2>());
-                Building.selectedInstanse.UpdateGridPosition(_replaceBasePosition, pos);
+                Building.selectedinstance.UpdateGridPosition(_replaceBasePosition, pos);
             }
 
             planDownLeft = CameraScreenPositionToWorldPosition(Vector2.zero);
@@ -494,8 +494,8 @@ namespace DevelopersHub.ClashOfWhatecer
                 _zoom = _zoomMax;
             }
 
-            float h = (UI_Main.instanse._grid.up + UI_Main.instanse._grid.down);
-            float w = (UI_Main.instanse._grid.right + UI_Main.instanse._grid.left);
+            float h = (UI_Main.instance._grid.up + UI_Main.instance._grid.down);
+            float w = (UI_Main.instance._grid.right + UI_Main.instance._grid.left);
 
             float ch = _zoom * 2f;
             float cw = ch * _camera.aspect;
@@ -513,21 +513,21 @@ namespace DevelopersHub.ClashOfWhatecer
             cw = ch * _camera.aspect;
 
             Vector3 position = _root.position;
-            if (position.x > UI_Main.instanse._grid.grid.transform.position.x + UI_Main.instanse._grid.right - cw)
+            if (position.x > UI_Main.instance._grid.grid.transform.position.x + UI_Main.instance._grid.right - cw)
             {
-                position.x = UI_Main.instanse._grid.grid.transform.position.x + UI_Main.instanse._grid.right - cw;
+                position.x = UI_Main.instance._grid.grid.transform.position.x + UI_Main.instance._grid.right - cw;
             }
-            if (position.x < UI_Main.instanse._grid.grid.transform.position.x - UI_Main.instanse._grid.left + cw)
+            if (position.x < UI_Main.instance._grid.grid.transform.position.x - UI_Main.instance._grid.left + cw)
             {
-                position.x = UI_Main.instanse._grid.grid.transform.position.x - UI_Main.instanse._grid.left + cw;
+                position.x = UI_Main.instance._grid.grid.transform.position.x - UI_Main.instance._grid.left + cw;
             }
-            if (position.y > UI_Main.instanse._grid.grid.transform.position.y + UI_Main.instanse._grid.up - ch)
+            if (position.y > UI_Main.instance._grid.grid.transform.position.y + UI_Main.instance._grid.up - ch)
             {
-                position.y = UI_Main.instanse._grid.grid.transform.position.y + UI_Main.instanse._grid.up - ch;
+                position.y = UI_Main.instance._grid.grid.transform.position.y + UI_Main.instance._grid.up - ch;
             }
-            if (position.y < UI_Main.instanse._grid.grid.transform.position.y - UI_Main.instanse._grid.down + ch)
+            if (position.y < UI_Main.instance._grid.grid.transform.position.y - UI_Main.instance._grid.down + ch)
             {
-                position.y = UI_Main.instanse._grid.grid.transform.position.y - UI_Main.instanse._grid.down + ch;
+                position.y = UI_Main.instance._grid.grid.transform.position.y - UI_Main.instance._grid.down + ch;
             }
             _root.position = position;
         }

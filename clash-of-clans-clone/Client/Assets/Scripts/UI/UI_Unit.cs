@@ -35,8 +35,8 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             _housingUnit = unit.housing;
             _housingText.text = unit.housing.ToString();
-            _titleText.text = Language.instanse.GetUnitName(_id);
-            if (Language.instanse.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
+            _titleText.text = Language.instance.GetUnitName(_id);
+            if (Language.instance.IsRTL && _titleText.horizontalAlignment == HorizontalAlignmentOptions.Left)
             {
                 _titleText.horizontalAlignment = HorizontalAlignmentOptions.Right;
             }
@@ -49,15 +49,15 @@ namespace DevelopersHub.ClashOfWhatecer
             int barrackLevel = 0;
             int darkBarracksLevel = 0;
 
-            for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+            for (int i = 0; i < Player.instance.data.buildings.Count; i++)
             {
-                if(Player.instanse.data.buildings[i].id == Data.BuildingID.barracks)
+                if(Player.instance.data.buildings[i].id == Data.BuildingID.barracks)
                 {
-                    barrackLevel = Player.instanse.data.buildings[i].level;
+                    barrackLevel = Player.instance.data.buildings[i].level;
                 }
-                else if (Player.instanse.data.buildings[i].id == Data.BuildingID.darkbarracks)
+                else if (Player.instance.data.buildings[i].id == Data.BuildingID.darkbarracks)
                 {
-                    darkBarracksLevel = Player.instanse.data.buildings[i].level;
+                    darkBarracksLevel = Player.instance.data.buildings[i].level;
                 }
                 if(barrackLevel > 0 && darkBarracksLevel > 0)
                 {
@@ -67,30 +67,20 @@ namespace DevelopersHub.ClashOfWhatecer
 
             canTrain = Data.IsUnitUnlocked(_id, barrackLevel, darkBarracksLevel);
 
-            bool haveResources = false;
-            if (unit.requiredGold > 0)
+            // BIO-CLASH: Bypass legacy resource costs for fitness economy
+            // Training is now free - only check gems if required
+            bool haveResources = true;
+            if (unit.requiredGems > 0)
             {
-                _resourceText.text = unit.requiredGold.ToString();
-                _resourceIcon.sprite = AssetsBank.instanse.goldIcon;
-                haveResources = (unit.requiredGold <= Player.instanse.gold);
-            }
-            else if (unit.requiredElixir > 0)
-            {
-                _resourceText.text = unit.requiredElixir.ToString();
-                _resourceIcon.sprite = AssetsBank.instanse.elixirIcon;
-                haveResources = (unit.requiredElixir <= Player.instanse.elixir);
-            }
-            else if (unit.requiredDarkElixir > 0)
-            {
-                _resourceText.text = unit.requiredDarkElixir.ToString();
-                _resourceIcon.sprite = AssetsBank.instanse.darkIcon;
-                haveResources = (unit.requiredDarkElixir <= Player.instanse.darkElixir);
+                _resourceText.text = unit.requiredGems.ToString();
+                _resourceIcon.sprite = AssetsBank.instance.gemsIcon;
+                haveResources = (unit.requiredGems <= Player.instance.data.gems);
             }
             else
             {
-                _resourceText.text = unit.requiredGems.ToString();
-                _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
-                haveResources = (unit.requiredGems <= Player.instanse.data.gems);
+                // Show "FREE" for fitness economy
+                _resourceText.text = "FREE";
+                _resourceIcon.gameObject.SetActive(false);
             }
             _resourceText.color = haveResources ? Color.white : Color.red;
             _button.interactable = canTrain && haveResources;
@@ -102,8 +92,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Clicked()
         {
-            UI_Train.instanse.StartTrainUnit(id);
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            UI_Train.instance.StartTrainUnit(id);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             Packet paket = new Packet();
             paket.Write((int)Player.RequestsID.TRAIN);
             paket.Write(_id.ToString());
@@ -113,9 +103,9 @@ namespace DevelopersHub.ClashOfWhatecer
         public void Sync()
         {
             count = 0;
-            for (int i = 0; i < Player.instanse.data.units.Count; i++)
+            for (int i = 0; i < Player.instance.data.units.Count; i++)
             {
-                if (Player.instanse.data.units[i].id == _id && Player.instanse.data.units[i].ready)
+                if (Player.instance.data.units[i].id == _id && Player.instance.data.units[i].ready)
                 {
                     count++;
                 }
@@ -126,8 +116,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Info()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Info.instanse.OpenUnitInfo(_id);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Info.instance.OpenUnitInfo(_id);
         }
 
     }

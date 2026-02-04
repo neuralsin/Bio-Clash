@@ -15,7 +15,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private RectTransform _lostRoot = null;
 
         [HideInInspector] public List<UI_WarLayoutBuilding> buildingItems = new List<UI_WarLayoutBuilding>();
-        private static UI_WarLayout _instance = null; public static UI_WarLayout instanse { get { return _instance; } }
+        private static UI_WarLayout _instance = null; public static UI_WarLayout instance { get { return _instance; } }
         private bool _active = false; public bool isActive { get { return _active; } }
         private long _placingID = 0; public long placingID { get { return _placingID; } set { _placingID = value; } }
 
@@ -40,56 +40,56 @@ namespace DevelopersHub.ClashOfWhatecer
             _placingID = 0;
             if (status)
             {
-                UI_Main.instanse.SetStatus(false);
+                UI_Main.instance.SetStatus(false);
                 PlaceBuildings();
-                Player.instanse.RushSyncRequest();
+                Player.instance.RushSyncRequest();
             }
             _elements.SetActive(status);
         }
 
         private void Back()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             ClearItems();
-            UI_Main.instanse._grid.Clear();
-            UI_Main.instanse.SetStatus(true);
+            UI_Main.instance._grid.Clear();
+            UI_Main.instance.SetStatus(true);
             SetStatus(false);
         }
 
         private void PlaceBuildings()
         {
             ClearItems();
-            UI_Main.instanse._grid.Clear();
-            for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+            UI_Main.instance._grid.Clear();
+            for (int i = 0; i < Player.instance.data.buildings.Count; i++)
             {
-                if(Player.instanse.data.buildings[i].warX >= 0 && Player.instanse.data.buildings[i].warY >= 0)
+                if(Player.instance.data.buildings[i].warX >= 0 && Player.instance.data.buildings[i].warY >= 0)
                 {
-                    var prefab = UI_Main.instanse.GetBuildingPrefab(Player.instanse.data.buildings[i].id);
+                    var prefab = UI_Main.instance.GetBuildingPrefab(Player.instance.data.buildings[i].id);
                     if (prefab.Item1 != null)
                     {
                         Building building = Instantiate(prefab.Item1, Vector3.zero, Quaternion.identity);
-                        building.data = Player.instanse.data.buildings[i];
+                        building.data = Player.instance.data.buildings[i];
                         building.rows = prefab.Item2.rows;
                         building.columns = prefab.Item2.columns;
-                        building.databaseID = Player.instanse.data.buildings[i].databaseID;
-                        building.PlacedOnGrid(Player.instanse.data.buildings[i].warX, Player.instanse.data.buildings[i].warY);
+                        building.databaseID = Player.instance.data.buildings[i].databaseID;
+                        building.PlacedOnGrid(Player.instance.data.buildings[i].warX, Player.instance.data.buildings[i].warY);
                         if (building._baseArea)
                         {
                             building._baseArea.gameObject.SetActive(false);
                         }
-                        UI_Main.instanse._grid.buildings.Add(building);
+                        UI_Main.instance._grid.buildings.Add(building);
                     }
                 }
                 else
                 {
                     UI_WarLayoutBuilding building = Instantiate(_listPrefab, _listGrid);
-                    building.Initialized(Player.instanse.data.buildings[i]);
+                    building.Initialized(Player.instance.data.buildings[i]);
                     RectTransform rect = building.GetComponent<RectTransform>();
                     rect.sizeDelta = new Vector2(itemHeight, itemHeight);
                     buildingItems.Add(building);
                 }
             }
-            UI_Main.instanse._grid.RefreshBuildings();
+            UI_Main.instance._grid.RefreshBuildings();
         }
 
         public void ClearItems()
@@ -106,46 +106,46 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void DataSynced()
         {
-            if (Player.instanse.data.buildings != null && Player.instanse.data.buildings.Count > 0)
+            if (Player.instance.data.buildings != null && Player.instance.data.buildings.Count > 0)
             {
-                for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+                for (int i = 0; i < Player.instance.data.buildings.Count; i++)
                 {
-                    if (Player.instanse.data.buildings[i].warX >= 0 && Player.instanse.data.buildings[i].warY >= 0)
+                    if (Player.instance.data.buildings[i].warX >= 0 && Player.instance.data.buildings[i].warY >= 0)
                     {
-                        Building building = UI_Main.instanse._grid.GetBuilding(Player.instanse.data.buildings[i].databaseID);
+                        Building building = UI_Main.instance._grid.GetBuilding(Player.instance.data.buildings[i].databaseID);
                         if (building != null)
                         {
-                            building.data = Player.instanse.data.buildings[i];
+                            building.data = Player.instance.data.buildings[i];
                         }
                         else
                         {
-                            building = UI_Main.instanse._grid.GetBuilding(Player.instanse.data.buildings[i].id, Player.instanse.data.buildings[i].x, Player.instanse.data.buildings[i].y);
+                            building = UI_Main.instance._grid.GetBuilding(Player.instance.data.buildings[i].id, Player.instance.data.buildings[i].x, Player.instance.data.buildings[i].y);
                             if (building != null)
                             {
-                                UI_Main.instanse._grid.RemoveUnidentifiedBuilding(building);
-                                building.databaseID = Player.instanse.data.buildings[i].databaseID;
-                                UI_Main.instanse._grid.buildings.Add(building);
+                                UI_Main.instance._grid.RemoveUnidentifiedBuilding(building);
+                                building.databaseID = Player.instance.data.buildings[i].databaseID;
+                                UI_Main.instance._grid.buildings.Add(building);
                             }
                             else
                             {
-                                var prefab = UI_Main.instanse.GetBuildingPrefab(Player.instanse.data.buildings[i].id);
+                                var prefab = UI_Main.instance.GetBuildingPrefab(Player.instance.data.buildings[i].id);
                                 if (prefab.Item1 != null)
                                 {
                                     building = Instantiate(prefab.Item1, Vector3.zero, Quaternion.identity);
-                                    building.data = Player.instanse.data.buildings[i];
+                                    building.data = Player.instance.data.buildings[i];
                                     building.rows = prefab.Item2.rows;
                                     building.columns = prefab.Item2.columns;
-                                    building.databaseID = Player.instanse.data.buildings[i].databaseID;
-                                    building.PlacedOnGrid(Player.instanse.data.buildings[i].warX, Player.instanse.data.buildings[i].warY, true);
+                                    building.databaseID = Player.instance.data.buildings[i].databaseID;
+                                    building.PlacedOnGrid(Player.instance.data.buildings[i].warX, Player.instance.data.buildings[i].warY, true);
                                     if (building._baseArea)
                                     {
                                         building._baseArea.gameObject.SetActive(false);
                                     }
-                                    UI_Main.instanse._grid.buildings.Add(building);
+                                    UI_Main.instance._grid.buildings.Add(building);
                                 }
                             }
                         }
-                        building.data = Player.instanse.data.buildings[i];
+                        building.data = Player.instance.data.buildings[i];
                         building.AdjustUI(true);
                     }
                 }

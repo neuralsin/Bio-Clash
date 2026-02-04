@@ -10,13 +10,13 @@ namespace DevelopersHub.ClashOfWhatecer
     {
 
         public Data.BuildingID id = Data.BuildingID.townhall;
-        private static Building _buildInstance = null; public static Building buildInstanse { get { return _buildInstance; } set { _buildInstance = value; } }
-        private static Building _selectedInstance = null; public static Building selectedInstanse { get { return _selectedInstance; } set { _selectedInstance = value; } }
+        private static Building _buildInstance = null; public static Building buildinstance { get { return _buildInstance; } set { _buildInstance = value; } }
+        private static Building _selectedInstance = null; public static Building selectedinstance { get { return _selectedInstance; } set { _selectedInstance = value; } }
 
         [HideInInspector] private Data.Building _data = new Data.Building(); public Data.Building data { get { return _data; }
             set
             {
-                if (!(lastChange >= Player.instanse.lastUpdateSent && UI_Main.instanse.isActive))
+                if (!(lastChange >= Player.instance.lastUpdateSent && UI_Main.instance.isActive))
                 {
                     if(_data.level <= value.level) // TODO -> This will be an issue if you implement building downgrade in the game
                     {
@@ -109,7 +109,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public static Vector2Int GetBuildingPosition(Data.Building building, int layout = 0)
         {
-            if (layout == 0) { layout = UI_WarLayout.instanse.isActive ? 2 : 1; }
+            if (layout == 0) { layout = UI_WarLayout.instance.isActive ? 2 : 1; }
             if (layout == 2)
             {
                 return new Vector2Int(building.warX, building.warY);
@@ -231,7 +231,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void DataSet()
         {
-            lastChange = Player.instanse.lastUpdate;
+            lastChange = Player.instance.lastUpdate;
             if (_rangeEffects && _data.radius > 0)
             {
                 Vector3 scale = _rangeEffects.transform.localScale;
@@ -450,7 +450,7 @@ namespace DevelopersHub.ClashOfWhatecer
                         case Data.BuildingID.goldmine:
                             if (_data.goldStorage >= Data.minGoldCollect)
                             {
-                                collectButton.gameObject.SetActive(!collecting && _data.isConstructing == false && Player.instanse.gold < Player.instanse.maxGold);
+                                collectButton.gameObject.SetActive(!collecting && _data.isConstructing == false && Player.instance.gold < Player.instance.maxGold);
                             }
                             else
                             {
@@ -460,7 +460,7 @@ namespace DevelopersHub.ClashOfWhatecer
                         case Data.BuildingID.elixirmine:
                             if (_data.elixirStorage >= Data.minElixirCollect)
                             {
-                                collectButton.gameObject.SetActive(!collecting && _data.isConstructing == false && Player.instanse.elixir < Player.instanse.maxElixir);
+                                collectButton.gameObject.SetActive(!collecting && _data.isConstructing == false && Player.instance.elixir < Player.instance.maxElixir);
                             }
                             else
                             {
@@ -470,7 +470,7 @@ namespace DevelopersHub.ClashOfWhatecer
                         case Data.BuildingID.darkelixirmine:
                             if (_data.darkStorage >= Data.minDarkElixirCollect)
                             {
-                                collectButton.gameObject.SetActive(!collecting && _data.isConstructing == false && Player.instanse.darkElixir < Player.instanse.maxDarkElixir);
+                                collectButton.gameObject.SetActive(!collecting && _data.isConstructing == false && Player.instance.darkElixir < Player.instance.maxDarkElixir);
                             }
                             else
                             {
@@ -480,10 +480,10 @@ namespace DevelopersHub.ClashOfWhatecer
                         case Data.BuildingID.goldstorage:
                             break;
                     }
-                    Vector3 end = UI_Main.instanse._grid.GetEndPosition(this);
+                    Vector3 end = UI_Main.instance._grid.GetEndPosition(this);
 
-                    Vector3 planDownLeft = CameraController.instanse.planDownLeft;
-                    Vector3 planTopRight = CameraController.instanse.planTopRight;
+                    Vector3 planDownLeft = CameraController.instance.planDownLeft;
+                    Vector3 planTopRight = CameraController.instance.planTopRight;
 
                     float w = planTopRight.x - planDownLeft.x;
                     float h = planTopRight.y - planDownLeft.y;
@@ -500,7 +500,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
             if (_boostEffects)
             {
-                _boostEffects.SetActive(_data.boost > Player.instanse.data.nowTime);
+                _boostEffects.SetActive(_data.boost > Player.instance.data.nowTime);
             }
 
             bool showBar = false;
@@ -508,9 +508,9 @@ namespace DevelopersHub.ClashOfWhatecer
             if (isConstructing)
             {
                 System.TimeSpan span = System.TimeSpan.Zero;
-                if (Player.instanse.data.nowTime < _data.constructionTime)
+                if (Player.instance.data.nowTime < _data.constructionTime)
                 {
-                    span = _data.constructionTime - Player.instanse.data.nowTime;
+                    span = _data.constructionTime - Player.instance.data.nowTime;
                 }
 
                 if (span.TotalSeconds <= 0)
@@ -520,7 +520,7 @@ namespace DevelopersHub.ClashOfWhatecer
                     level = level + 1;
                     checkLevel = true;
                     lastChange = System.DateTime.Now;
-                    Player.instanse.RushSyncRequest();
+                    Player.instance.RushSyncRequest();
                 }
                 else
                 {
@@ -540,10 +540,10 @@ namespace DevelopersHub.ClashOfWhatecer
                     else
                     {
                         buildBar.gameObject.SetActive(true);
-                        Vector3 end = UI_Main.instanse._grid.GetEndPosition(this);
+                        Vector3 end = UI_Main.instance._grid.GetEndPosition(this);
 
-                        Vector3 planDownLeft = CameraController.instanse.planDownLeft;
-                        Vector3 planTopRight = CameraController.instanse.planTopRight;
+                        Vector3 planDownLeft = CameraController.instance.planDownLeft;
+                        Vector3 planTopRight = CameraController.instance.planTopRight;
 
                         float w = planTopRight.x - planDownLeft.x;
                         float h = planTopRight.y - planDownLeft.y;
@@ -580,11 +580,11 @@ namespace DevelopersHub.ClashOfWhatecer
             Sender.TCP_Send(packet);
             if (id == Data.BuildingID.elixirmine)
             {
-                SoundManager.instanse.PlaySound(SoundManager.instanse.elixirCollect);
+                SoundManager.instance.PlaySound(SoundManager.instance.elixirCollect);
             }
             else if (id == Data.BuildingID.goldmine)
             {
-                SoundManager.instanse.PlaySound(SoundManager.instanse.goldCollect);
+                SoundManager.instance.PlaySound(SoundManager.instance.goldCollect);
             }
         }
 
@@ -617,7 +617,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void SetPosition(int x, int y)
         {
-            transform.position = UI_Main.instanse._grid.CellToWorld(x, y);
+            transform.position = UI_Main.instance._grid.CellToWorld(x, y);
         }
 
         public void StartMovingOnGrid()
@@ -629,21 +629,21 @@ namespace DevelopersHub.ClashOfWhatecer
         public void RemovedFromGrid()
         {
             _buildInstance = null;
-            UI_Build.instanse.SetStatus(false);
-            CameraController.instanse.isPlacingBuilding = false;
+            UI_Build.instance.SetStatus(false);
+            CameraController.instance.isPlacingBuilding = false;
             Destroy(gameObject);
         }
 
         public void BuildForFirstTimeStarted()
         {
-            if(_constructionEffects != null && UI_WarLayout.instanse != null && data.buildTime > 0)
+            if(_constructionEffects != null && UI_WarLayout.instance != null && data.buildTime > 0)
             {
                 _constructionEffects.SetActive(true);
             }
-            UI_Main.instanse._grid.AddUnidentifiedBuilding(buildInstanse);
+            UI_Main.instance._grid.AddUnidentifiedBuilding(buildinstance);
             _buildInstance = null;
-            UI_Build.instanse.SetStatus(false);
-            CameraController.instanse.isPlacingBuilding = false;
+            UI_Build.instance.SetStatus(false);
+            CameraController.instance.isPlacingBuilding = false;
             if (_baseArea)
             {
                 _baseArea.gameObject.SetActive(false);
@@ -654,9 +654,9 @@ namespace DevelopersHub.ClashOfWhatecer
         {
 
             Vector3 dir = currentPosition - basePosition;
-            Vector3 original = UI_Main.instanse._grid.CellToWorld(_X, _Y);
+            Vector3 original = UI_Main.instance._grid.CellToWorld(_X, _Y);
             Vector3 position = original + dir;
-            Vector2Int p = UI_Main.instanse._grid.WorldToCell(position);
+            Vector2Int p = UI_Main.instance._grid.WorldToCell(position);
             _currentX = p.x;
             _currentY = p.y;
             SetPosition(_currentX, _currentY);
@@ -672,9 +672,9 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void SetBaseColor()
         {
-            if(UI_Main.instanse._grid.CanPlaceBuilding(this, currentX, currentY))
+            if(UI_Main.instance._grid.CanPlaceBuilding(this, currentX, currentY))
             {
-                UI_Build.instanse.clickConfirmButton.interactable = true;
+                UI_Build.instance.clickConfirmButton.interactable = true;
                 if (_baseArea)
                 {
                     _baseArea.color = Color.green;
@@ -682,7 +682,7 @@ namespace DevelopersHub.ClashOfWhatecer
             }
             else
             {
-                UI_Build.instanse.clickConfirmButton.interactable = false;
+                UI_Build.instance.clickConfirmButton.interactable = false;
                 if (_baseArea)
                 {
                     _baseArea.color = Color.red;
@@ -694,15 +694,15 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void Selected()
         {
-            if (selectedInstanse != null)
+            if (selectedinstance != null)
             {
-                if(selectedInstanse == this)
+                if(selectedinstance == this)
                 {
                     return;
                 }
                 else
                 {
-                    selectedInstanse.Deselected();
+                    selectedinstance.Deselected();
                 }
             }
 
@@ -720,10 +720,10 @@ namespace DevelopersHub.ClashOfWhatecer
                 }
             }
 
-            selectedInstanse = this;
+            selectedinstance = this;
             
             UI_SelectedBuilding.instance._elements.SetActive(true);
-            UI_SelectedBuilding.instance._buildingNameText.SetText(Language.instanse.GetBuildingName(id, data.level));
+            UI_SelectedBuilding.instance._buildingNameText.SetText(Language.instance.GetBuildingName(id, data.level));
             UI_SelectedBuilding.instance._buildingNameText.ForceMeshUpdate(true);
             
             if (!scout)
@@ -734,7 +734,7 @@ namespace DevelopersHub.ClashOfWhatecer
                 }
                 _originalX = currentX;
                 _originalY = currentY;
-                UI_BuildingOptions.instanse.SetStatus(true);
+                UI_BuildingOptions.instance.SetStatus(true);
             }
         }
 
@@ -751,8 +751,8 @@ namespace DevelopersHub.ClashOfWhatecer
             UI_SelectedBuilding.instance._elements.SetActive(false);
             if (!scout)
             {
-                UI_BuildingOptions.instanse.SetStatus(false);
-                CameraController.instanse.isReplacingBuilding = false;
+                UI_BuildingOptions.instance.SetStatus(false);
+                CameraController.instance.isReplacingBuilding = false;
                 if (_originalX != currentX || _originalY != currentY)
                 {
                     SaveLocation();
@@ -762,20 +762,20 @@ namespace DevelopersHub.ClashOfWhatecer
                     _selectEffects.SetActive(false);
                 }
             }
-            selectedInstanse = null;
+            selectedinstance = null;
         }
 
         public void SaveLocation(bool resetIfNot = true)
         {
-            if (UI_Main.instanse._grid.CanPlaceBuilding(this, currentX, currentY) && (_X != currentX || _Y != currentY) && !waitingReplaceResponse)
+            if (UI_Main.instance._grid.CanPlaceBuilding(this, currentX, currentY) && (_X != currentX || _Y != currentY) && !waitingReplaceResponse)
             {
                 waitingReplaceResponse = true;
                 Packet packet = new Packet();
                 packet.Write((int)Player.RequestsID.REPLACE);
-                packet.Write(selectedInstanse.databaseID);
-                packet.Write(selectedInstanse.currentX);
-                packet.Write(selectedInstanse.currentY);
-                packet.Write(UI_WarLayout.instanse.isActive ? 2 : 1);
+                packet.Write(selectedinstance.databaseID);
+                packet.Write(selectedinstance.currentX);
+                packet.Write(selectedinstance.currentY);
+                packet.Write(UI_WarLayout.instance.isActive ? 2 : 1);
                 Sender.TCP_Send(packet);
                 if (_baseArea)
                 {
@@ -836,22 +836,22 @@ namespace DevelopersHub.ClashOfWhatecer
                 bool index_l = false;
                 // bool index_f = false;
                 bool index_b = false;
-                for (int i = 0; i < UI_Main.instanse._grid.buildings.Count; i++)
+                for (int i = 0; i < UI_Main.instance._grid.buildings.Count; i++)
                 {
-                    if (UI_Main.instanse._grid.buildings[i].id != Data.BuildingID.wall) { continue; }
-                    if (UI_Main.instanse._grid.buildings[i].currentX == (currentX + 1) && UI_Main.instanse._grid.buildings[i].currentY == currentY)
+                    if (UI_Main.instance._grid.buildings[i].id != Data.BuildingID.wall) { continue; }
+                    if (UI_Main.instance._grid.buildings[i].currentX == (currentX + 1) && UI_Main.instance._grid.buildings[i].currentY == currentY)
                     {
                         index_l = true;
                     }
-                    else if (UI_Main.instanse._grid.buildings[i].currentX == (currentX - 1) && UI_Main.instanse._grid.buildings[i].currentY == currentY)
+                    else if (UI_Main.instance._grid.buildings[i].currentX == (currentX - 1) && UI_Main.instance._grid.buildings[i].currentY == currentY)
                     {
                         // index_r = true;
                     }
-                    else if (UI_Main.instanse._grid.buildings[i].currentX == currentX && UI_Main.instanse._grid.buildings[i].currentY == (currentY + 1))
+                    else if (UI_Main.instance._grid.buildings[i].currentX == currentX && UI_Main.instance._grid.buildings[i].currentY == (currentY + 1))
                     {
                         index_b = true;
                     }
-                    else if (UI_Main.instanse._grid.buildings[i].currentX == currentX && UI_Main.instanse._grid.buildings[i].currentY == (currentY - 1))
+                    else if (UI_Main.instance._grid.buildings[i].currentX == currentX && UI_Main.instance._grid.buildings[i].currentY == (currentY - 1))
                     {
                         // index_f = true;
                     }

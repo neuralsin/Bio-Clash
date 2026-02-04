@@ -12,7 +12,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private Button _closeButton = null;
 
         private bool _active = false; public bool isActive { get { return _active; } }
-        private static UI_PrivacyPolicy _instance = null; public static UI_PrivacyPolicy instanse { get { return _instance; } }
+        private static UI_PrivacyPolicy _instance = null; public static UI_PrivacyPolicy instance { get { return _instance; } }
         
         private void Awake()
         {
@@ -34,7 +34,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _active = false;
             _elements.SetActive(false);
         }

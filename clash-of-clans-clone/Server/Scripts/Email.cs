@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -63,7 +63,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
             mail = mail.Replace("[email_description]", "You can use this code to recover your account. Enter this code in the game to load your progress.");
             mail = mail.Replace("[verification_code]", code);
             mail = mail.Replace("[remained_time]", Data.recoveryCodeExpiration + " seconds");
-            mail = mail.Replace("[copyright_footer]", "Â© " + DateTime.UtcNow.Year.ToString() + " " + name + " , Torento, Canada");
+            mail = mail.Replace("[copyright_footer]", "© " + DateTime.UtcNow.Year.ToString() + " " + name + " , Torento, Canada");
             return Send(email, "Account Recovery Code", mail);
         }
 
@@ -76,7 +76,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
             mail = mail.Replace("[email_description]", "You can use this code to confirm your account. Enter this code in the game and your progress will be synced with this email adress.");
             mail = mail.Replace("[verification_code]", code);
             mail = mail.Replace("[remained_time]", Data.recoveryCodeExpiration + " seconds");
-            mail = mail.Replace("[copyright_footer]", "Â© " + DateTime.UtcNow.Year.ToString() + " " + name + " , Torento, Canada");
+            mail = mail.Replace("[copyright_footer]", "© " + DateTime.UtcNow.Year.ToString() + " " + name + " , Torento, Canada");
             return Send(email, "Email Confirmation Code", mail);
         }
 

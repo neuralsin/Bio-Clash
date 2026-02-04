@@ -47,11 +47,11 @@ namespace DevelopersHub.ClashOfWhatecer
         public UI_Button buttonCollectElixir = null;
         public UI_Button buttonCollectDarkElixir = null;
         public UI_Bar barBuild = null;
-        private static UI_Main _instance = null; public static UI_Main instanse { get { return _instance; } }
+        private static UI_Main _instance = null; public static UI_Main instance { get { return _instance; } }
 
         private bool _active = true;public bool isActive { get { return _active; } }
         private int workers = 0;
-        private int busyWorkers = 0; public bool haveAvalibaleBuilder { get { return busyWorkers < workers; } }
+        private int busyWorkers = 0; public bool haveAvailableBuilder { get { return busyWorkers < workers; } }
 
         /*
         public void Log(string text)
@@ -64,19 +64,17 @@ namespace DevelopersHub.ClashOfWhatecer
         {
              _instance = this;
             _elements.SetActive(true);
-            _goldText.text = "";
-            _elixirText.text = "";
-            _darkText.text = "";
-            _gemsText.text = "";
+            
+            // BIO-CLASH: Hide standard resources
+            if (_goldBar) _goldBar.transform.parent.gameObject.SetActive(false);
+            if (_elixirBar) _elixirBar.transform.parent.gameObject.SetActive(false);
+            if (_darkBar) _darkBar.transform.parent.gameObject.SetActive(false);
+            if (_gemsBar) _gemsBar.transform.parent.gameObject.SetActive(false); // Gems might still be useful, keeping hidden for now per user request for "total replacement" logic
+            
             _usernameText.text = "";
             _xpText.text = "";
             _trophiesText.text = "";
             _levelText.text = "";
-            _goldBar.fillAmount = 0;
-            _elixirBar.fillAmount = 0;
-            _darkBar.fillAmount = 0;
-            _gemsBar.fillAmount = 0;
-            _xpBar.fillAmount = 0;
             _buildersText.text = "";
             _shieldText.text = "";
         }
@@ -93,8 +91,29 @@ namespace DevelopersHub.ClashOfWhatecer
             _buyResourceButton.onClick.AddListener(BuyResource);
             _battleReportsButton.onClick.AddListener(BattleReportsButtonClicked);
             if (_fitnessButton != null)
+            {
                 _fitnessButton.onClick.AddListener(FitnessButtonClicked);
-            SoundManager.instanse.PlayMusic(SoundManager.instanse.mainMusic);
+                // Pulse effect to highlight it
+                StartCoroutine(PulseFitnessButton());
+            }
+            SoundManager.instance.PlayMusic(SoundManager.instance.mainMusic);
+        }
+
+        private IEnumerator PulseFitnessButton()
+        {
+            // BIO-CLASH: Added safety checks to prevent null ref on scene change
+            while (this != null && gameObject != null && gameObject.activeInHierarchy)
+            {
+                if (_fitnessButton != null && _fitnessButton.gameObject != null)
+                {
+                    _fitnessButton.transform.localScale = Vector3.one * (1f + Mathf.PingPong(Time.time * 0.5f, 0.1f));
+                }
+                else
+                {
+                    yield break; // Exit if button is destroyed
+                }
+                yield return null;
+            }
         }
 
         public void ChangeUnreadBattleReports(int count)
@@ -104,51 +123,51 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void BattleReportsButtonClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_BattleReports.instanse.Open();
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_BattleReports.instance.Open();
         }
 
         private void FitnessButtonClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Fitness.instanse.Open();
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Fitness.instance.Open();
         }
 
         private void SettingsButtonClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Settings.instanse.Open();
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Settings.instance.Open();
         }
 
         private void RankingButtonClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_PlayersRanking.instanse.Open();
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_PlayersRanking.instance.Open();
         }
 
         private void ChatButtonClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Chat.instanse.Open();
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Chat.instance.Open();
         }
 
         private void ShopButtonClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Shop.instanse.SetStatus(true);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Shop.instance.SetStatus(true);
             SetStatus(false);
         }
 
         private void BattleButtonClicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Search.instanse.SetStatus(true);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Search.instance.SetStatus(true);
             SetStatus(false);
         }
 
         private void OnLeave()
         {
-            UI_Build.instanse.Cancel();
+            UI_Build.instance.Cancel();
         }
 
         public void SetStatus(bool status)
@@ -159,11 +178,11 @@ namespace DevelopersHub.ClashOfWhatecer
             }
             else
             {
-                if (SoundManager.instanse.musicSource.clip != SoundManager.instanse.mainMusic)
+                if (SoundManager.instance.musicSource.clip != SoundManager.instance.mainMusic)
                 {
-                    SoundManager.instanse.PlayMusic(SoundManager.instanse.mainMusic);
+                    SoundManager.instance.PlayMusic(SoundManager.instance.mainMusic);
                 }
-                Player.instanse.RushSyncRequest();
+                Player.instance.RushSyncRequest();
             }
             _active = status;
             _elements.SetActive(status);
@@ -171,7 +190,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public (Building, Data.ServerBuilding) GetBuildingPrefab(Data.BuildingID id)
         {
-            Data.ServerBuilding server = Player.instanse.GetServerBuilding(id, 1);
+            Data.ServerBuilding server = Player.instance.GetServerBuilding(id, 1);
             if (server != null)
             {
                 for (int i = 0; i < _buildingPrefabs.Length; i++)
@@ -189,41 +208,41 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             int _workers = 0;
             int _busyWorkers = 0;
-            if (Player.instanse.data.buildings != null && Player.instanse.data.buildings.Count > 0)
+            if (Player.instance.data.buildings != null && Player.instance.data.buildings.Count > 0)
             {
-                for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+                for (int i = 0; i < Player.instance.data.buildings.Count; i++)
                 {
                     bool first = false;
-                    if (Player.instanse.data.buildings[i].isConstructing && Player.instanse.data.buildings[i].buildTime > 0)
+                    if (Player.instance.data.buildings[i].isConstructing && Player.instance.data.buildings[i].buildTime > 0)
                     {
                         _busyWorkers += 1;
                     }
-                    Building building = _grid.GetBuilding(Player.instanse.data.buildings[i].databaseID);
+                    Building building = _grid.GetBuilding(Player.instance.data.buildings[i].databaseID);
                     if (building != null)
                     {
                         
                     }
                     else
                     {
-                        building = _grid.GetBuilding(Player.instanse.data.buildings[i].id, Player.instanse.data.buildings[i].x, Player.instanse.data.buildings[i].y);
+                        building = _grid.GetBuilding(Player.instance.data.buildings[i].id, Player.instance.data.buildings[i].x, Player.instance.data.buildings[i].y);
                         if(building != null)
                         {
                             _grid.RemoveUnidentifiedBuilding(building);
-                            building.databaseID = Player.instanse.data.buildings[i].databaseID;
+                            building.databaseID = Player.instance.data.buildings[i].databaseID;
                             _grid.buildings.Add(building);
                         }
                         else
                         {
-                            var prefab = GetBuildingPrefab(Player.instanse.data.buildings[i].id);
+                            var prefab = GetBuildingPrefab(Player.instance.data.buildings[i].id);
                             if (prefab.Item1)
                             {
                                 building = Instantiate(prefab.Item1, Vector3.zero, Quaternion.identity);
                                 building.rows = prefab.Item2.rows;
                                 building.columns = prefab.Item2.columns;
-                                building.databaseID = Player.instanse.data.buildings[i].databaseID;
-                                building.lastChange = Player.instanse.lastUpdateSent.AddSeconds(-1);
+                                building.databaseID = Player.instance.data.buildings[i].databaseID;
+                                building.lastChange = Player.instance.lastUpdateSent.AddSeconds(-1);
                                 first = true;
-                                building.PlacedOnGrid(Player.instanse.data.buildings[i].x, Player.instanse.data.buildings[i].y);
+                                building.PlacedOnGrid(Player.instance.data.buildings[i].x, Player.instance.data.buildings[i].y);
                                 if (building._baseArea)
                                 {
                                     building._baseArea.gameObject.SetActive(false);
@@ -232,7 +251,7 @@ namespace DevelopersHub.ClashOfWhatecer
                             }
                             else
                             {
-                                Debug.LogWarning("Building " + Player.instanse.data.buildings[i].id + " have no prefab.");
+                                Debug.LogWarning("Building " + Player.instance.data.buildings[i].id + " have no prefab.");
                                 continue;
                             }
                         }
@@ -244,10 +263,10 @@ namespace DevelopersHub.ClashOfWhatecer
                         building.buildBar.gameObject.SetActive(false);
                     }
 
-                    building.data = Player.instanse.data.buildings[i];
+                    building.data = Player.instance.data.buildings[i];
                     if(first)
                     {
-                        building.lastChange = Player.instanse.lastUpdateSent.AddSeconds(-1);
+                        building.lastChange = Player.instance.lastUpdateSent.AddSeconds(-1);
                     }
 
                     switch (building.id)
@@ -283,14 +302,14 @@ namespace DevelopersHub.ClashOfWhatecer
                 }
                 _grid.RefreshBuildings();
             }
-            if (Player.instanse.data.buildings != null)
+            if (Player.instance.data.buildings != null)
             {
                 for (int i = _grid.buildings.Count - 1; i >= 0; i--)
                 {
                     bool found = false;
-                    for (int j = 0; j < Player.instanse.data.buildings.Count; j++)
+                    for (int j = 0; j < Player.instance.data.buildings.Count; j++)
                     {
-                        if (_grid.buildings[i].data.databaseID == Player.instanse.data.buildings[j].databaseID)
+                        if (_grid.buildings[i].data.databaseID == Player.instance.data.buildings[j].databaseID)
                         {
                             found = true;
                             break;
@@ -298,8 +317,11 @@ namespace DevelopersHub.ClashOfWhatecer
                     }
                     if (!found)
                     {
-                        Destroy(_grid.buildings[i].gameObject);
+                        // BIO-CLASH: Delayed destruction to avoid visual popping on network lag
+                        // Buildings fade out smoothly instead of instant destruction
+                        Building buildingToDestroy = _grid.buildings[i];
                         _grid.buildings.RemoveAt(i);
+                        StartCoroutine(DelayedDestroyBuilding(buildingToDestroy, 0.5f));
                     }
                 }
             }
@@ -312,9 +334,9 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             if (_active)
             {
-                if(Player.instanse.data.shield > Player.instanse.data.nowTime)
+                if(Player.instance.data.shield > Player.instance.data.nowTime)
                 {
-                    _shieldText.text = Tools.SecondsToTimeFormat((int)(Player.instanse.data.shield - Player.instanse.data.nowTime).TotalSeconds);
+                    _shieldText.text = Tools.SecondsToTimeFormat((int)(Player.instance.data.shield - Player.instance.data.nowTime).TotalSeconds);
                 }
                 else
                 {
@@ -325,20 +347,57 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void AddShield()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Store.instanse.Open(2);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Store.instance.Open(2);
         }
 
         private void AddGems()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Store.instanse.Open(1);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Store.instance.Open(1);
         }
 
         private void BuyResource()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            UI_Store.instanse.Open(3);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            UI_Store.instance.Open(3);
+        }
+
+        /// <summary>
+        /// BIO-CLASH: Delayed building destruction with fade-out effect.
+        /// Prevents visual popping when buildings are removed on network sync.
+        /// </summary>
+        private IEnumerator DelayedDestroyBuilding(Building building, float delay)
+        {
+            if (building == null || building.gameObject == null) yield break;
+            
+            // Optional: Add fade-out visual effect here
+            // For now, just wait then destroy
+            float elapsed = 0f;
+            Renderer[] renderers = building.GetComponentsInChildren<Renderer>();
+            
+            while (elapsed < delay)
+            {
+                elapsed += Time.deltaTime;
+                float alpha = 1f - (elapsed / delay);
+                
+                // Fade out all renderers
+                foreach (Renderer r in renderers)
+                {
+                    if (r != null && r.material != null)
+                    {
+                        Color c = r.material.color;
+                        c.a = alpha;
+                        r.material.color = c;
+                    }
+                }
+                yield return null;
+            }
+            
+            if (building != null && building.gameObject != null)
+            {
+                Destroy(building.gameObject);
+            }
         }
 
     }

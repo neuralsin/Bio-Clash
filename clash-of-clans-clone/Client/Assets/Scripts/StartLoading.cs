@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer 
+namespace DevelopersHub.ClashOfWhatecer 
 { 
     using System.Collections;
     using UnityEngine;
@@ -40,7 +40,7 @@
         private DateTime _baseTime;
         private DateTime _expireTime;
         private string email = "";
-        private static StartLoading _instance = null; public static StartLoading instanse { get { return _instance; } }
+        private static StartLoading _instance = null; public static StartLoading instance { get { return _instance; } }
 
         private void Awake()
         {
@@ -113,10 +113,10 @@
         private void CreateNew()
         {
             creatingNew = true;
-            switch (Language.instanse.language)
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    _textLog.text = "یک نام برای حساب جدید خود وارد کنید:";
+                    _textLog.text = "?? ??? ???? ???? ???? ??? ???? ????:";
                     break;
                 default:
                     _textLog.text = "Enter a name for your new account:";
@@ -168,10 +168,10 @@
             {
                 if(createName.Length > 20)
                 {
-                    switch (Language.instanse.language)
+                    switch (Language.instance.language)
                     {
                         case Language.LanguageID.persian:
-                            _textLog.text = "نام نباید از 20 کاراکتر بیشتر باشد.";
+                            _textLog.text = "??? ????? ?? 20 ??????? ????? ????.";
                             break;
                         default:
                             _textLog.text = "Name length is longer that 20 characters.";
@@ -184,10 +184,10 @@
                 }
                 else
                 {
-                    switch (Language.instanse.language)
+                    switch (Language.instance.language)
                     {
                         case Language.LanguageID.persian:
-                            _textLog.text = "این نام قابل قبول نیست.";
+                            _textLog.text = "??? ??? ???? ???? ????.";
                             break;
                         default:
                             _textLog.text = "Name is not acceptable.";
@@ -197,10 +197,10 @@
             }
             else
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        _textLog.text = "این نام معتبر نیست.";
+                        _textLog.text = "??? ??? ????? ????.";
                         break;
                     default:
                         _textLog.text = "Name is not valid.";
@@ -215,10 +215,10 @@
             _buttonConfirm.interactable = true;
             _buttonCancel.interactable = true;
             waitingForCode = false;
-            switch (Language.instanse.language)
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    _textLog.text = "لطفاً ایمیل متصل به حساب خود را وارد کنید:";
+                    _textLog.text = "????? ????? ???? ?? ???? ??? ?? ???? ????:";
                     break;
                 default:
                     _textLog.text = "Please enter your account recovery email.";
@@ -272,10 +272,10 @@
                 }
                 else
                 {
-                    switch (Language.instanse.language)
+                    switch (Language.instance.language)
                     {
                         case Language.LanguageID.persian:
-                            _textLog.text = "این ایمیل معتبر نیست.";
+                            _textLog.text = "??? ????? ????? ????.";
                             break;
                         default:
                             _textLog.text = "Email is not valid.";
@@ -295,10 +295,10 @@
                 _inputEmail.gameObject.SetActive(false);
                 _inputCode.gameObject.SetActive(true);
                 _inputCode.text = "";
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        _textLog.text = "کد ارسال شده به ایمیل خود را وارد کنید:";
+                        _textLog.text = "?? ????? ??? ?? ????? ??? ?? ???? ????:";
                         break;
                     default:
                         _textLog.text = "Please enter the code that has been sent to your email:";
@@ -308,10 +308,10 @@
             else
             {
                 _inputEmail.interactable = true;
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        _textLog.text = "ارسال کد با خطا مواجه شد.";
+                        _textLog.text = "????? ?? ?? ??? ????? ??.";
                         break;
                     default:
                         _textLog.text = "Failed to send the code.";
@@ -413,10 +413,10 @@
             }
             else
             {
-                switch (Language.instanse.language)
+                switch (Language.instance.language)
                 {
                     case Language.LanguageID.persian:
-                        MessageBox.Open(0, 0.8f, false, MessageResponded, new string[] { "اتصال به سرور برقرار نشد. لطفاً اینترنت خود را چک و مجدداً تلاش کنید." }, new string[] { "تلاش مجدد" });
+                        MessageBox.Open(0, 0.8f, false, MessageResponded, new string[] { "????? ?? ???? ?????? ???. ????? ??????? ??? ?? ?? ? ?????? ???? ????." }, new string[] { "???? ????" });
                         break;
                     default:
                         MessageBox.Open(0, 0.8f, false, MessageResponded, new string[] { "Failed to connect to server. Please check you internet connection and try again." }, new string[] { "Try Again" });

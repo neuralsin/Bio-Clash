@@ -20,7 +20,7 @@ namespace DevelopersHub.ClashOfWhatecer
         public AudioClip buildStart = null;
         public AudioClip placeUnitSound = null;
 
-        private static SoundManager _instance = null; public static SoundManager instanse { get { return _instance; } }
+        private static SoundManager _instance = null; public static SoundManager instance { get { return _instance; } }
 
         private bool _musicMute = false; public bool musicMute { get { return _musicMute; } set { _musicMute = value; musicSource.mute = value; } }
         private bool _soundMute = false; public bool soundMute { get { return _soundMute; } set { _soundMute = value; soundSource.mute = value; } }

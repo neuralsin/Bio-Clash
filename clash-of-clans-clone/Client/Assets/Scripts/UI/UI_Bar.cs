@@ -28,7 +28,7 @@ namespace DevelopersHub.ClashOfWhatecer
             if (rect != null)
             {
                 size = new Vector2(Screen.height * height * aspect, Screen.height * height);
-                rect.sizeDelta = size * CameraController.instanse.zoomScale;
+                rect.sizeDelta = size * CameraController.instance.zoomScale;
             }
         }
 
@@ -36,7 +36,7 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             if (rect != null)
             {
-                rect.sizeDelta = size / CameraController.instanse.zoomScale;
+                rect.sizeDelta = size / CameraController.instance.zoomScale;
             }
         }
 

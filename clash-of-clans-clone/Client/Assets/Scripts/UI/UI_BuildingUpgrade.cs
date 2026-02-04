@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -17,7 +17,7 @@
     {
 
         [SerializeField] public GameObject _elements = null;
-        private static UI_BuildingUpgrade _instance = null; public static UI_BuildingUpgrade instanse { get { return _instance; } }
+        private static UI_BuildingUpgrade _instance = null; public static UI_BuildingUpgrade instance { get { return _instance; } }
 
         [SerializeField] private Button _closeButton = null;
         [SerializeField] private GameObject _maxLevelPanel = null;
@@ -53,7 +53,7 @@
         private List<UI_RequiredBuilding> _buildings = new List<UI_RequiredBuilding>();
         private bool _active = false; public bool isActive { get { return _active; } }
         private Data.ServerBuilding serverBuilding = null;
-        private Building selectedInstanse = null;
+        private Building selectedinstance = null;
 
         private void Awake()
         {
@@ -76,22 +76,22 @@
             _upgradeButton.interactable = true;
             _requiredBuildingPanel.SetActive(false);
             _townHallRequiredPanel.SetActive(false);
-            id = Building.selectedInstanse.data.databaseID;
-            selectedInstanse = Building.selectedInstanse;
+            id = Building.selectedinstance.data.databaseID;
+            selectedinstance = Building.selectedinstance;
             int x = -1;
             int townHallLevel = 0;
             
-            for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
+            for (int i = 0; i < Player.instance.data.buildings.Count; i++)
             {
-                if (Player.instanse.data.buildings[i].databaseID == id) { x = i; }
-                if (Player.instanse.data.buildings[i].id == Data.BuildingID.townhall) { townHallLevel = Player.instanse.data.buildings[i].level; }
+                if (Player.instance.data.buildings[i].databaseID == id) { x = i; }
+                if (Player.instance.data.buildings[i].id == Data.BuildingID.townhall) { townHallLevel = Player.instance.data.buildings[i].level; }
                 if (townHallLevel > 0 && x >= 0) { break; }
             }
             
             if (x >= 0)
             {
-                _titleBuilding.text = Language.instanse.GetBuildingName(Player.instanse.data.buildings[x].id);
-                Sprite icon = AssetsBank.GetBuildingIcon(Player.instanse.data.buildings[x].id, Player.instanse.data.buildings[x].level);
+                _titleBuilding.text = Language.instance.GetBuildingName(Player.instance.data.buildings[x].id);
+                Sprite icon = AssetsBank.GetBuildingIcon(Player.instance.data.buildings[x].id, Player.instance.data.buildings[x].level);
                 if (icon != null)
                 {
                     _icon.sprite = icon;
@@ -101,20 +101,20 @@
                     _icon.sprite = _defaultIcon;
                 }
                 
-                serverBuilding = Player.instanse.GetServerBuilding(Player.instanse.data.buildings[x].id, Player.instanse.data.buildings[x].level + 1);
+                serverBuilding = Player.instance.GetServerBuilding(Player.instance.data.buildings[x].id, Player.instance.data.buildings[x].level + 1);
                 
-                if (serverBuilding != null && !(Player.instanse.data.buildings[x].id == Data.BuildingID.townhall && Player.instanse.data.buildings[x].level >= Data.maxTownHallLevel))
+                if (serverBuilding != null && !(Player.instance.data.buildings[x].id == Data.BuildingID.townhall && Player.instance.data.buildings[x].level >= Data.maxTownHallLevel))
                 {
                     // =========================================================
                     // BIO-CLASH: FITNESS REQUIREMENT CHECK
                     // =========================================================
-                    bool meetsFitnessRequirement = CheckFitnessRequirement(selectedInstanse);
+                    bool meetsFitnessRequirement = CheckFitnessRequirement(selectedinstance);
                     
                     // Display fitness requirements
-                    DisplayFitnessRequirements(selectedInstanse);
+                    DisplayFitnessRequirements(selectedinstance);
                     
                     // Check builder availability (still needed)
-                    if (UI_Main.instanse.haveAvalibaleBuilder == false)
+                    if (UI_Main.instance.haveAvailableBuilder == false)
                     {
                         _upgradeButton.interactable = false;
                         _townHallRequiredPanel.SetActive(true);
@@ -124,14 +124,14 @@
                     {
                         _upgradeButton.interactable = false;
                         _townHallRequiredPanel.SetActive(true);
-                        _townHallRequiredText.text = "💪 Workout more to unlock!";
+                        _townHallRequiredText.text = "?? Workout more to unlock!";
                     }
 
                     // Hide original resource requirements, show fitness
-                    if (reqGold != null) reqGold.text = "0";
-                    if (reqElixir != null) reqElixir.text = "0";
-                    if (reqDark != null) reqDark.text = "0";
-                    if (reqGems != null) reqGems.text = "0";
+                    if (reqGold != null) reqGold.transform.parent.gameObject.SetActive(false);
+                    if (reqElixir != null) reqElixir.transform.parent.gameObject.SetActive(false);
+                    if (reqDark != null) reqDark.transform.parent.gameObject.SetActive(false);
+                    if (reqGems != null) reqGems.transform.parent.gameObject.SetActive(false);
                     
                     // Build time based on recovery score (faster if recovered)
                     int baseBuildTime = serverBuilding.buildTime;
@@ -142,7 +142,7 @@
                     }
                     if (reqTime != null) reqTime.text = Tools.SecondsToTimeFormat(baseBuildTime);
                     
-                    _titleLevel.text = "Upgrade to Level " + (Player.instanse.data.buildings[x].level + 1).ToString();
+                    _titleLevel.text = "Upgrade to Level " + (Player.instance.data.buildings[x].level + 1).ToString();
                     _maxLevelPanel.SetActive(false);
                     _detailsPanel.SetActive(true);
                 }
@@ -198,7 +198,7 @@
                 int requiredDays = (building.data.level + 1) * 7;
                 int currentStreak = FitnessManager.instance.workoutStreak;
                 
-                if (reqMuscle != null) reqMuscle.text = "🔥 Consistency";
+                if (reqMuscle != null) reqMuscle.text = "?? Consistency";
                 if (reqVolume != null) reqVolume.text = $"{currentStreak} / {requiredDays} days";
                 if (reqVolumeBar != null) reqVolumeBar.fillAmount = Mathf.Clamp01((float)currentStreak / requiredDays);
                 if (reqStreak != null) reqStreak.text = $"Maintain a {requiredDays}-day workout streak!";
@@ -225,7 +225,7 @@
         {
             if (_detailsPanel == null) return;
 
-            Debug.Log("🛠️ Auto-creating Fitness Requirement UI elements");
+            Debug.Log("??? Auto-creating Fitness Requirement UI elements");
 
             // Create container
             fitnessRequirementsPanel = new GameObject("FitnessRequirements");
@@ -296,22 +296,22 @@
         {
             switch (muscle.ToLower())
             {
-                case "chest": return "💪";
-                case "back": return "🦴";
-                case "legs": return "🦵";
-                case "shoulders": return "🤸";
-                case "biceps": return "💪";
-                case "triceps": return "🏋️";
-                case "core": return "🔥";
-                case "cardio": return "🏃";
-                default: return "💪";
+                case "chest": return "??";
+                case "back": return "??";
+                case "legs": return "??";
+                case "shoulders": return "??";
+                case "biceps": return "??";
+                case "triceps": return "???";
+                case "core": return "??";
+                case "cardio": return "??";
+                default: return "??";
             }
         }
 
         public void Close()
         {
-            if (SoundManager.instanse != null)
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instance != null)
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _active = false;
             ClearBuildings();
             _elements.SetActive(false);
@@ -329,10 +329,10 @@
             if (serverBuilding != null)
             {
                 // BIO-CLASH: Final fitness check before upgrade
-                if (!CheckFitnessRequirement(selectedInstanse))
+                if (!CheckFitnessRequirement(selectedinstance))
                 {
                     _townHallRequiredPanel.SetActive(true);
-                    _townHallRequiredText.text = "💪 Need more workout volume!";
+                    _townHallRequiredText.text = "?? Need more workout volume!";
                     return;
                 }
                 
@@ -346,18 +346,18 @@
                         adjustedBuildTime = Mathf.Max(10, (int)(serverBuilding.buildTime * recoveryMultiplier));
                     }
                     
-                    selectedInstanse.isCons = true;
-                    selectedInstanse.data.constructionTime = Player.instanse.data.nowTime.AddSeconds(adjustedBuildTime);
-                    selectedInstanse.data.buildTime = adjustedBuildTime;
+                    selectedinstance.isCons = true;
+                    selectedinstance.data.constructionTime = Player.instance.data.nowTime.AddSeconds(adjustedBuildTime);
+                    selectedinstance.data.buildTime = adjustedBuildTime;
                 }
                 else
                 {
-                    selectedInstanse.isCons = false;
-                    selectedInstanse.level = selectedInstanse.level + 1;
-                    selectedInstanse.AdjustUI(true);
+                    selectedinstance.isCons = false;
+                    selectedinstance.level = selectedinstance.level + 1;
+                    selectedinstance.AdjustUI(true);
                 }
                 
-                selectedInstanse.lastChange = DateTime.Now;
+                selectedinstance.lastChange = DateTime.Now;
                 
                 Packet packet = new Packet();
                 packet.Write((int)Player.RequestsID.UPGRADE);
@@ -365,7 +365,7 @@
                 Sender.TCP_Send(packet);
                 
                 Close2();
-                SoundManager.instanse.PlaySound(SoundManager.instanse.buildStart);
+                SoundManager.instance.PlaySound(SoundManager.instance.buildStart);
             }
             else
             {

@@ -30,7 +30,7 @@ namespace DevelopersHub.ClashOfWhatecer
             _trophiesText.text = clan.trophies.ToString();
             _rankText.text = clan.rank.ToString();
             _nameText.text = Data.DecodeString(clan.name);
-            _icon.sprite = UI_Clan.instanse.patterns[clan.pattern];
+            _icon.sprite = UI_Clan.instance.patterns[clan.pattern];
             _background.color = Tools.HexToColor(clan.backgroundColor);
             _icon.color = Tools.HexToColor(clan.patternColor);
             _trophiesText.ForceMeshUpdate(true);
@@ -40,7 +40,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Select()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             Packet packet = new Packet();
             packet.Write((int)Player.RequestsID.OPENCLAN);
             long id = 0;

@@ -1,4 +1,4 @@
-﻿namespace RTLTMPro
+namespace RTLTMPro
 {
     public enum EnglishNumbers
     {

@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using DevelopersHub.RealtimeNetworking.Client;
     using System;
@@ -23,11 +23,11 @@
 
         private void Clicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            switch (Language.instanse.language)
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            switch (Language.instance.language)
             {
                 case Language.LanguageID.persian:
-                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "خرید بسته سپر دفاعی؟" }, new string[] { "بله", "خیر" });
+                    MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "???? ???? ??? ??????" }, new string[] { "???", "???" });
                     break;
                 default:
                     MessageBox.Open(3, 0.8f, true, MessageResponded, new string[] { "Buy the shield pack?" }, new string[] { "Yes", "No" });
@@ -67,23 +67,23 @@
             TimeSpan span = new TimeSpan();
             if (pack == 1)
             {
-                span = Player.instanse.data.shield1 - Player.instanse.data.nowTime;
+                span = Player.instance.data.shield1 - Player.instance.data.nowTime;
                 price = 10;
                 cooldown = "23H";
             }
             else if (pack == 2)
             {
-                span = Player.instanse.data.shield2 - Player.instanse.data.nowTime;
+                span = Player.instance.data.shield2 - Player.instance.data.nowTime;
                 price = 100;
                 cooldown = "5d";
             }
             else if (pack == 3)
             {
-                span = Player.instanse.data.shield3 - Player.instanse.data.nowTime;
+                span = Player.instance.data.shield3 - Player.instance.data.nowTime;
                 price = 250;
                 cooldown = "35d";
             }
-            if (Player.instanse.data.gems >= price)
+            if (Player.instance.data.gems >= price)
             {
                 _priceText.color = Color.white;
                 SetStatus(true);

@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using NUnit.Framework;
 
 namespace RTLTMPro.Tests

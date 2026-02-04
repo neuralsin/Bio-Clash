@@ -88,7 +88,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
                     await connection.OpenAsync();
                     
                     string query = @"
-                        INSERT INTO fitness_logs (player_id, muscle_group, volume_kg, reps, logged_at)
+                        INSERT INTO fitness_logs (account_id, muscle_group, volume_kg, reps, logged_at)
                         VALUES (@playerId, @muscle, @volume, @reps, NOW())";
                     
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
@@ -120,7 +120,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
         private static async Task UpdatePlayerVolume(MySqlConnection connection, long playerId, int muscleGroup, float volume)
         {
             string query = @"
-                INSERT INTO player_fitness (player_id, muscle_group, total_volume)
+                INSERT INTO player_fitness (account_id, muscle_group, total_volume)
                 VALUES (@playerId, @muscle, @volume)
                 ON DUPLICATE KEY UPDATE total_volume = total_volume + @volume";
             
@@ -160,7 +160,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
                     string query = @"
                         SELECT muscle_group, total_volume 
                         FROM player_fitness 
-                        WHERE player_id = @playerId";
+                        WHERE account_id = @playerId";
                     
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
@@ -230,8 +230,8 @@ namespace DevelopersHub.RealtimeNetworking.Server
                     await connection.OpenAsync();
                     
                     string query = @"
-                        SELECT streak FROM player_fitness_meta 
-                        WHERE player_id = @playerId";
+                        SELECT streak_days FROM player_fitness 
+                        WHERE account_id = @playerId";
                     
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
@@ -260,8 +260,8 @@ namespace DevelopersHub.RealtimeNetworking.Server
                     await connection.OpenAsync();
                     
                     string query = @"
-                        SELECT recovery_score FROM player_fitness_meta 
-                        WHERE player_id = @playerId";
+                        SELECT recovery_score FROM player_fitness 
+                        WHERE account_id = @playerId";
                     
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))
                     {
@@ -323,7 +323,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
                     string query = @"
                         SELECT SUM(volume_kg) as today_volume 
                         FROM fitness_logs 
-                        WHERE player_id = @playerId 
+                        WHERE account_id = @playerId 
                         AND DATE(logged_at) = CURDATE()";
                     
                     using (MySqlCommand cmd = new MySqlCommand(query, connection))

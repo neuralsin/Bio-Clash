@@ -14,7 +14,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private UI_BattleReportsItem _reportPrefab = null;
         [SerializeField] private RectTransform _reportsParent = null;
 
-        private static UI_BattleReports _instance = null; public static UI_BattleReports instanse { get { return _instance; } }
+        private static UI_BattleReports _instance = null; public static UI_BattleReports instance { get { return _instance; } }
         private bool _active = false; public bool isActive { get { return _active; } }
         private List<UI_BattleReportsItem> items = new List<UI_BattleReportsItem>();
 
@@ -55,15 +55,15 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             _Close();
         }
 
         public void _Close()
         {
-            if(Building.selectedInstanse != null)
+            if(Building.selectedinstance != null)
             {
-                Building.selectedInstanse.Deselected();
+                Building.selectedinstance.Deselected();
             }
             _active = false;
             _elements.SetActive(false);
@@ -87,7 +87,7 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 _Close();
             }
-            UI_Scout.instanse.Open(player, report.type, report);
+            UI_Scout.instance.Open(player, report.type, report);
         }
 
     }

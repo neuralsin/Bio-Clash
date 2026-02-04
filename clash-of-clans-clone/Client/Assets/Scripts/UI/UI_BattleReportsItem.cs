@@ -17,7 +17,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private GameObject _attackIcon = null;
         [SerializeField] private GameObject _defendIcon = null;
         [SerializeField] private GameObject _backgroundVictory = null;
-        [SerializeField] private GameObject _backgroundDefeate = null;
+        [SerializeField] private GameObject _backgrounddefeat = null;
 
         private void Start()
         {
@@ -31,17 +31,17 @@ namespace DevelopersHub.ClashOfWhatecer
             _nameText.ForceMeshUpdate(true);
             _trophiesText.text = _data.trophies.ToString();
             _trophiesText.ForceMeshUpdate(true);
-            _attackIcon.SetActive(_data.attacker == Player.instanse.data.id);
-            _defendIcon.SetActive(_data.defender == Player.instanse.data.id);
-            if ((_data.attacker == Player.instanse.data.id && _data.stars > 0) || (_data.defender == Player.instanse.data.id && _data.stars <= 0))
+            _attackIcon.SetActive(_data.attacker == Player.instance.data.id);
+            _defendIcon.SetActive(_data.defender == Player.instance.data.id);
+            if ((_data.attacker == Player.instance.data.id && _data.stars > 0) || (_data.defender == Player.instance.data.id && _data.stars <= 0))
             {
                 _backgroundVictory.SetActive(true);
-                _backgroundDefeate.SetActive(false);
+                _backgrounddefeat.SetActive(false);
             }
             else
             {
                 _backgroundVictory.SetActive(false);
-                _backgroundDefeate.SetActive(true);
+                _backgrounddefeat.SetActive(true);
             }
             _playButton.gameObject.SetActive(data.hasReply);
         }
