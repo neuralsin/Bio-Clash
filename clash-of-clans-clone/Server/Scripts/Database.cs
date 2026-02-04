@@ -23,7 +23,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
 
         public static MySqlConnection GetMysqlConnection()
         {
-            MySqlConnection connection = new MySqlConnection("SERVER=" + _mysqlServer + "; DATABASE=" + _mysqlDatabase + "; UID=" + _mysqlUsername + "; PWD=" + _mysqlPassword + "; POOLING=TRUE; CHARSET=UTF8");
+            MySqlConnection connection = new MySqlConnection("SERVER=" + _mysqlServer + "; DATABASE=" + _mysqlDatabase + "; UID=" + _mysqlUsername + "; PWD=" + _mysqlPassword + "; POOLING=FALSE; CHARSET=UTF8");
             if (connection.State == ConnectionState.Closed)
             {
                 connection.Open();
@@ -3135,7 +3135,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
             Packet packet = new Packet();
             packet.Write((int)Terminal.RequestsID.WARREPORTLIST);
             List<Data.ClanWarData> response = await GetWarReportsListAsync(account_id);
-            string data = await Data.SerializeAsync<Data.ClanWarData>(response);
+            string data = await Data.SerializeAsync<List<Data.ClanWarData>>(response);
             packet.Write(data);
             Sender.TCP_Send(id, packet);
         }

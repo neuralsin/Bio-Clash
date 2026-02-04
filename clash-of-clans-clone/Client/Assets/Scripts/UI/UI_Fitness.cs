@@ -206,15 +206,32 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Start()
         {
+            // If we have references assigned in editor, initialize. 
+            // If they are null (programmatic setup), Initialize() will be called by FitnessSetup.
+            if (_closeButton != null || _logButton != null)
+            {
+                Initialize();
+            }
+        }
+
+        /// <summary>
+        /// Explicit initialization method called by FitnessSetup after creating UI elements.
+        /// This fixes the race condition where Start() ran before buttons were created.
+        /// </summary>
+        public void Initialize()
+        {
             RefreshStats();
             
+            // Clear previous listeners to avoid duplicates if re-initialized
+            RemoveAllListeners();
+
             if (_closeButton != null)
                 _closeButton.onClick.AddListener(Close);
             else
                 Debug.LogWarning("UI_Fitness: Close Button not assigned!");
 
             if (_logButton != null)
-                _logButton.onClick.AddListener(AddExerciseToSession);
+                _logButton.onClick.AddListener(LogWorkout); // Fixed: Was AddExerciseToSession, but LogWorkout handles manual input
 
             if (_quickBenchButton != null) _quickBenchButton.onClick.AddListener(() => QuickLog("Bench Press"));
             if (_quickSquatButton != null) _quickSquatButton.onClick.AddListener(() => QuickLog("Squat"));
@@ -227,10 +244,29 @@ namespace DevelopersHub.ClashOfWhatecer
             if (_pauseWorkoutButton != null) _pauseWorkoutButton.onClick.AddListener(TogglePauseWorkout);
             if (_addExerciseButton != null) _addExerciseButton.onClick.AddListener(AddExerciseToSession);
             
+            if (_logHealthButton != null) _logHealthButton.onClick.AddListener(LogHealth);
+
             LoadHealthData();
 
             // Initialize workout session UI
             UpdateWorkoutSessionUI();
+            
+            Debug.Log("UI_Fitness Initialized Successfully");
+        }
+
+        private void RemoveAllListeners()
+        {
+            if (_closeButton != null) _closeButton.onClick.RemoveAllListeners();
+            if (_logButton != null) _logButton.onClick.RemoveAllListeners();
+            if (_quickBenchButton != null) _quickBenchButton.onClick.RemoveAllListeners();
+            if (_quickSquatButton != null) _quickSquatButton.onClick.RemoveAllListeners();
+            if (_quickDeadliftButton != null) _quickDeadliftButton.onClick.RemoveAllListeners();
+            if (_quickRunButton != null) _quickRunButton.onClick.RemoveAllListeners();
+            if (_startWorkoutButton != null) _startWorkoutButton.onClick.RemoveAllListeners();
+            if (_stopWorkoutButton != null) _stopWorkoutButton.onClick.RemoveAllListeners();
+            if (_pauseWorkoutButton != null) _pauseWorkoutButton.onClick.RemoveAllListeners();
+            if (_addExerciseButton != null) _addExerciseButton.onClick.RemoveAllListeners();
+            if (_logHealthButton != null) _logHealthButton.onClick.RemoveAllListeners();
         }
 
         private void PopulateDropdowns()
