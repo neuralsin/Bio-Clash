@@ -44,144 +44,115 @@ namespace DevelopersHub.ClashOfWhatecer
             }
             _closeButton.onClick.AddListener(CloseShop);
             
-            // Bio-Clash: Initialize Codex UI
-            InitializeCodex();
+            // Bio-Clash: Initialize n8n Flowchart UI
+            InitializeN8nFlowchart();
         }
 
         // ============================================================
-        // BIO-CLASH CODEX UI
+        // BIO-CLASH N8N FLOWCHART UI
         // ============================================================
         
-        private GameObject _codexPanel;
-        private bool _isCodexOpen = false;
-
-        private void InitializeCodex()
+        private void InitializeN8nFlowchart()
         {
-            // Create CODEX button
-            GameObject codexBtnObj = new GameObject("BtnCodex");
-            codexBtnObj.transform.SetParent(_elements.transform, false);
-            
-            RectTransform btnRect = codexBtnObj.AddComponent<RectTransform>();
-            // Position top-left (near currency) or top-right? Let's put it top-center-ish
-            btnRect.anchorMin = new Vector2(0.8f, 0.9f);
-            btnRect.anchorMax = new Vector2(0.95f, 0.98f);
-            btnRect.offsetMin = Vector2.zero;
-            btnRect.offsetMax = Vector2.zero;
-            
-            Image btnImg = codexBtnObj.AddComponent<Image>();
-            btnImg.color = new Color(0.4f, 0.2f, 0.6f, 1f); // Purple
-            
-            Button btn = codexBtnObj.AddComponent<Button>();
-            btn.targetGraphic = btnImg;
-            btn.onClick.AddListener(ToggleCodex);
-            
-            // Button Text
-            GameObject txtObj = new GameObject("Text");
-            txtObj.transform.SetParent(codexBtnObj.transform, false);
-            RectTransform txtRect = txtObj.AddComponent<RectTransform>();
-            txtRect.anchorMin = Vector2.zero;
-            txtRect.anchorMax = Vector2.one;
-            
+            // ═══════════════════════════════════════════════════════════════
+            // MODERN N8N-STYLE 1:1 MAPPING FLOWCHART
+            // Each muscle group maps to exactly one defense building
+            // ═══════════════════════════════════════════════════════════════
+
+            // 1:1 Mappings with unique accent colors (HSL-inspired palette)
+            var mappings = new List<(string muscle, string building, Color accent)>
+            {
+                ("CHEST",     "Archer Tower",  new Color(1.0f, 0.42f, 0.42f)),  // Coral Red
+                ("BACK",      "Cannon",        new Color(0.4f, 0.6f, 1.0f)),    // Sky Blue
+                ("SHOULDERS", "Wizard Tower",  new Color(1.0f, 0.84f, 0.0f)),   // Gold
+                ("BICEPS",    "Hidden Tesla",  new Color(0.87f, 0.63f, 0.87f)), // Plum
+                ("TRICEPS",   "Mortar",        new Color(0.69f, 0.88f, 0.9f)),  // Powder Blue
+                ("LEGS",      "Inferno Tower", new Color(1.0f, 0.55f, 0.0f)),   // Orange
+                ("CORE",      "Walls",         new Color(0.6f, 0.98f, 0.6f)),   // Pale Green
+                ("CARDIO",    "X-Bow",         new Color(0.0f, 1.0f, 1.0f))     // Cyan
+            };
+
+            // Sort by combined text length for clean visual flow
+            mappings.Sort((a, b) => (a.muscle.Length + a.building.Length)
+                                    .CompareTo(b.muscle.Length + b.building.Length));
+
+            // Container - positioned below currency bar, non-overlapping
+            GameObject container = new GameObject("N8nFlowchartContainer");
+            container.transform.SetParent(_elements.transform, false);
+
+            RectTransform containerRect = container.AddComponent<RectTransform>();
+            containerRect.anchorMin = new Vector2(0.02f, 0.76f);
+            containerRect.anchorMax = new Vector2(0.98f, 0.86f);
+            containerRect.offsetMin = Vector2.zero;
+            containerRect.offsetMax = Vector2.zero;
+
+            // Glassmorphism background
+            Image containerBg = container.AddComponent<Image>();
+            containerBg.color = new Color(0.08f, 0.08f, 0.12f, 0.85f); // Near-black with transparency
+
+            // Subtle border glow
+            Outline containerOutline = container.AddComponent<Outline>();
+            containerOutline.effectColor = new Color(0.4f, 0.8f, 1.0f, 0.3f); // Soft cyan glow
+            containerOutline.effectDistance = new Vector2(1, -1);
+
+            // Horizontal layout with spacing
+            HorizontalLayoutGroup layout = container.AddComponent<HorizontalLayoutGroup>();
+            layout.padding = new RectOffset(12, 12, 6, 6);
+            layout.spacing = 8;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.MiddleCenter;
+
+            // Create each node
+            foreach (var mapping in mappings)
+            {
+                CreateFlowNode(container.transform, mapping.muscle, mapping.building, mapping.accent);
+            }
+        }
+
+        private void CreateFlowNode(Transform parent, string muscle, string building, Color accentColor)
+        {
+            // Node container
+            GameObject nodeObj = new GameObject($"Node_{muscle}");
+            nodeObj.transform.SetParent(parent, false);
+
+            // Modern card-style background
+            Image nodeImg = nodeObj.AddComponent<Image>();
+            nodeImg.color = new Color(0.12f, 0.14f, 0.18f, 0.95f); // Dark charcoal
+
+            // Accent border (unique per muscle)
+            Outline accent = nodeObj.AddComponent<Outline>();
+            accent.effectColor = new Color(accentColor.r, accentColor.g, accentColor.b, 0.7f);
+            accent.effectDistance = new Vector2(2, -2);
+
+            // Inner padding
+            HorizontalLayoutGroup hlg = nodeObj.AddComponent<HorizontalLayoutGroup>();
+            hlg.padding = new RectOffset(8, 8, 4, 4);
+            hlg.spacing = 4;
+            hlg.childControlWidth = true;
+            hlg.childControlHeight = true;
+            hlg.childForceExpandWidth = false;
+            hlg.childForceExpandHeight = false;
+            hlg.childAlignment = TextAnchor.MiddleCenter;
+
+            // Text with modern styling
+            GameObject txtObj = new GameObject("Label");
+            txtObj.transform.SetParent(nodeObj.transform, false);
+
             TextMeshProUGUI tmp = txtObj.AddComponent<TextMeshProUGUI>();
-            tmp.text = "📖 CODEX";
-            tmp.fontSize = 18;
+            
+            // Format: MUSCLE → Building (1:1 mapping, clear and readable)
+            string hexColor = ColorUtility.ToHtmlStringRGB(accentColor);
+            tmp.text = $"<color=#{hexColor}><b>{muscle}</b></color> <color=#888888>→</color> <color=#ffffff>{building}</color>";
+            tmp.fontSize = 12;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = Color.white;
-            tmp.fontStyle = FontStyles.Bold; // Make sure FontStyles is available or use numeric
-
-            // Create Codex Panel (Hidden by default)
-            _codexPanel = new GameObject("CodexPanel");
-            _codexPanel.transform.SetParent(_elements.transform, false);
-            _codexPanel.SetActive(false);
-            
-            RectTransform panelRect = _codexPanel.AddComponent<RectTransform>();
-            panelRect.anchorMin = new Vector2(0.1f, 0.1f);
-            panelRect.anchorMax = new Vector2(0.9f, 0.9f);
-            panelRect.offsetMin = Vector2.zero;
-            panelRect.offsetMax = Vector2.zero;
-            
-            Image panelImg = _codexPanel.AddComponent<Image>();
-            panelImg.color = new Color(0.1f, 0.1f, 0.15f, 0.98f); // Dark background
-            
-            // Add Border
-            Outline outline = _codexPanel.AddComponent<Outline>();
-            outline.effectColor = new Color(0.4f, 0.8f, 1f, 0.5f);
-            outline.effectDistance = new Vector2(2, 2);
-
-            // Title
-            CreateText(_codexPanel.transform, "Title", "🧬 BIO-CODEX: MUSCLE MAPPING", 28, 
-                new Vector2(0, 0.9f), new Vector2(1, 1), TextAlignmentOptions.Center, Color.cyan);
-
-            // Close Codex Button
-            GameObject closeBtn = new GameObject("CloseCodex");
-            closeBtn.transform.SetParent(_codexPanel.transform, false);
-            RectTransform closeRect = closeBtn.AddComponent<RectTransform>();
-            closeRect.anchorMin = new Vector2(0.92f, 0.92f);
-            closeRect.anchorMax = new Vector2(0.98f, 0.98f);
-            
-            Image closeImg = closeBtn.AddComponent<Image>();
-            closeImg.color = Color.red;
-            
-            Button cBtn = closeBtn.AddComponent<Button>();
-            cBtn.onClick.AddListener(ToggleCodex);
-            
-            GameObject closeTxt = new GameObject("Text");
-            closeTxt.transform.SetParent(closeBtn.transform, false);
-            RectTransform ctRect = closeTxt.AddComponent<RectTransform>();
-            ctRect.anchorMin = Vector2.zero;
-            ctRect.anchorMax = Vector2.one;
-            
-            TextMeshProUGUI cTmp = closeTxt.AddComponent<TextMeshProUGUI>();
-            cTmp.text = "X";
-            cTmp.alignment = TextAlignmentOptions.Center;
-            cTmp.fontSize = 20;
-
-            // Content
-            string content = 
-                "<color=#ff9999><b>CHEST</b></color>  ➔  <color=#ffffff>Archer Tower</color>\n" +
-                "<color=#9999ff><b>BACK</b></color>   ➔  <color=#ffffff>Cannon</color>\n" +
-                "<color=#ffff99><b>SHOULDERS</b></color> ➔ <color=#ffffff>Wizard Tower / Air Def</color>\n" +
-                "<color=#ff99ff><b>BICEPS</b></color> ➔  <color=#ffffff>Hidden Tesla / Bomb Tower</color>\n" +
-                "<color=#cc99ff><b>TRICEPS</b></color> ➔ <color=#ffffff>Mortar</color>\n" +
-                "<color=#99ff99><b>LEGS</b></color>   ➔  <color=#ffffff>Inferno Tower</color>\n" +
-                "<color=#ffffcc><b>CORE</b></color>   ➔  <color=#ffffff>Walls</color>\n" +
-                "<color=#99ffff><b>CARDIO</b></color> ➔  <color=#ffffff>X-Bow</color>\n\n" +
-                "<i>Train specific muscles to unlock upgrades for these buildings!</i>";
-
-            CreateText(_codexPanel.transform, "Content", content, 24,
-                new Vector2(0.1f, 0.1f), new Vector2(0.9f, 0.85f), TextAlignmentOptions.TopLeft, Color.white);
-        }
-
-        private void ToggleCodex()
-        {
-            _isCodexOpen = !_isCodexOpen;
-            if (_codexPanel != null)
-                _codexPanel.SetActive(_isCodexOpen);
-            
-            if (SoundManager.instance != null)
-                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
-        }
-
-        private GameObject CreateText(Transform parent, string name, string text, int fontSize, 
-            Vector2 anchorMin, Vector2 anchorMax, TextAlignmentOptions align, Color color)
-        {
-            GameObject textGO = new GameObject(name);
-            textGO.transform.SetParent(parent, false);
-            
-            RectTransform rect = textGO.AddComponent<RectTransform>();
-            rect.anchorMin = anchorMin;
-            rect.anchorMax = anchorMax;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-            
-            TextMeshProUGUI tmp = textGO.AddComponent<TextMeshProUGUI>();
-            tmp.text = text;
-            tmp.fontSize = fontSize;
-            tmp.alignment = align;
-            tmp.color = color;
-            tmp.richText = true; // Enable rich text for colors
-            
-            return textGO;
+            tmp.richText = true;
+            tmp.enableWordWrapping = false;
+            tmp.fontStyle = FontStyles.Normal;
+            tmp.characterSpacing = 0.5f; // Slightly increased letter spacing for modern feel
         }
 
         public bool IsBuildingInShop(Data.BuildingID id)

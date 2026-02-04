@@ -319,7 +319,6 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 float.TryParse(_weightInput.text, out weight);
             }
-            Debug.Log($"   Weight: {weight} kg");
 
             // Parse reps
             int reps = 0;
@@ -327,7 +326,6 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 int.TryParse(_repsInput.text, out reps);
             }
-            Debug.Log($"   Reps: {reps}");
 
             // Parse sets (default to 1)
             int sets = 1;
@@ -335,12 +333,10 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 int.TryParse(_setsInput.text, out sets);
             }
-            Debug.Log($"   Sets: {sets}");
 
             // Get exercise and muscle names
-            string exerciseName = _exerciseInput != null ? _exerciseInput.text.Trim() : "";
+            string exerciseName = _exerciseInput != null ? _exerciseInput.text.Trim() : "Manual Exercise";
             string muscleName = _muscleInput != null ? _muscleInput.text.Trim() : "Chest";
-            Debug.Log($"   Exercise: '{exerciseName}', Muscle: '{muscleName}'");
 
             if (weight <= 0 || reps <= 0)
             {
@@ -350,35 +346,43 @@ namespace DevelopersHub.ClashOfWhatecer
 
             // Determine muscle group
             FitnessManager.MuscleGroup muscle = FitnessManager.MuscleGroup.Chest;
-            
-            // Try parsing muscle name directly first
             try
             {
                 muscle = (FitnessManager.MuscleGroup)System.Enum.Parse(
                     typeof(FitnessManager.MuscleGroup), muscleName, true);
-                Debug.Log($"   ✓ Parsed muscle from input: {muscle}");
             }
             catch
             {
-                // Try auto-detection from exercise name
                 if (!string.IsNullOrEmpty(exerciseName) && 
                     FitnessManager.ExerciseToMuscle.TryGetValue(exerciseName, out var detected))
                 {
                     muscle = detected;
-                    Debug.Log($"   ✓ Auto-detected muscle from exercise: {muscle}");
-                }
-                else
-                {
-                    Debug.Log($"   ⚠️ Using default muscle: Chest");
                 }
             }
 
-            // Log each set
-            float totalVolume = weight * reps * sets;
+            // 1. Log to FitnessManager (Server/Persistence)
+            float setVolume = weight * reps;
+            float totalVolume = setVolume * sets;
+            
             for (int i = 0; i < sets; i++)
             {
                 FitnessManager.instance.LogWorkout(muscle, weight, reps);
             }
+
+            // 2. Add to Local Session List (UI Visibility)
+            var exercise = new WorkoutExercise
+            {
+                exerciseName = exerciseName,
+                muscleGroup = muscle,
+                weight = weight,
+                reps = reps,
+                sets = sets,
+                volume = totalVolume,
+                timestamp = System.DateTime.Now
+            };
+            _currentWorkoutExercises.Add(exercise);
+            _sessionTotalVolume += totalVolume;
+
             Debug.Log($"✅ LOGGED: {exerciseName} → {muscle} | {sets}x{reps} @ {weight}kg = {totalVolume}kg volume");
 
             // Clear inputs
@@ -387,8 +391,9 @@ namespace DevelopersHub.ClashOfWhatecer
             if (_setsInput != null) _setsInput.text = "";
             if (_exerciseInput != null) _exerciseInput.text = "";
 
-            // ALWAYS refresh stats after logging
+            // 3. Refresh UI
             RefreshStats();
+            UpdateExerciseList(); 
             UpdateWorkoutSessionUI();
 
             // Play success sound and animation
@@ -397,48 +402,51 @@ namespace DevelopersHub.ClashOfWhatecer
             
             if (_panel != null)
                 StartCoroutine(PunchScale(_panel.transform));
-            
-            Debug.Log($"✅ Logged: {weight}kg x {reps} reps");
         }
 
         private void QuickLog(string exercise)
         {
             Debug.Log($"📍 QuickLog called: {exercise}");
             
-            // Ensure FitnessManager exists
-            if (FitnessManager.instance == null)
-            {
-                Debug.LogError("❌ FitnessManager.instance is NULL! Creating one...");
-                GameObject fmGO = new GameObject("FitnessManager_AutoCreated");
-                fmGO.AddComponent<FitnessManager>();
-            }
+            if (FitnessManager.instance == null) return;
             
-            if (!quickExercises.ContainsKey(exercise))
-            {
-                Debug.LogWarning($"QuickLog: Unknown exercise '{exercise}'");
-                return;
-            }
+            if (!quickExercises.ContainsKey(exercise)) return;
 
             var preset = quickExercises[exercise];
-            
+            float vol = 0;
+
             if (preset.muscle == FitnessManager.MuscleGroup.Cardio)
             {
                 FitnessManager.instance.LogCardio((int)preset.weight);
-                Debug.Log($"🏃 Quick Logged: {exercise} ({preset.weight} min cardio)");
+                vol = preset.weight * 10; 
             }
             else
             {
                 FitnessManager.instance.LogWorkout(preset.muscle, preset.weight, preset.reps);
-                Debug.Log($"💪 Quick Logged: {exercise} ({preset.weight}kg x {preset.reps} reps → {preset.muscle})");
+                vol = preset.weight * preset.reps;
             }
 
+            // Add to Local List
+            var exEntry = new WorkoutExercise
+            {
+                exerciseName = exercise,
+                muscleGroup = preset.muscle,
+                weight = preset.weight,
+                reps = preset.reps,
+                sets = 1,
+                volume = vol,
+                timestamp = System.DateTime.Now
+            };
+            _currentWorkoutExercises.Add(exEntry);
+            _sessionTotalVolume += vol;
+
             RefreshStats();
+            UpdateExerciseList();
             UpdateWorkoutSessionUI();
             
             if (SoundManager.instance != null)
                 SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             
-            // Visual feedback - punch animation on the panel
             if (_panel != null)
                 StartCoroutine(PunchScale(_panel.transform));
         }
@@ -909,9 +917,19 @@ namespace DevelopersHub.ClashOfWhatecer
                     _workoutStatusText.text = "[GYM] Workout Active";
             }
 
-            // Update totals
+            // Update totals (Showing Last Exercise instead of Total Volume per user request)
             if (_totalVolumeText != null)
-                _totalVolumeText.text = $"[*] {_sessionTotalVolume:N0} kg";
+            {
+                 if (_currentWorkoutExercises.Count > 0)
+                 {
+                     var last = _currentWorkoutExercises[_currentWorkoutExercises.Count - 1];
+                     _totalVolumeText.text = $"[LAST] {last.exerciseName} - {last.sets}x{last.reps} @ {last.weight}kg";
+                 }
+                 else
+                 {
+                     _totalVolumeText.text = "[*] No recent activity";
+                 }
+            }
             if (_exerciseCountText != null)
                 _exerciseCountText.text = $"[#] {_currentWorkoutExercises.Count} exercises";
         }

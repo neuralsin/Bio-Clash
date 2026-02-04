@@ -116,6 +116,18 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             if (uiMain == null || uiMain._elements == null) return;
 
+            // Cleanup any existing/duplicate FitnessButtons (e.g. from previous runs or left-aligned versions)
+            // We iterate backwards to safely destroy
+            for (int i = uiMain._elements.transform.childCount - 1; i >= 0; i--)
+            {
+                Transform child = uiMain._elements.transform.GetChild(i);
+                if (child.name == "FitnessButton" || (child.GetComponentInChildren<TextMeshProUGUI>() != null && child.GetComponentInChildren<TextMeshProUGUI>().text == "FITNESS"))
+                {
+                    Debug.Log($"[BIO-CLASH] Removing duplicate/old fitness button: {child.name}");
+                    DestroyImmediate(child.gameObject);
+                }
+            }
+
             // Check if button already exists via reflection
             var fitnessButtonField = typeof(UI_Main).GetField("_fitnessButton", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -129,8 +141,17 @@ namespace DevelopersHub.ClashOfWhatecer
             Button existingButton = fitnessButtonField.GetValue(uiMain) as Button;
             if (existingButton != null) 
             {
-                Debug.Log("[BIO-CLASH] Fitness button already assigned");
-                return;
+                // If the field is assigned but the GO was destroyed above, it's null now. 
+                // Checks if it's still valid in hierarchy
+                if (existingButton.gameObject == null)
+                {
+                     fitnessButtonField.SetValue(uiMain, null); // Clear reference
+                }
+                else
+                {
+                    Debug.Log("[BIO-CLASH] Fitness button already assigned and valid.");
+                    return;
+                }
             }
 
             // Create button in UI_Main._elements (bottom bar area)
@@ -138,8 +159,8 @@ namespace DevelopersHub.ClashOfWhatecer
             btnGO.transform.SetParent(uiMain._elements.transform, false);
             
             RectTransform btnRect = btnGO.AddComponent<RectTransform>();
-            btnRect.anchorMin = new Vector2(0.02f, 0.02f);
-            btnRect.anchorMax = new Vector2(0.15f, 0.12f);
+            btnRect.anchorMin = new Vector2(0.42f, 0.02f);
+            btnRect.anchorMax = new Vector2(0.58f, 0.12f);
             btnRect.offsetMin = Vector2.zero;
             btnRect.offsetMax = Vector2.zero;
 
@@ -396,6 +417,47 @@ namespace DevelopersHub.ClashOfWhatecer
                     Debug.Log("🔄 All fitness data reset!");
                 }
             });
+
+            // --- EXERCISE LIST SCROLL VIEW ---
+            GameObject listScroll = CreatePanel(workoutSection.transform, "ExerciseListScroll", new Color(0, 0, 0, 0.3f));
+            RectTransform scrollRect = listScroll.GetComponent<RectTransform>();
+            scrollRect.anchorMin = new Vector2(0.02f, 0.40f); // Occupy middle space
+            scrollRect.anchorMax = new Vector2(0.98f, 0.64f);
+            
+            // Add ScrollRect
+            ScrollRect sr = listScroll.AddComponent<ScrollRect>();
+            sr.horizontal = false;
+            sr.vertical = true;
+            
+            // Content
+            GameObject listContent = new GameObject("Content");
+            listContent.transform.SetParent(listScroll.transform, false);
+            RectTransform contentRect = listContent.AddComponent<RectTransform>();
+            contentRect.anchorMin = new Vector2(0, 1);
+            contentRect.anchorMax = new Vector2(1, 1);
+            contentRect.pivot = new Vector2(0.5f, 1);
+            contentRect.sizeDelta = new Vector2(0, 300); // Initial height
+            
+            // Vertical Layout Group for Content
+            VerticalLayoutGroup vlg = listContent.AddComponent<VerticalLayoutGroup>();
+            vlg.padding = new RectOffset(5, 5, 5, 5);
+            vlg.spacing = 2;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = false;
+            vlg.childForceExpandHeight = false;
+            
+            // Content Size Fitter
+            ContentSizeFitter csf = listContent.AddComponent<ContentSizeFitter>();
+            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            
+            sr.content = contentRect;
+            sr.viewport = scrollRect; // Self as viewport for simplicity
+            
+            // Mask
+            listScroll.AddComponent<RectMask2D>();
+            
+            fitnessUI._exerciseListContainer = listContent.transform;
+
 
             // Control buttons row - START button (visible when no workout active)
             GameObject startBtn = CreateButton(workoutSection.transform, "BtnStart", "▶ START", 14, 
