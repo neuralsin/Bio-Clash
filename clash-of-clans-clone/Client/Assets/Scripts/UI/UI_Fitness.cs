@@ -645,10 +645,10 @@ namespace DevelopersHub.ClashOfWhatecer
                 return;
             }
 
-            // Get exercise name
+            // Get exercise name from input field
             string exerciseName = "Custom Exercise";
-            if (_exerciseDropdown != null && _exerciseDropdown.options.Count > 0)
-                exerciseName = _exerciseDropdown.options[_exerciseDropdown.value].text;
+            if (_exerciseInput != null && !string.IsNullOrEmpty(_exerciseInput.text))
+                exerciseName = _exerciseInput.text;
 
             // Get weight
             float weight = 0;
@@ -671,12 +671,19 @@ namespace DevelopersHub.ClashOfWhatecer
                 return;
             }
 
-            // Auto-detect muscle group
+            // Auto-detect muscle group from exercise name
             FitnessManager.MuscleGroup muscleGroup = FitnessManager.MuscleGroup.Chest;
             if (FitnessManager.ExerciseToMuscle.TryGetValue(exerciseName, out var detected))
                 muscleGroup = detected;
-            else if (_muscleDropdown != null)
-                muscleGroup = (FitnessManager.MuscleGroup)_muscleDropdown.value;
+            else if (_muscleInput != null && !string.IsNullOrEmpty(_muscleInput.text))
+            {
+                // Try parsing muscle name from input
+                try
+                {
+                    muscleGroup = (FitnessManager.MuscleGroup)System.Enum.Parse(typeof(FitnessManager.MuscleGroup), _muscleInput.text, true);
+                }
+                catch { /* Keep default */ }
+            }
 
             // Calculate volume
             float volume = weight * reps * sets;

@@ -143,25 +143,10 @@ namespace DevelopersHub.ClashOfWhatecer
 
             // Input row 1: Exercise + Muscle
             CreateText(inputSection.transform, "ExerciseLabel", "Exercise:", 14, new Vector2(0.02f, 0.55f), new Vector2(0.15f, 0.95f));
-            fitnessUI._exerciseDropdown = CreateInputField(inputSection.transform, "ExerciseDropdown", "Bench Press ▼", new Vector2(0.16f, 0.55f), new Vector2(0.48f, 0.95f)).GetComponentInChildren<TMP_Dropdown>(); // Note: InputField helper creates InputField, but we need dropdown. Fixing this to InputField for now as placeholder or need real dropdown creation
-            // Fixing Dropdown: CreateInputField currently returns TMP_InputField. We need a real dropdown. For now, let's assume CreateInputField actually creates an InputField acting as a simple text entry if we don't implement full dropdown logic, OR we accept it's an input field for now. 
-            // In UI_Fitness, it's TMP_Dropdown. I need to handle this mismatch. 
-            // Let's change UI_Fitness to accept TMP_InputField for exercise/muscle if I can't easily create a dropdown here, OR I create a CreateDropdown helper.
-            // CAUTION: Changing UI_Fitness type again is risky. 
-            // Better: Let's make CreateDropdown helper.
+            fitnessUI._exerciseInput = CreateInputField(inputSection.transform, "ExerciseInput", "Bench Press", new Vector2(0.16f, 0.55f), new Vector2(0.48f, 0.95f)).GetComponent<TMP_InputField>();
             
-            // For now, I will map them to InputFields in the code logic to avoid complex UI creation if I don't have a Dropdown prefab. 
-            // Wait, UI_Fitness expects TMP_Dropdown. If I assign TMP_InputField to it, it won't work.
-            // I should change UI_Fitness to use TMP_InputField for simplicity in this generated UI, OR create a proper dropdown.
-            // Given the complexity of creating a standardized TMP_Dropdown from scratch (needs scroll rect, item templates etc), passing a TMP_InputField is safer for stability, and we can auto-detect from text.
-            // Refactoring UI_Fitness to usage of TMP_InputField for exercise input is safer.
-            
-            // Let's continue with assignments assuming I will refactor UI_Fitness to use InputFields for these inputs, which is also more flexible for "Custom Exercises".
-            
-            // Wait, I can't assign InputField to Dropdown variable.
-            // I will update UI_Fitness to use TMP_InputField for _exerciseDropdown and _muscleDropdown (renaming them or changing type).
-            // Actually, let's keep the names but change the type in UI_Fitness in a separate step if needed. 
-            // For this step, I will comment out the assignment of dropdowns and handle them as InputFields in next step.
+            CreateText(inputSection.transform, "MuscleLabel", "Muscle:", 14, new Vector2(0.50f, 0.55f), new Vector2(0.62f, 0.95f));
+            fitnessUI._muscleInput = CreateInputField(inputSection.transform, "MuscleInput", "Chest", new Vector2(0.63f, 0.55f), new Vector2(0.98f, 0.95f)).GetComponent<TMP_InputField>();
             
             fitnessUI._weightInput = CreateInputField(inputSection.transform, "WeightInput", "60", new Vector2(0.11f, 0.05f), new Vector2(0.25f, 0.50f)).GetComponent<TMP_InputField>();
             
