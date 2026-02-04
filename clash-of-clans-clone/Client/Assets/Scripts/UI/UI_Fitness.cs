@@ -209,7 +209,7 @@ namespace DevelopersHub.ClashOfWhatecer
             RefreshStats();
             
             if (_closeButton != null)
-                _closeButton.onClick.AddListener(ClosePanel);
+                _closeButton.onClick.AddListener(Close);
             else
                 Debug.LogWarning("UI_Fitness: Close Button not assigned!");
 

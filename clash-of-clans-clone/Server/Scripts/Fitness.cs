@@ -109,7 +109,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
             }
             catch (Exception ex)
             {
-                Terminal.Log($"Fitness.LogWorkout Error: {ex.Message}");
+                Console.WriteLine($"Fitness.LogWorkout Error: {ex.Message}");
                 return false;
             }
         }
@@ -170,8 +170,8 @@ namespace DevelopersHub.RealtimeNetworking.Server
                         {
                             while (await reader.ReadAsync())
                             {
-                                int muscle = reader.GetInt32("muscle_group");
-                                float volume = reader.GetFloat("total_volume");
+                                int muscle = reader.GetInt32(reader.GetOrdinal("muscle_group"));
+                                float volume = reader.GetFloat(reader.GetOrdinal("total_volume"));
                                 stats[muscle] = volume;
                             }
                         }
@@ -180,7 +180,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
             }
             catch (Exception ex)
             {
-                Terminal.Log($"Fitness.GetPlayerStats Error: {ex.Message}");
+                Console.WriteLine($"Fitness.GetPlayerStats Error: {ex.Message}");
             }
 
             return stats;

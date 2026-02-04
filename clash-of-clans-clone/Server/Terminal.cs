@@ -19,8 +19,8 @@ namespace DevelopersHub.RealtimeNetworking.Server
         public const int maxPlayers = 100000;
         public const int portNumber = 5555;
         public static int onlinePlayers = 0;
-        public static readonly string dataFolderPath = "C:\\Clash Of Whatever\\";
-        public static readonly string logFolderPath = "C:\\Clash Of Whatever\\Errors\\";
+        public static readonly string dataFolderPath = @"C:\Users\shaan\OneDrive\Documents\Bio-Clash\clash-of-clans-clone\Database";
+        public static readonly string logFolderPath = @"C:\Users\shaan\OneDrive\Documents\Bio-Clash\clash-of-clans-clone\Database";
 
         public static void OnClientConnected(int id, string ip)
         {

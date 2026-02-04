@@ -1,0 +1,7 @@
+﻿<Solution>
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="RTLTMPro.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="RTLTMPro-Editor.csproj" />
+  <Project Path="RTLTMPro-Tests.csproj" />
+</Solution>

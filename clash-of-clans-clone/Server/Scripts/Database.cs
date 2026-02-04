@@ -19,7 +19,7 @@ namespace DevelopersHub.RealtimeNetworking.Server
         private const string _mysqlServer = "127.0.0.1";
         private const string _mysqlUsername = "root";
         private const string _mysqlPassword = "";
-        private const string _mysqlDatabase = "clash_of_whatever";
+        private const string _mysqlDatabase = "bio_clash";
 
         public static MySqlConnection GetMysqlConnection()
         {

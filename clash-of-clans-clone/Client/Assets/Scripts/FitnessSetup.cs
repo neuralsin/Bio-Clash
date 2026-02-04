@@ -396,7 +396,7 @@ namespace DevelopersHub.ClashOfWhatecer
             return inputGO;
         }
 
-        private void CreateMuscleBar(Transform parent, string muscleName, float y)
+        private GameObject CreateMuscleBar(Transform parent, string muscleName, float y)
         {
             // Label
             CreateText(parent, muscleName + "Label", muscleName + ":", 16, new Vector2(0.02f, y - 0.08f), new Vector2(0.18f, y));
@@ -430,6 +430,8 @@ namespace DevelopersHub.ClashOfWhatecer
             
             // Volume text
             CreateText(parent, muscleName + "Volume", "500/1000 kg", 14, new Vector2(0.77f, y - 0.08f), new Vector2(0.98f, y));
+            
+            return bgBar;
         }
 
         private Color GetMuscleColor(string muscle)
