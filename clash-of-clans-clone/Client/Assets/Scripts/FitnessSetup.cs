@@ -151,10 +151,85 @@ namespace DevelopersHub.ClashOfWhatecer
             CreateText(statsSection.transform, "StreakLabel", "🔥 Streak: 0 days", 20, new Vector2(0.4f, 0.02f), new Vector2(0.7f, 0.12f));
             CreateText(statsSection.transform, "AttackLabel", "⚔️ Power: 0", 20, new Vector2(0.72f, 0.02f), new Vector2(0.98f, 0.12f));
 
+            // ============================================================
+            // HEALTH TRACKING SECTION
+            // ============================================================
+            GameObject healthSection = CreatePanel(bgPanel.transform, "HealthSection", new Color(0.1f, 0.18f, 0.15f, 1f));
+            RectTransform healthRect = healthSection.GetComponent<RectTransform>();
+            healthRect.anchorMin = new Vector2(0.52f, 0.08f);
+            healthRect.anchorMax = new Vector2(0.95f, 0.53f);
+            
+            // Adjust stats section to make room for health
+            statsRect.anchorMax = new Vector2(0.48f, 0.53f);
+
+            CreateText(healthSection.transform, "HealthTitle", "💚 HEALTH TRACKING", 22, new Vector2(0, 0.88f), new Vector2(1, 1));
+
+            // Health input fields
+            CreateText(healthSection.transform, "SleepLabel", "😴 Sleep (hrs):", 16, new Vector2(0.02f, 0.72f), new Vector2(0.45f, 0.82f));
+            CreateInputField(healthSection.transform, "SleepInput", "8", new Vector2(0.5f, 0.72f), new Vector2(0.95f, 0.82f));
+
+            CreateText(healthSection.transform, "WaterLabel", "💧 Water (L):", 16, new Vector2(0.02f, 0.58f), new Vector2(0.45f, 0.68f));
+            CreateInputField(healthSection.transform, "WaterInput", "2.5", new Vector2(0.5f, 0.58f), new Vector2(0.95f, 0.68f));
+
+            CreateText(healthSection.transform, "StepsLabel", "👟 Steps:", 16, new Vector2(0.02f, 0.44f), new Vector2(0.45f, 0.54f));
+            CreateInputField(healthSection.transform, "StepsInput", "5000", new Vector2(0.5f, 0.44f), new Vector2(0.95f, 0.54f));
+
+            CreateText(healthSection.transform, "HeartLabel", "❤️ Heart Rate:", 16, new Vector2(0.02f, 0.30f), new Vector2(0.45f, 0.40f));
+            CreateInputField(healthSection.transform, "HeartInput", "72", new Vector2(0.5f, 0.30f), new Vector2(0.95f, 0.40f));
+
+            CreateText(healthSection.transform, "WeightLabel", "⚖️ Weight (kg):", 16, new Vector2(0.02f, 0.16f), new Vector2(0.45f, 0.26f));
+            CreateInputField(healthSection.transform, "WeightInput", "70", new Vector2(0.5f, 0.16f), new Vector2(0.95f, 0.26f));
+
+            // Log Health button
+            CreateButton(healthSection.transform, "LogHealthButton", "📝 LOG HEALTH", 18, new Vector2(0.1f, 0.02f), new Vector2(0.9f, 0.12f));
+
+            // ============================================================
+            // WORKOUT SESSION SECTION
+            // ============================================================
+            GameObject workoutSection = CreatePanel(bgPanel.transform, "WorkoutSessionSection", new Color(0.12f, 0.1f, 0.18f, 1f));
+            RectTransform workoutRect = workoutSection.GetComponent<RectTransform>();
+            workoutRect.anchorMin = new Vector2(0.05f, 0.55f);
+            workoutRect.anchorMax = new Vector2(0.95f, 0.73f);
+
+            // Move input section higher
+            inputRect.anchorMin = new Vector2(0.05f, 0.37f);
+            inputRect.anchorMax = new Vector2(0.95f, 0.53f);
+
+            CreateText(workoutSection.transform, "WorkoutTitle", "🏋️ ACTIVE WORKOUT", 22, new Vector2(0, 0.75f), new Vector2(0.5f, 1f));
+
+            // Timer display
+            CreateText(workoutSection.transform, "WorkoutTimer", "⏱️ 0:00", 28, new Vector2(0.5f, 0.75f), new Vector2(1f, 1f));
+
+            // Status text
+            CreateText(workoutSection.transform, "WorkoutStatus", "💤 No workout in progress", 16, new Vector2(0.02f, 0.45f), new Vector2(0.6f, 0.7f));
+
+            // Session stats
+            CreateText(workoutSection.transform, "TotalVolume", "💪 0 kg", 16, new Vector2(0.6f, 0.55f), new Vector2(1f, 0.7f));
+            CreateText(workoutSection.transform, "ExerciseCount", "📋 0 exercises", 16, new Vector2(0.6f, 0.4f), new Vector2(1f, 0.55f));
+
+            // Control buttons row
+            CreateButton(workoutSection.transform, "StartWorkoutBtn", "▶️ START", 16, new Vector2(0.02f, 0.05f), new Vector2(0.32f, 0.35f));
+            CreateButton(workoutSection.transform, "StopWorkoutBtn", "⏹️ FINISH", 16, new Vector2(0.02f, 0.05f), new Vector2(0.32f, 0.35f));
+            CreateButton(workoutSection.transform, "PauseWorkoutBtn", "⏸️ PAUSE", 16, new Vector2(0.34f, 0.05f), new Vector2(0.64f, 0.35f));
+            CreateButton(workoutSection.transform, "AddExerciseBtn", "➕ ADD SET", 16, new Vector2(0.66f, 0.05f), new Vector2(0.98f, 0.35f));
+
+            // Sets input (add to existing input section)
+            CreateText(inputSection.transform, "SetsLabel", "Sets:", 18, new Vector2(0.35f, 0.1f), new Vector2(0.48f, 0.45f));
+            CreateInputField(inputSection.transform, "SetsInput", "3", new Vector2(0.5f, 0.1f), new Vector2(0.65f, 0.45f));
+
+            // Update log button text
+            var logBtnTransform = inputSection.transform.Find("LogButton");
+            if (logBtnTransform != null)
+            {
+                var btnText = logBtnTransform.GetComponentInChildren<TextMeshProUGUI>();
+                if (btnText != null)
+                    btnText.text = "📝 QUICK LOG";
+            }
+
             // Initially hide the panel
             fitnessPanel.SetActive(false);
 
-            Debug.Log("✅ Fitness UI panel created automatically");
+            Debug.Log("✅ Fitness UI with Workout Session created automatically");
         }
 
         private GameObject CreatePanel(Transform parent, string name, Color color)

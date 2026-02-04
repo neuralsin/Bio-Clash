@@ -96,6 +96,133 @@ namespace DevelopersHub.ClashOfWhatecer
         };
 
         // ============================================================
+        // EXERCISE AUTO-DETECTION: Exercise → Muscle Group Mapping
+        // ============================================================
+        public static readonly Dictionary<string, MuscleGroup> ExerciseToMuscle = new Dictionary<string, MuscleGroup>(StringComparer.OrdinalIgnoreCase)
+        {
+            // CHEST EXERCISES
+            { "Bench Press", MuscleGroup.Chest },
+            { "Incline Press", MuscleGroup.Chest },
+            { "Decline Press", MuscleGroup.Chest },
+            { "Dumbbell Fly", MuscleGroup.Chest },
+            { "Chest Fly", MuscleGroup.Chest },
+            { "Push-ups", MuscleGroup.Chest },
+            { "Pushups", MuscleGroup.Chest },
+            { "Cable Crossover", MuscleGroup.Chest },
+            { "Pec Deck", MuscleGroup.Chest },
+            { "Dips", MuscleGroup.Chest }, // Also triceps but primary chest
+
+            // BACK EXERCISES
+            { "Deadlift", MuscleGroup.Back },
+            { "Barbell Row", MuscleGroup.Back },
+            { "Dumbbell Row", MuscleGroup.Back },
+            { "Bent Over Row", MuscleGroup.Back },
+            { "Lat Pulldown", MuscleGroup.Back },
+            { "Pull-ups", MuscleGroup.Back },
+            { "Pullups", MuscleGroup.Back },
+            { "Chin-ups", MuscleGroup.Back },
+            { "Chinups", MuscleGroup.Back },
+            { "Seated Row", MuscleGroup.Back },
+            { "Cable Row", MuscleGroup.Back },
+            { "T-Bar Row", MuscleGroup.Back },
+            { "Face Pull", MuscleGroup.Back },
+
+            // SHOULDER EXERCISES
+            { "Overhead Press", MuscleGroup.Shoulders },
+            { "Military Press", MuscleGroup.Shoulders },
+            { "Shoulder Press", MuscleGroup.Shoulders },
+            { "Lateral Raise", MuscleGroup.Shoulders },
+            { "Side Raise", MuscleGroup.Shoulders },
+            { "Front Raise", MuscleGroup.Shoulders },
+            { "Rear Delt Fly", MuscleGroup.Shoulders },
+            { "Arnold Press", MuscleGroup.Shoulders },
+            { "Upright Row", MuscleGroup.Shoulders },
+            { "Shrugs", MuscleGroup.Shoulders },
+
+            // BICEPS EXERCISES
+            { "Bicep Curl", MuscleGroup.Biceps },
+            { "Barbell Curl", MuscleGroup.Biceps },
+            { "Dumbbell Curl", MuscleGroup.Biceps },
+            { "Hammer Curl", MuscleGroup.Biceps },
+            { "Preacher Curl", MuscleGroup.Biceps },
+            { "Concentration Curl", MuscleGroup.Biceps },
+            { "Cable Curl", MuscleGroup.Biceps },
+            { "EZ Bar Curl", MuscleGroup.Biceps },
+            { "Spider Curl", MuscleGroup.Biceps },
+
+            // TRICEPS EXERCISES
+            { "Tricep Pushdown", MuscleGroup.Triceps },
+            { "Tricep Extension", MuscleGroup.Triceps },
+            { "Skull Crusher", MuscleGroup.Triceps },
+            { "Overhead Extension", MuscleGroup.Triceps },
+            { "Close Grip Bench", MuscleGroup.Triceps },
+            { "Tricep Dips", MuscleGroup.Triceps },
+            { "Kickbacks", MuscleGroup.Triceps },
+            { "Diamond Push-ups", MuscleGroup.Triceps },
+
+            // LEG EXERCISES
+            { "Squat", MuscleGroup.Legs },
+            { "Back Squat", MuscleGroup.Legs },
+            { "Front Squat", MuscleGroup.Legs },
+            { "Leg Press", MuscleGroup.Legs },
+            { "Lunges", MuscleGroup.Legs },
+            { "Leg Extension", MuscleGroup.Legs },
+            { "Leg Curl", MuscleGroup.Legs },
+            { "Calf Raise", MuscleGroup.Legs },
+            { "Romanian Deadlift", MuscleGroup.Legs },
+            { "Hip Thrust", MuscleGroup.Legs },
+            { "Bulgarian Split Squat", MuscleGroup.Legs },
+            { "Hack Squat", MuscleGroup.Legs },
+            { "Step-ups", MuscleGroup.Legs },
+
+            // CORE EXERCISES
+            { "Plank", MuscleGroup.Core },
+            { "Crunches", MuscleGroup.Core },
+            { "Sit-ups", MuscleGroup.Core },
+            { "Situps", MuscleGroup.Core },
+            { "Leg Raise", MuscleGroup.Core },
+            { "Russian Twist", MuscleGroup.Core },
+            { "Ab Wheel", MuscleGroup.Core },
+            { "Cable Crunch", MuscleGroup.Core },
+            { "Hanging Leg Raise", MuscleGroup.Core },
+            { "Mountain Climbers", MuscleGroup.Core },
+            { "Dead Bug", MuscleGroup.Core },
+            { "Bicycle Crunch", MuscleGroup.Core },
+
+            // CARDIO EXERCISES
+            { "Running", MuscleGroup.Cardio },
+            { "Run", MuscleGroup.Cardio },
+            { "Jogging", MuscleGroup.Cardio },
+            { "Cycling", MuscleGroup.Cardio },
+            { "Bike", MuscleGroup.Cardio },
+            { "Rowing", MuscleGroup.Cardio },
+            { "Swimming", MuscleGroup.Cardio },
+            { "Jump Rope", MuscleGroup.Cardio },
+            { "Burpees", MuscleGroup.Cardio },
+            { "HIIT", MuscleGroup.Cardio },
+            { "Elliptical", MuscleGroup.Cardio },
+            { "Stair Climber", MuscleGroup.Cardio },
+            { "Walking", MuscleGroup.Cardio },
+            { "Treadmill", MuscleGroup.Cardio }
+        };
+
+        // ============================================================
+        // MUSCLE CURRENCY: Each muscle has its own currency (volume-based)
+        // Used ONLY for upgrading buildings mapped to that muscle
+        // ============================================================
+        [System.Serializable]
+        public class MuscleCurrency
+        {
+            public string muscleName;
+            public float volume;         // Total kg lifted
+            public float todayVolume;    // Today's volume
+            public int workoutCount;     // Total sets logged
+            public string mappedBuilding; // The building this unlocks
+        }
+
+        public MuscleCurrency[] muscleCurrencies = new MuscleCurrency[8];
+
+        // ============================================================
         // UNITY LIFECYCLE
         // ============================================================
         private void Awake()
@@ -113,8 +240,33 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void Start()
         {
+            // Initialize muscle currencies
+            InitializeMuscleCurrencies();
+            
             // Load saved fitness data
             LoadFitnessData();
+        }
+
+        /// <summary>
+        /// Initialize the muscle currency tracking system.
+        /// Each muscle is its own currency for building upgrades.
+        /// </summary>
+        private void InitializeMuscleCurrencies()
+        {
+            string[] muscleNames = { "Chest", "Back", "Shoulders", "Biceps", "Triceps", "Legs", "Core", "Cardio" };
+            string[] buildingNames = { "Archer Tower", "Cannon", "Wizard Tower", "Hidden Tesla", "Mortar", "Inferno Tower", "Walls", "X-Bow" };
+
+            for (int i = 0; i < 8; i++)
+            {
+                muscleCurrencies[i] = new MuscleCurrency
+                {
+                    muscleName = muscleNames[i],
+                    volume = muscleVolumes[i],
+                    todayVolume = todayVolumes[i],
+                    workoutCount = 0,
+                    mappedBuilding = buildingNames[i]
+                };
+            }
         }
 
         // ============================================================
@@ -129,6 +281,14 @@ namespace DevelopersHub.ClashOfWhatecer
             float volume = weight * reps;
             muscleVolumes[(int)muscle] += volume;
             todayVolumes[(int)muscle] += volume;
+            
+            // Update muscle currency
+            if (muscleCurrencies[(int)muscle] != null)
+            {
+                muscleCurrencies[(int)muscle].volume = muscleVolumes[(int)muscle];
+                muscleCurrencies[(int)muscle].todayVolume = todayVolumes[(int)muscle];
+                muscleCurrencies[(int)muscle].workoutCount++;
+            }
             
             // Update streak
             if (lastWorkoutDate.Date != DateTime.Today)
@@ -167,6 +327,13 @@ namespace DevelopersHub.ClashOfWhatecer
             muscleVolumes[(int)MuscleGroup.Cardio] += minutes;
             todayVolumes[(int)MuscleGroup.Cardio] += minutes;
             
+            // Update currency
+            if (muscleCurrencies[(int)MuscleGroup.Cardio] != null)
+            {
+                muscleCurrencies[(int)MuscleGroup.Cardio].volume = muscleVolumes[(int)MuscleGroup.Cardio];
+                muscleCurrencies[(int)MuscleGroup.Cardio].workoutCount++;
+            }
+            
             // Cardio improves recovery
             recoveryScore = Mathf.Min(100, recoveryScore + (minutes / 5));
             
@@ -174,6 +341,70 @@ namespace DevelopersHub.ClashOfWhatecer
             SendWorkoutToServer(MuscleGroup.Cardio, minutes, 1);
             
             Debug.Log($"🏃 Logged: {minutes} min cardio. Recovery: {recoveryScore}%");
+        }
+
+        /// <summary>
+        /// LOG EXERCISE WITH AUTO-DETECTION
+        /// Automatically identifies which muscle group the exercise targets
+        /// and adds volume to the correct muscle currency.
+        /// </summary>
+        /// <param name="exerciseName">Name of the exercise (e.g., "Bench Press", "Squat")</param>
+        /// <param name="weight">Weight used in kg</param>
+        /// <param name="reps">Number of reps</param>
+        /// <returns>The detected muscle group, or null if not found</returns>
+        public MuscleGroup? LogExercise(string exerciseName, float weight, int reps)
+        {
+            // Try exact match first
+            if (ExerciseToMuscle.TryGetValue(exerciseName, out MuscleGroup muscle))
+            {
+                LogWorkout(muscle, weight, reps);
+                Debug.Log($"🎯 Auto-detected: '{exerciseName}' → {muscle} ({weight}kg x {reps})");
+                return muscle;
+            }
+
+            // Try partial match (contains)
+            foreach (var kvp in ExerciseToMuscle)
+            {
+                if (exerciseName.ToLower().Contains(kvp.Key.ToLower()) || 
+                    kvp.Key.ToLower().Contains(exerciseName.ToLower()))
+                {
+                    LogWorkout(kvp.Value, weight, reps);
+                    Debug.Log($"🎯 Fuzzy match: '{exerciseName}' → {kvp.Value} (matched '{kvp.Key}')");
+                    return kvp.Value;
+                }
+            }
+
+            Debug.LogWarning($"⚠️ Unknown exercise: '{exerciseName}'. Please select muscle group manually.");
+            return null;
+        }
+
+        /// <summary>
+        /// Get the muscle currency for a specific muscle group.
+        /// This is used to check if player can afford building upgrades.
+        /// </summary>
+        public MuscleCurrency GetMuscleCurrency(MuscleGroup muscle)
+        {
+            if (muscleCurrencies[(int)muscle] != null)
+                return muscleCurrencies[(int)muscle];
+            return null;
+        }
+
+        /// <summary>
+        /// Get all muscle currencies for display.
+        /// </summary>
+        public MuscleCurrency[] GetAllMuscleCurrencies()
+        {
+            return muscleCurrencies;
+        }
+
+        /// <summary>
+        /// Check if player can afford an upgrade using the specific muscle currency.
+        /// </summary>
+        public bool CanAffordUpgrade(MuscleGroup muscle, float requiredVolume)
+        {
+            if (muscleCurrencies[(int)muscle] != null)
+                return muscleCurrencies[(int)muscle].volume >= requiredVolume;
+            return false;
         }
 
         // ============================================================
