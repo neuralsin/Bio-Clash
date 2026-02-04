@@ -3,11 +3,11 @@ namespace DevelopersHub.ClashOfWhatecer
     using UnityEngine;
     using UnityEngine.UI;
     using TMPro;
+    using System.Collections;
 
     /// <summary>
     /// Auto-setup script for Bio-Clash Fitness system.
-    /// Attach this to an empty GameObject in the scene.
-    /// It will automatically create the FitnessManager and configure the UI.
+    /// This script auto-initializes at runtime - no manual setup required!
     /// </summary>
     public class FitnessSetup : MonoBehaviour
     {
@@ -19,6 +19,22 @@ namespace DevelopersHub.ClashOfWhatecer
         public Canvas mainCanvas;
         public UI_Main uiMain;
 
+        /// <summary>
+        /// RUNTIME AUTO-INIT: Automatically creates FitnessSetup on game start.
+        /// No need to manually add to scene!
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        static void AutoInitialize()
+        {
+            // Only create if not already present
+            if (FindObjectOfType<FitnessSetup>() == null && FindObjectOfType<FitnessManager>() == null)
+            {
+                GameObject setupGO = new GameObject("FitnessSetup_Auto");
+                setupGO.AddComponent<FitnessSetup>();
+                Debug.Log("[BIO-CLASH] Fitness system auto-initialized!");
+            }
+        }
+
         private void Awake()
         {
             // Create FitnessManager singleton if needed
@@ -27,34 +43,121 @@ namespace DevelopersHub.ClashOfWhatecer
                 GameObject fitnessManagerGO = new GameObject("FitnessManager");
                 fitnessManagerGO.AddComponent<FitnessManager>();
                 DontDestroyOnLoad(fitnessManagerGO);
-                Debug.Log("✅ FitnessManager created automatically");
+                Debug.Log("[BIO-CLASH] FitnessManager created");
             }
 
-            // BIO-CLASH: Cache expensive FindObjectOfType calls
-            // These are only called once in Awake, results are reused
+            // Start coroutine to wait for UI_Main
+            StartCoroutine(InitializeUI());
+        }
+
+        private IEnumerator InitializeUI()
+        {
+            // Wait for UI_Main to be available
+            float timeout = 5f;
+            while (UI_Main.instance == null && timeout > 0)
+            {
+                timeout -= 0.1f;
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            if (UI_Main.instance == null)
+            {
+                Debug.LogWarning("[BIO-CLASH] UI_Main not found after timeout");
+                yield break;
+            }
+
+            // Cache references
             if (mainCanvas == null)
             {
                 mainCanvas = FindObjectOfType<Canvas>();
-                if (mainCanvas != null)
-                {
-                    Debug.Log("📦 Cached Canvas reference");
-                }
             }
 
             if (uiMain == null)
             {
-                uiMain = FindObjectOfType<UI_Main>();
-                if (uiMain != null)
-                {
-                    Debug.Log("📦 Cached UI_Main reference");
-                }
+                uiMain = UI_Main.instance;
             }
+
+            // Create Fitness Button in UI_Main if not assigned
+            CreateFitnessButton();
 
             // Create Fitness UI panel if needed
             if (createFitnessUI && mainCanvas != null)
             {
                 CreateFitnessUIPanel();
             }
+
+            Debug.Log("[BIO-CLASH] Fitness UI initialized!");
+        }
+
+        /// <summary>
+        /// Creates the fitness button in UI_Main's bottom bar area.
+        /// </summary>
+        private void CreateFitnessButton()
+        {
+            if (uiMain == null || uiMain._elements == null) return;
+
+            // Check if button already exists via reflection
+            var fitnessButtonField = typeof(UI_Main).GetField("_fitnessButton", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (fitnessButtonField == null)
+            {
+                Debug.LogWarning("[BIO-CLASH] _fitnessButton field not found in UI_Main");
+                return;
+            }
+
+            Button existingButton = fitnessButtonField.GetValue(uiMain) as Button;
+            if (existingButton != null) 
+            {
+                Debug.Log("[BIO-CLASH] Fitness button already assigned");
+                return;
+            }
+
+            // Create button in UI_Main._elements (bottom bar area)
+            GameObject btnGO = new GameObject("FitnessButton");
+            btnGO.transform.SetParent(uiMain._elements.transform, false);
+            
+            RectTransform btnRect = btnGO.AddComponent<RectTransform>();
+            btnRect.anchorMin = new Vector2(0.02f, 0.02f);
+            btnRect.anchorMax = new Vector2(0.15f, 0.12f);
+            btnRect.offsetMin = Vector2.zero;
+            btnRect.offsetMax = Vector2.zero;
+
+            Image btnImg = btnGO.AddComponent<Image>();
+            btnImg.color = new Color(0.2f, 0.7f, 0.3f, 1f); // Green fitness color
+
+            Button btn = btnGO.AddComponent<Button>();
+            btn.targetGraphic = btnImg;
+            
+            // Add text
+            GameObject textGO = new GameObject("Text");
+            textGO.transform.SetParent(btnGO.transform, false);
+            RectTransform textRect = textGO.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+            
+            TextMeshProUGUI text = textGO.AddComponent<TextMeshProUGUI>();
+            text.text = "FITNESS";
+            text.fontSize = 18;
+            text.fontStyle = TMPro.FontStyles.Bold;
+            text.alignment = TextAlignmentOptions.Center;
+            text.color = Color.white;
+
+            // Wire button to field
+            fitnessButtonField.SetValue(uiMain, btn);
+            
+            // Add click listener
+            btn.onClick.AddListener(() => {
+                if (UI_Fitness.instance != null)
+                {
+                    SoundManager.instance?.PlaySound(SoundManager.instance.buttonClickSound);
+                    UI_Fitness.instance.Open();
+                }
+            });
+
+            Debug.Log("[BIO-CLASH] Fitness button created and wired!");
         }
 
         // Cached reference for UI_Fitness to avoid repeated FindObjectOfType calls
@@ -77,19 +180,19 @@ namespace DevelopersHub.ClashOfWhatecer
                 return;
             }
 
-            // Create main panel
+            // Create main panel - MUST add RectTransform FIRST for UI components
             GameObject fitnessPanel = new GameObject("UI_Fitness");
             fitnessPanel.transform.SetParent(mainCanvas.transform, false);
             
-            // Add UI_Fitness component
-            UI_Fitness fitnessUI = fitnessPanel.AddComponent<UI_Fitness>();
-            
-            // Create RectTransform
-            RectTransform panelRect = fitnessPanel.GetComponent<RectTransform>();
+            // Add RectTransform BEFORE any other UI components
+            RectTransform panelRect = fitnessPanel.AddComponent<RectTransform>();
             panelRect.anchorMin = Vector2.zero;
             panelRect.anchorMax = Vector2.one;
             panelRect.offsetMin = Vector2.zero;
             panelRect.offsetMax = Vector2.zero;
+            
+            // Now add UI_Fitness component (RectTransform exists)
+            UI_Fitness fitnessUI = fitnessPanel.AddComponent<UI_Fitness>();
 
             // Assign main panel
             fitnessUI._panel = fitnessPanel;
@@ -102,8 +205,8 @@ namespace DevelopersHub.ClashOfWhatecer
             bgRect.offsetMin = Vector2.zero;
             bgRect.offsetMax = Vector2.zero;
 
-            // Create title
-            GameObject titleGO = CreateText(bgPanel.transform, "Title", "💪 FITNESS CENTER", 42, TextAlignmentOptions.Center);
+            // Create title (using text instead of emojis for font compatibility)
+            GameObject titleGO = CreateText(bgPanel.transform, "Title", "[*] FITNESS CENTER", 42, TextAlignmentOptions.Center);
             TextMeshProUGUI titleText = titleGO.GetComponent<TextMeshProUGUI>();
             titleText.color = new Color(1f, 0.92f, 0.5f, 1f); // CoC Gold
             
@@ -140,7 +243,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
             // Quick log buttons row
             float buttonWidth = 0.23f;
-            fitnessUI._quickBenchButton = CreateButton(quickLogSection.transform, "BenchButton", "🏋️ Bench", 14, new Vector2(0.15f, 0.1f), new Vector2(0.15f + buttonWidth, 0.9f)).GetComponent<Button>();
+            fitnessUI._quickBenchButton = CreateButton(quickLogSection.transform, "BenchButton", "[GYM] Bench", 14, new Vector2(0.15f, 0.1f), new Vector2(0.15f + buttonWidth, 0.9f)).GetComponent<Button>();
             fitnessUI._quickSquatButton = CreateButton(quickLogSection.transform, "SquatButton", "🦵 Squat", 14, new Vector2(0.40f, 0.1f), new Vector2(0.40f + buttonWidth, 0.9f)).GetComponent<Button>();
             fitnessUI._quickDeadliftButton = CreateButton(quickLogSection.transform, "DeadliftButton", "🦴 Deadlift", 14, new Vector2(0.65f, 0.1f), new Vector2(0.65f + buttonWidth, 0.9f)).GetComponent<Button>();
 
@@ -151,13 +254,13 @@ namespace DevelopersHub.ClashOfWhatecer
             workoutRect.anchorMax = new Vector2(0.95f, 0.86f);
             fitnessUI._workoutSessionPanel = workoutSection;
 
-            CreateText(workoutSection.transform, "WorkoutTitle", "🏋️ ACTIVE WORKOUT", 20, new Vector2(0, 0.65f), new Vector2(0.35f, 1f));
-            fitnessUI._workoutTimerText = CreateText(workoutSection.transform, "WorkoutTimer", "⏱️ 0:00", 24, new Vector2(0.35f, 0.65f), new Vector2(0.65f, 1f)).GetComponent<TextMeshProUGUI>();
-            fitnessUI._workoutStatusText = CreateText(workoutSection.transform, "WorkoutStatus", "💤 Tap START", 14, new Vector2(0.65f, 0.65f), new Vector2(1f, 1f)).GetComponent<TextMeshProUGUI>();
+            CreateText(workoutSection.transform, "WorkoutTitle", "[GYM] ACTIVE WORKOUT", 20, new Vector2(0, 0.65f), new Vector2(0.35f, 1f));
+            fitnessUI._workoutTimerText = CreateText(workoutSection.transform, "WorkoutTimer", "[TIME] 0:00", 24, new Vector2(0.35f, 0.65f), new Vector2(0.65f, 1f)).GetComponent<TextMeshProUGUI>();
+            fitnessUI._workoutStatusText = CreateText(workoutSection.transform, "WorkoutStatus", "[ZZZ] Tap START", 14, new Vector2(0.65f, 0.65f), new Vector2(1f, 1f)).GetComponent<TextMeshProUGUI>();
 
             // Session stats row
-            fitnessUI._totalVolumeText = CreateText(workoutSection.transform, "TotalVolume", "💪 0 kg", 14, new Vector2(0.02f, 0.35f), new Vector2(0.35f, 0.6f)).GetComponent<TextMeshProUGUI>();
-            fitnessUI._exerciseCountText = CreateText(workoutSection.transform, "ExerciseCount", "📋 0 sets", 14, new Vector2(0.35f, 0.35f), new Vector2(0.65f, 0.6f)).GetComponent<TextMeshProUGUI>();
+            fitnessUI._totalVolumeText = CreateText(workoutSection.transform, "TotalVolume", "[*] 0 kg", 14, new Vector2(0.02f, 0.35f), new Vector2(0.35f, 0.6f)).GetComponent<TextMeshProUGUI>();
+            fitnessUI._exerciseCountText = CreateText(workoutSection.transform, "ExerciseCount", "[#] 0 sets", 14, new Vector2(0.35f, 0.35f), new Vector2(0.65f, 0.6f)).GetComponent<TextMeshProUGUI>();
 
             // Control buttons row
             fitnessUI._startWorkoutButton = CreateButton(workoutSection.transform, "StartWorkoutBtn", "▶️ START", 14, new Vector2(0.02f, 0.02f), new Vector2(0.24f, 0.32f)).GetComponent<Button>();
@@ -165,7 +268,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
             fitnessUI._stopWorkoutButton = CreateButton(workoutSection.transform, "StopWorkoutBtn", "⏹️ FINISH", 14, new Vector2(0.02f, 0.02f), new Vector2(0.24f, 0.32f)).GetComponent<Button>();
             fitnessUI._stopWorkoutButton.image.color = new Color(1f, 0.6f, 0.2f, 1f); // Orange
-            fitnessUI._pauseWorkoutButton = CreateButton(workoutSection.transform, "PauseWorkoutBtn", "⏸️ PAUSE", 14, new Vector2(0.26f, 0.02f), new Vector2(0.48f, 0.32f)).GetComponent<Button>();
+            fitnessUI._pauseWorkoutButton = CreateButton(workoutSection.transform, "PauseWorkoutBtn", "[||] PAUSE", 14, new Vector2(0.26f, 0.02f), new Vector2(0.48f, 0.32f)).GetComponent<Button>();
             fitnessUI._addExerciseButton = CreateButton(workoutSection.transform, "AddExerciseBtn", "➕ ADD SET", 14, new Vector2(0.50f, 0.02f), new Vector2(0.72f, 0.32f)).GetComponent<Button>();
             fitnessUI._quickRunButton = CreateButton(quickLogSection.transform, "RunButton", "🏃 Run", 14, new Vector2(0.74f, 0.02f), new Vector2(0.98f, 0.32f)).GetComponent<Button>();
 
@@ -230,8 +333,8 @@ namespace DevelopersHub.ClashOfWhatecer
 
             // Recovery and Streak
             fitnessUI._recoveryText = CreateText(statsSection.transform, "RecoveryLabel", "❤️ Recovery: 100%", 20, new Vector2(0.02f, 0.02f), new Vector2(0.35f, 0.12f)).GetComponent<TextMeshProUGUI>();
-            fitnessUI._streakText = CreateText(statsSection.transform, "StreakLabel", "🔥 Streak: 0 days", 20, new Vector2(0.4f, 0.02f), new Vector2(0.7f, 0.12f)).GetComponent<TextMeshProUGUI>();
-            fitnessUI._attackPowerText = CreateText(statsSection.transform, "AttackLabel", "⚔️ Power: 0", 20, new Vector2(0.72f, 0.02f), new Vector2(0.98f, 0.12f)).GetComponent<TextMeshProUGUI>();
+            fitnessUI._streakText = CreateText(statsSection.transform, "StreakLabel", "[FIRE] Streak: 0 days", 20, new Vector2(0.4f, 0.02f), new Vector2(0.7f, 0.12f)).GetComponent<TextMeshProUGUI>();
+            fitnessUI._attackPowerText = CreateText(statsSection.transform, "AttackLabel", "[ATK] Power: 0", 20, new Vector2(0.72f, 0.02f), new Vector2(0.98f, 0.12f)).GetComponent<TextMeshProUGUI>();
 
             // ============================================================
             // HEALTH TRACKING SECTION (RIGHT: 0.52-0.95, 0.08-0.52)

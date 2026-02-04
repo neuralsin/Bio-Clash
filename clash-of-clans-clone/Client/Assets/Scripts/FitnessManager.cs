@@ -223,6 +223,233 @@ namespace DevelopersHub.ClashOfWhatecer
         public MuscleCurrency[] muscleCurrencies = new MuscleCurrency[8];
 
         // ============================================================
+        // REAL FITNESS SCIENCE ALGORITHMS
+        // ============================================================
+        
+        /// <summary>
+        /// Workout history entry for trend analysis
+        /// </summary>
+        [System.Serializable]
+        public class WorkoutEntry
+        {
+            public DateTime date;
+            public MuscleGroup muscle;
+            public string exercise;
+            public float weight;
+            public int reps;
+            public int sets;
+            public int rpe; // Rate of Perceived Exertion (1-10)
+            public float volume => weight * reps * sets;
+            public float estimated1RM => Calculate1RM(weight, reps);
+        }
+        
+        // Workout history (last 30 days)
+        public List<WorkoutEntry> workoutHistory = new List<WorkoutEntry>();
+        
+        // Personal records (1RM per muscle group)
+        public float[] personalRecords = new float[8];
+        
+        // Weekly volume targets (recommended volume per muscle group)
+        public static readonly float[] WeeklyVolumeTargets = {
+            10000f,  // Chest: 10-20 sets/week @ ~500kg/set avg
+            12000f,  // Back: Higher volume typical
+            6000f,   // Shoulders: Lower volume needs
+            4000f,   // Biceps: Small muscle
+            4000f,   // Triceps: Small muscle
+            15000f,  // Legs: High volume capacity
+            5000f,   // Core: Moderate volume
+            150f     // Cardio: 150 min/week recommended
+        };
+        
+        /// <summary>
+        /// Calculate estimated 1-Rep Max using Brzycki formula
+        /// 1RM = weight × (36 / (37 - reps))
+        /// Valid for reps 1-10
+        /// </summary>
+        public static float Calculate1RM(float weight, int reps)
+        {
+            if (reps <= 0) return 0;
+            if (reps == 1) return weight;
+            if (reps > 10) reps = 10; // Formula accuracy drops after 10 reps
+            
+            return weight * (36f / (37f - reps));
+        }
+        
+        /// <summary>
+        /// Calculate estimated reps at a given percentage of 1RM
+        /// Inverse of Brzycki formula
+        /// </summary>
+        public static int CalculateRepsAt(float oneRM, float weight)
+        {
+            if (weight >= oneRM) return 1;
+            if (weight <= 0) return 0;
+            
+            float percentage = weight / oneRM;
+            // Reps ≈ 37 - (36 / percentage)
+            int reps = Mathf.RoundToInt(37f - (36f / percentage));
+            return Mathf.Clamp(reps, 1, 30);
+        }
+        
+        /// <summary>
+        /// Estimate calories burned from a workout set
+        /// Based on: MET value × weight (person) × duration
+        /// Simplified: ~0.05 cal per kg lifted for strength, ~8 cal/min for cardio
+        /// </summary>
+        public float EstimateCaloriesBurned(float volume, bool isCardio = false)
+        {
+            if (isCardio)
+            {
+                // Cardio: ~8 calories per minute (moderate intensity)
+                return volume * 8f;
+            }
+            else
+            {
+                // Strength: ~0.05 calories per kg of volume
+                return volume * 0.05f;
+            }
+        }
+        
+        /// <summary>
+        /// Get total calories burned today across all workouts
+        /// </summary>
+        public float GetTodayCaloriesBurned()
+        {
+            float total = 0;
+            for (int i = 0; i < 7; i++) // Strength muscles
+            {
+                total += EstimateCaloriesBurned(todayVolumes[i], false);
+            }
+            total += EstimateCaloriesBurned(todayVolumes[7], true); // Cardio
+            return total;
+        }
+        
+        /// <summary>
+        /// Get weekly volume for a muscle group (last 7 days)
+        /// </summary>
+        public float GetWeeklyVolume(MuscleGroup muscle)
+        {
+            float total = 0;
+            DateTime weekAgo = DateTime.Today.AddDays(-7);
+            
+            foreach (var entry in workoutHistory)
+            {
+                if (entry.muscle == muscle && entry.date >= weekAgo)
+                {
+                    total += entry.volume;
+                }
+            }
+            return total;
+        }
+        
+        /// <summary>
+        /// Get progress percentage toward weekly volume target
+        /// </summary>
+        public float GetWeeklyProgress(MuscleGroup muscle)
+        {
+            float current = GetWeeklyVolume(muscle);
+            float target = WeeklyVolumeTargets[(int)muscle];
+            return Mathf.Clamp01(current / target) * 100f;
+        }
+        
+        /// <summary>
+        /// Check if progressive overload achieved this week
+        /// (Volume or intensity increased vs last week)
+        /// </summary>
+        public bool IsProgressiveOverload(MuscleGroup muscle)
+        {
+            DateTime weekAgo = DateTime.Today.AddDays(-7);
+            DateTime twoWeeksAgo = DateTime.Today.AddDays(-14);
+            
+            float thisWeek = 0, lastWeek = 0;
+            
+            foreach (var entry in workoutHistory)
+            {
+                if (entry.muscle == muscle)
+                {
+                    if (entry.date >= weekAgo)
+                        thisWeek += entry.volume;
+                    else if (entry.date >= twoWeeksAgo)
+                        lastWeek += entry.volume;
+                }
+            }
+            
+            // Progressive overload = at least 2.5% more volume
+            return thisWeek > lastWeek * 1.025f;
+        }
+        
+        /// <summary>
+        /// Get personal record for a muscle group (highest estimated 1RM)
+        /// </summary>
+        public float GetPersonalRecord(MuscleGroup muscle)
+        {
+            return personalRecords[(int)muscle];
+        }
+        
+        /// <summary>
+        /// Update personal record if new lift is higher
+        /// </summary>
+        private void UpdatePersonalRecord(MuscleGroup muscle, float weight, int reps)
+        {
+            float estimated1RM = Calculate1RM(weight, reps);
+            if (estimated1RM > personalRecords[(int)muscle])
+            {
+                personalRecords[(int)muscle] = estimated1RM;
+                Debug.Log($"[NEW PR!] {muscle}: {estimated1RM:F1}kg estimated 1RM!");
+            }
+        }
+        
+        /// <summary>
+        /// Calculate optimal rest time based on intensity and goals
+        /// Hypertrophy: 60-90s, Strength: 2-5 min
+        /// </summary>
+        public int GetRecommendedRestTime(float percentOf1RM)
+        {
+            if (percentOf1RM >= 0.9f) return 300; // 5 min for near-max
+            if (percentOf1RM >= 0.8f) return 180; // 3 min for strength
+            if (percentOf1RM >= 0.7f) return 120; // 2 min for power
+            if (percentOf1RM >= 0.6f) return 90;  // 90s for hypertrophy
+            return 60; // 60s for endurance/pump
+        }
+        
+        /// <summary>
+        /// Get muscle group recovery status based on last workout
+        /// Returns hours since last trained
+        /// </summary>
+        public int GetMuscleRecoveryHours(MuscleGroup muscle)
+        {
+            DateTime lastTrained = DateTime.MinValue;
+            
+            foreach (var entry in workoutHistory)
+            {
+                if (entry.muscle == muscle && entry.date > lastTrained)
+                {
+                    lastTrained = entry.date;
+                }
+            }
+            
+            if (lastTrained == DateTime.MinValue) return 168; // Never trained = 7 days
+            return (int)(DateTime.Now - lastTrained).TotalHours;
+        }
+        
+        /// <summary>
+        /// Check if muscle is recovered enough to train again
+        /// Small muscles: 48h, Large muscles: 72h
+        /// </summary>
+        public bool IsMuscleRecovered(MuscleGroup muscle)
+        {
+            int hoursNeeded = muscle switch
+            {
+                MuscleGroup.Legs => 72,
+                MuscleGroup.Back => 72,
+                MuscleGroup.Chest => 72,
+                MuscleGroup.Cardio => 24, // Can do daily
+                _ => 48 // Small muscles
+            };
+            
+            return GetMuscleRecoveryHours(muscle) >= hoursNeeded;
+        }
+
+        // ============================================================
         // UNITY LIFECYCLE
         // ============================================================
         private void Awake()
@@ -278,10 +505,11 @@ namespace DevelopersHub.ClashOfWhatecer
         
         /// <summary>
         /// Log a workout set. Volume = weight * reps
+        /// Now also tracks workout history, PRs, and calories
         /// </summary>
-        public void LogWorkout(MuscleGroup muscle, float weight, int reps)
+        public void LogWorkout(MuscleGroup muscle, float weight, int reps, int sets = 1, string exerciseName = "")
         {
-            float volume = weight * reps;
+            float volume = weight * reps * sets;
             muscleVolumes[(int)muscle] += volume;
             todayVolumes[(int)muscle] += volume;
             
@@ -292,6 +520,25 @@ namespace DevelopersHub.ClashOfWhatecer
                 muscleCurrencies[(int)muscle].todayVolume = todayVolumes[(int)muscle];
                 muscleCurrencies[(int)muscle].workoutCount++;
             }
+            
+            // Add to workout history
+            workoutHistory.Add(new WorkoutEntry
+            {
+                date = DateTime.Now,
+                muscle = muscle,
+                exercise = exerciseName,
+                weight = weight,
+                reps = reps,
+                sets = sets,
+                rpe = 7 // Default RPE
+            });
+            
+            // Trim history to last 30 days
+            DateTime cutoff = DateTime.Today.AddDays(-30);
+            workoutHistory.RemoveAll(e => e.date < cutoff);
+            
+            // Update personal record
+            UpdatePersonalRecord(muscle, weight, reps);
             
             // Update streak
             if (lastWorkoutDate.Date != DateTime.Today)
@@ -308,7 +555,12 @@ namespace DevelopersHub.ClashOfWhatecer
             }
 
             // Calculate recovery impact (intense workouts reduce recovery)
-            if (volume > 500)
+            float intensity = GetPersonalRecord(muscle) > 0 ? weight / GetPersonalRecord(muscle) : 0.5f;
+            if (intensity > 0.8f) // Heavy set
+            {
+                recoveryScore = Mathf.Max(0, recoveryScore - 15);
+            }
+            else if (volume > 500)
             {
                 recoveryScore = Mathf.Max(0, recoveryScore - 10);
             }
@@ -319,7 +571,9 @@ namespace DevelopersHub.ClashOfWhatecer
             // Sync with server
             SendWorkoutToServer(muscle, volume, reps);
 
-            Debug.Log($"💪 Logged: {volume}kg {muscle}. Total: {muscleVolumes[(int)muscle]}kg");
+            // Log with calorie info
+            float calories = EstimateCaloriesBurned(volume, muscle == MuscleGroup.Cardio);
+            Debug.Log($"[LOGGED] {volume:F0}kg {muscle} | 1RM: {Calculate1RM(weight, reps):F1}kg | ~{calories:F0} cal");
         }
 
         /// <summary>
@@ -556,6 +810,7 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 PlayerPrefs.SetFloat($"muscle_{i}", muscleVolumes[i]);
                 PlayerPrefs.SetFloat($"today_{i}", todayVolumes[i]);
+                PlayerPrefs.SetFloat($"pr_{i}", personalRecords[i]); // Save PRs
             }
             PlayerPrefs.SetInt("recovery", recoveryScore);
             PlayerPrefs.SetInt("streak", workoutStreak);
@@ -569,6 +824,7 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 muscleVolumes[i] = PlayerPrefs.GetFloat($"muscle_{i}", 0);
                 todayVolumes[i] = PlayerPrefs.GetFloat($"today_{i}", 0);
+                personalRecords[i] = PlayerPrefs.GetFloat($"pr_{i}", 0); // Load PRs
             }
             recoveryScore = PlayerPrefs.GetInt("recovery", 100);
             workoutStreak = PlayerPrefs.GetInt("streak", 0);
@@ -627,6 +883,14 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void SyncFitnessFromServer()
         {
+            // BIO-CLASH: Check if network is ready before syncing
+            // This prevents NullReferenceException on startup when connection isn't established yet
+            if (Client.instance == null || !Client.instance.isConnected)
+            {
+                Debug.Log("Fitness sync deferred - waiting for network connection");
+                return;
+            }
+            
             Packet packet = new Packet();
             packet.Write((int)Player.RequestsID.FITNESS_STATS);
             Sender.TCP_Send(packet);

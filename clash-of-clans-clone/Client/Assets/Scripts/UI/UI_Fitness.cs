@@ -384,13 +384,13 @@ namespace DevelopersHub.ClashOfWhatecer
 
             // Streak
             if (_streakText != null)
-                _streakText.text = $"🔥 {FitnessManager.instance.workoutStreak} days";
+                _streakText.text = $"[FIRE] {FitnessManager.instance.workoutStreak} days";
 
             // Attack/Defense Power
             if (_attackPowerText != null)
-                _attackPowerText.text = $"⚔️ {FitnessManager.instance.GetAttackPower():N0}";
+                _attackPowerText.text = $"[ATK] {FitnessManager.instance.GetAttackPower():N0}";
             if (_defensePowerText != null)
-                _defensePowerText.text = $"🛡️ {FitnessManager.instance.GetDefensePower():N0}";
+                _defensePowerText.text = $"[DEF] {FitnessManager.instance.GetDefensePower():N0}";
 
             // Health metrics
             RefreshHealthDisplay();
@@ -484,7 +484,7 @@ namespace DevelopersHub.ClashOfWhatecer
             // Heart rate
             if (_heartRateText != null)
             {
-                string hrEmoji = _currentHeartRate < 60 ? "💙" : (_currentHeartRate > 100 ? "❤️‍🔥" : "💚");
+                string hrEmoji = _currentHeartRate < 60 ? "[LOW]" : (_currentHeartRate > 100 ? "[HIGH]" : "[OK]");
                 _heartRateText.text = $"{hrEmoji} {_currentHeartRate} BPM";
             }
 
@@ -610,7 +610,7 @@ namespace DevelopersHub.ClashOfWhatecer
             
             if (SoundManager.instance != null)
                 SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
-            Debug.Log("🏋️ Workout started!");
+            Debug.Log("[GYM] Workout started!");
         }
 
         /// <summary>
@@ -661,7 +661,7 @@ namespace DevelopersHub.ClashOfWhatecer
                 _pausedDuration += Time.time - _pauseStartTime;
                 _isWorkoutPaused = false;
                 if (_workoutStatusText != null)
-                    _workoutStatusText.text = "🏋️ Workout Active";
+                    _workoutStatusText.text = "[GYM] Workout Active";
                 Debug.Log("▶️ Workout resumed");
             }
             else
@@ -670,8 +670,8 @@ namespace DevelopersHub.ClashOfWhatecer
                 _pauseStartTime = Time.time;
                 _isWorkoutPaused = true;
                 if (_workoutStatusText != null)
-                    _workoutStatusText.text = "⏸️ Paused";
-                Debug.Log("⏸️ Workout paused");
+                    _workoutStatusText.text = "[PAUSE] Paused";
+                Debug.Log("[PAUSE] Workout paused");
             }
 
             UpdateWorkoutSessionUI();
@@ -785,9 +785,9 @@ namespace DevelopersHub.ClashOfWhatecer
             int seconds = Mathf.FloorToInt(_workoutDuration % 60);
 
             if (hours > 0)
-                _workoutTimerText.text = $"⏱️ {hours}:{minutes:D2}:{seconds:D2}";
+                _workoutTimerText.text = $"[TIME] {hours}:{minutes:D2}:{seconds:D2}";
             else
-                _workoutTimerText.text = $"⏱️ {minutes}:{seconds:D2}";
+                _workoutTimerText.text = $"[TIME] {minutes}:{seconds:D2}";
         }
 
         /// <summary>
@@ -805,7 +805,7 @@ namespace DevelopersHub.ClashOfWhatecer
                 _pauseWorkoutButton.gameObject.SetActive(_isWorkoutActive);
                 var btnText = _pauseWorkoutButton.GetComponentInChildren<TextMeshProUGUI>();
                 if (btnText != null)
-                    btnText.text = _isWorkoutPaused ? "▶️ Resume" : "⏸️ Pause";
+                    btnText.text = _isWorkoutPaused ? "[>] Resume" : "[||] Pause";
             }
             if (_addExerciseButton != null)
                 _addExerciseButton.gameObject.SetActive(_isWorkoutActive);
@@ -814,18 +814,18 @@ namespace DevelopersHub.ClashOfWhatecer
             if (_workoutStatusText != null)
             {
                 if (!_isWorkoutActive)
-                    _workoutStatusText.text = "💤 No workout in progress";
+                    _workoutStatusText.text = "[ZZZ] No workout in progress";
                 else if (_isWorkoutPaused)
-                    _workoutStatusText.text = "⏸️ Paused";
+                    _workoutStatusText.text = "[||] Paused";
                 else
-                    _workoutStatusText.text = "🏋️ Workout Active";
+                    _workoutStatusText.text = "[GYM] Workout Active";
             }
 
             // Update totals
             if (_totalVolumeText != null)
-                _totalVolumeText.text = $"💪 {_sessionTotalVolume:N0} kg";
+                _totalVolumeText.text = $"[*] {_sessionTotalVolume:N0} kg";
             if (_exerciseCountText != null)
-                _exerciseCountText.text = $"📋 {_currentWorkoutExercises.Count} exercises";
+                _exerciseCountText.text = $"[#] {_currentWorkoutExercises.Count} exercises";
         }
 
         /// <summary>
