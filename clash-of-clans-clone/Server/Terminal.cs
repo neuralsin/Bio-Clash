@@ -57,7 +57,9 @@ namespace DevelopersHub.RealtimeNetworking.Server
         #region Data
         public enum RequestsID
         {
-            AUTH = 1, SYNC = 2, BUILD = 3, REPLACE = 4, COLLECT = 5, PREUPGRADE = 6, UPGRADE = 7, INSTANTBUILD = 8, TRAIN = 9, CANCELTRAIN = 10, BATTLEFIND = 11, BATTLESTART = 12, BATTLEFRAME = 13, BATTLEEND = 14, OPENCLAN = 15, GETCLANS = 16, JOINCLAN = 17, LEAVECLAN = 18, EDITCLAN = 19, CREATECLAN = 20, OPENWAR = 21, STARTWAR = 22, CANCELWAR = 23, WARSTARTED = 24, WARATTACK = 25, WARREPORTLIST = 26, WARREPORT = 27, JOINREQUESTS = 28, JOINRESPONSE = 29, GETCHATS = 30, SENDCHAT = 31, SENDCODE = 32, CONFIRMCODE = 33, EMAILCODE = 34, EMAILCONFIRM = 35, LOGOUT = 36, KICKMEMBER = 37, BREW = 38, CANCELBREW = 39, RESEARCH = 40, PROMOTEMEMBER = 41, DEMOTEMEMBER = 42, SCOUT = 43, BUYSHIELD = 44, BUYGEM = 45, BYUGOLD = 46, REPORTCHAT = 47, PLAYERSRANK = 48, BOOST = 49, BUYRESOURCE = 50, BATTLEREPORTS = 51, BATTLEREPORT = 52, RENAME = 53
+            AUTH = 1, SYNC = 2, BUILD = 3, REPLACE = 4, COLLECT = 5, PREUPGRADE = 6, UPGRADE = 7, INSTANTBUILD = 8, TRAIN = 9, CANCELTRAIN = 10, BATTLEFIND = 11, BATTLESTART = 12, BATTLEFRAME = 13, BATTLEEND = 14, OPENCLAN = 15, GETCLANS = 16, JOINCLAN = 17, LEAVECLAN = 18, EDITCLAN = 19, CREATECLAN = 20, OPENWAR = 21, STARTWAR = 22, CANCELWAR = 23, WARSTARTED = 24, WARATTACK = 25, WARREPORTLIST = 26, WARREPORT = 27, JOINREQUESTS = 28, JOINRESPONSE = 29, GETCHATS = 30, SENDCHAT = 31, SENDCODE = 32, CONFIRMCODE = 33, EMAILCODE = 34, EMAILCONFIRM = 35, LOGOUT = 36, KICKMEMBER = 37, BREW = 38, CANCELBREW = 39, RESEARCH = 40, PROMOTEMEMBER = 41, DEMOTEMEMBER = 42, SCOUT = 43, BUYSHIELD = 44, BUYGEM = 45, BYUGOLD = 46, REPORTCHAT = 47, PLAYERSRANK = 48, BOOST = 49, BUYRESOURCE = 50, BATTLEREPORTS = 51, BATTLEREPORT = 52, RENAME = 53,
+            // Bio-Clash Fitness Integration
+            FITNESS_LOG = 60, FITNESS_STATS = 61, FITNESS_RECOVERY = 62, FITNESS_CHALLENGE = 63
         }
 
         public static void ReceivedPacket(int clientID, Packet packet)
@@ -317,6 +319,22 @@ namespace DevelopersHub.RealtimeNetworking.Server
                         string nm = packet.ReadString();
                         Database.ChangePlayerName(clientID, nm);
                         break;
+                    
+                    // =========================================================
+                    // BIO-CLASH FITNESS INTEGRATION
+                    // =========================================================
+                    case RequestsID.FITNESS_LOG:
+                        int muscleGroup = packet.ReadInt();
+                        float volume = packet.ReadFloat();
+                        int reps = packet.ReadInt();
+                        _ = Fitness.LogWorkout(Server.clients[clientID].account, muscleGroup, volume, reps);
+                        break;
+                    case RequestsID.FITNESS_STATS:
+                        _ = SendFitnessStats(clientID);
+                        break;
+                    case RequestsID.FITNESS_RECOVERY:
+                        _ = SendRecoveryScore(clientID);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -378,6 +396,62 @@ namespace DevelopersHub.RealtimeNetworking.Server
         public static void ReceivedEvent(int clientID, int packetID)
         {
 
+        }
+        #endregion
+
+        #region Bio-Clash Fitness Helpers
+        /// <summary>
+        /// Send player's fitness stats to client.
+        /// </summary>
+        private static async System.Threading.Tasks.Task SendFitnessStats(int clientID)
+        {
+            try
+            {
+                long playerId = Server.clients[clientID].account;
+                var stats = await Fitness.GetPlayerStats(playerId);
+                int streak = await Fitness.GetPlayerStreak(playerId);
+                int recovery = await Fitness.GetRecoveryScore(playerId);
+
+                Packet packet = new Packet();
+                packet.Write((int)RequestsID.FITNESS_STATS);
+                
+                // Write all 8 muscle group volumes
+                for (int i = 0; i < 8; i++)
+                {
+                    packet.Write(stats.ContainsKey(i) ? stats[i] : 0f);
+                }
+                
+                packet.Write(streak);
+                packet.Write(recovery);
+                
+                Sender.TCP_Send(clientID, packet);
+            }
+            catch (Exception ex)
+            {
+                Tools.LogError($"SendFitnessStats Error: {ex.Message}", ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// Send player's recovery score to client.
+        /// </summary>
+        private static async System.Threading.Tasks.Task SendRecoveryScore(int clientID)
+        {
+            try
+            {
+                long playerId = Server.clients[clientID].account;
+                int recovery = await Fitness.GetRecoveryScore(playerId);
+
+                Packet packet = new Packet();
+                packet.Write((int)RequestsID.FITNESS_RECOVERY);
+                packet.Write(recovery);
+                
+                Sender.TCP_Send(clientID, packet);
+            }
+            catch (Exception ex)
+            {
+                Tools.LogError($"SendRecoveryScore Error: {ex.Message}", ex.StackTrace);
+            }
         }
         #endregion
 

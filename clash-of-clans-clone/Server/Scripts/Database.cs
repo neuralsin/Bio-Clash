@@ -3872,9 +3872,20 @@ namespace DevelopersHub.RealtimeNetworking.Server
                         }
                         else
                         {
-                            if (SpendResources(connection, account_id, reqGold, reqElixir, reqGems, reqDarkElixir))
+                            // =========================================================
+                            // BIO-CLASH: FITNESS-BASED UPGRADE CHECK
+                            // Replaces SpendResources with fitness volume validation
+                            // =========================================================
+                            bool canUpgrade = Fitness.CanUpgradeBuilding(account_id, globalID, level + 1).Result;
+                            
+                            if (canUpgrade)
                             {
-                                query = String.Format("UPDATE buildings SET is_constructing = 1, construction_time =  NOW() + INTERVAL {0} SECOND, construction_build_time = {1} WHERE id = {2};", time, time, buildingID);
+                                // Apply recovery-based build time bonus
+                                int recoveryScore = Fitness.GetRecoveryScore(account_id).Result;
+                                float recoveryMultiplier = 1f - (recoveryScore / 200f); // 100% recovery = 50% faster
+                                int adjustedTime = Math.Max(10, (int)(time * recoveryMultiplier));
+                                
+                                query = String.Format("UPDATE buildings SET is_constructing = 1, construction_time = NOW() + INTERVAL {0} SECOND, construction_build_time = {1} WHERE id = {2};", adjustedTime, adjustedTime, buildingID);
                                 using (MySqlCommand command = new MySqlCommand(query, connection))
                                 {
                                     command.ExecuteNonQuery();
@@ -3883,7 +3894,8 @@ namespace DevelopersHub.RealtimeNetworking.Server
                             }
                             else
                             {
-                                response = 2;
+                                // Response 7 = Fitness requirement not met (new response code)
+                                response = 7;
                             }
                         }
                     }

@@ -35,6 +35,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private Button _addShieldButton = null;
         [SerializeField] private Button _buyResourceButton = null;
         [SerializeField] private Button _battleReportsButton = null;
+        [SerializeField] private Button _fitnessButton = null; // Bio-Clash Fitness
         [SerializeField] private GameObject _battleReportsNew = null;
         [SerializeField] public BuildGrid _grid = null;
         [SerializeField] public Building[] _buildingPrefabs = null;
@@ -91,6 +92,8 @@ namespace DevelopersHub.ClashOfWhatecer
             _rankingButton.onClick.AddListener(RankingButtonClicked);
             _buyResourceButton.onClick.AddListener(BuyResource);
             _battleReportsButton.onClick.AddListener(BattleReportsButtonClicked);
+            if (_fitnessButton != null)
+                _fitnessButton.onClick.AddListener(FitnessButtonClicked);
             SoundManager.instanse.PlayMusic(SoundManager.instanse.mainMusic);
         }
 
@@ -103,6 +106,12 @@ namespace DevelopersHub.ClashOfWhatecer
         {
             SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
             UI_BattleReports.instanse.Open();
+        }
+
+        private void FitnessButtonClicked()
+        {
+            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            UI_Fitness.instanse.Open();
         }
 
         private void SettingsButtonClicked()

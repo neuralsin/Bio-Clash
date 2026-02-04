@@ -8,6 +8,11 @@
     using DevelopersHub.RealtimeNetworking.Client;
     using System;
 
+    /// <summary>
+    /// BIO-CLASH UPGRADE PANEL
+    /// Replaces resource-based upgrades with fitness volume requirements.
+    /// "Your Body Builds Your Base"
+    /// </summary>
     public class UI_BuildingUpgrade : MonoBehaviour
     {
 
@@ -21,11 +26,22 @@
         [SerializeField] private TextMeshProUGUI _titleBuilding = null;
         [SerializeField] private Image _icon = null;
         [SerializeField] private Sprite _defaultIcon = null;
+        
+        // Original resource fields (hidden but kept for compatibility)
         [SerializeField] private TextMeshProUGUI reqGold = null;
         [SerializeField] private TextMeshProUGUI reqElixir = null;
         [SerializeField] private TextMeshProUGUI reqDark = null;
         [SerializeField] private TextMeshProUGUI reqGems = null;
         [SerializeField] private TextMeshProUGUI reqTime = null;
+        
+        // BIO-CLASH: Fitness requirement fields
+        [Header("Bio-Clash Fitness Requirements")]
+        [SerializeField] private TextMeshProUGUI reqMuscle = null; // "Chest", "Back", etc
+        [SerializeField] private TextMeshProUGUI reqVolume = null; // "500 / 1000 kg"
+        [SerializeField] private Image reqVolumeBar = null; // Progress bar
+        [SerializeField] private TextMeshProUGUI reqStreak = null; // For Town Hall
+        [SerializeField] private GameObject fitnessRequirementsPanel = null;
+        
         [SerializeField] private Button _upgradeButton = null;
         [SerializeField] private GameObject _requiredBuildingPanel = null;
         [SerializeField] private GameObject _townHallRequiredPanel = null;
@@ -64,25 +80,19 @@
             selectedInstanse = Building.selectedInstanse;
             int x = -1;
             int townHallLevel = 0;
-            int haveCount = 0;
+            
             for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
             {
                 if (Player.instanse.data.buildings[i].databaseID == id) { x = i; }
-                if (Player.instanse.data.buildings[i].id == Data.BuildingID.townhall) { townHallLevel = Player.instanse.data.buildings[i].level ; }
+                if (Player.instanse.data.buildings[i].id == Data.BuildingID.townhall) { townHallLevel = Player.instanse.data.buildings[i].level; }
                 if (townHallLevel > 0 && x >= 0) { break; }
             }
+            
             if (x >= 0)
             {
-                for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
-                {
-                    if (Player.instanse.data.buildings[i].id == Player.instanse.data.buildings[x].id)
-                    {
-                        haveCount++;
-                    }
-                }
                 _titleBuilding.text = Language.instanse.GetBuildingName(Player.instanse.data.buildings[x].id);
                 Sprite icon = AssetsBank.GetBuildingIcon(Player.instanse.data.buildings[x].id, Player.instanse.data.buildings[x].level);
-                if(icon != null)
+                if (icon != null)
                 {
                     _icon.sprite = icon;
                 }
@@ -90,168 +100,49 @@
                 {
                     _icon.sprite = _defaultIcon;
                 }
+                
                 serverBuilding = Player.instanse.GetServerBuilding(Player.instanse.data.buildings[x].id, Player.instanse.data.buildings[x].level + 1);
-                if(serverBuilding != null && !(Player.instanse.data.buildings[x].id == Data.BuildingID.townhall && Player.instanse.data.buildings[x].level >= Data.maxTownHallLevel))
+                
+                if (serverBuilding != null && !(Player.instanse.data.buildings[x].id == Data.BuildingID.townhall && Player.instanse.data.buildings[x].level >= Data.maxTownHallLevel))
                 {
-                    bool haveResources = true;
-                    if (serverBuilding.requiredGold > Player.instanse.gold || serverBuilding.requiredElixir > Player.instanse.elixir || serverBuilding.requiredDarkElixir > Player.instanse.darkElixir || serverBuilding.requiredGems > Player.instanse.data.gems)
-                    {
-                        haveResources = false;
-                    }
-                    if (Player.instanse.data.buildings[x].id == Data.BuildingID.townhall)
-                    {
-                        Data.BuildingAvailability limits = Data.GetTownHallLimits(Player.instanse.data.buildings[x].level);
-                        if(limits != null)
-                        {
-                            List<Data.BuildingCount> buildings = new List<Data.BuildingCount>();
-                            for (int i = 0; i < limits.buildings.Length; i++)
-                            {
-                                if(limits.buildings[i].id == Data.BuildingID.townhall.ToString() || limits.buildings[i].id == Data.BuildingID.clancastle.ToString() || limits.buildings[i].id == Data.BuildingID.buildershut.ToString() || limits.buildings[i].id == Data.BuildingID.decoration.ToString() || limits.buildings[i].id == Data.BuildingID.obstacle.ToString())
-                                {
-                                    continue;
-                                }
-                                if (UI_Shop.instanse.IsBuildingInShop((Data.BuildingID)Enum.Parse(typeof(Data.BuildingID), limits.buildings[i].id)))
-                                {
-                                    for (int j = 0; j < Player.instanse.data.buildings.Count; j++)
-                                    {
-                                        if (Player.instanse.data.buildings[j].id.ToString() == limits.buildings[i].id)
-                                        {
-                                            limits.buildings[i].have += 1;
-                                        }
-                                    }
-                                    if (limits.buildings[i].have < limits.buildings[i].count)
-                                    {
-                                        buildings.Add(limits.buildings[i]);
-                                    }
-                                }
-                            }
-                            if(buildings.Count > 0)
-                            {
-                                float h = (_requiredBuildingRoot.anchorMax.y - _requiredBuildingRoot.anchorMin.y) * Screen.height;
-                                for (int i = 0; i < buildings.Count; i++)
-                                {
-                                    UI_RequiredBuilding requiredBuilding = Instantiate(_requiredBuildingPrefab, _requiredBuildingGrid);
-                                    requiredBuilding.Initialize((Data.BuildingID)Enum.Parse(typeof(Data.BuildingID), buildings[i].id), buildings[i].count - buildings[i].have);
-                                    RectTransform rect = requiredBuilding.GetComponent<RectTransform>();
-                                    rect.sizeDelta = new Vector2(h, h);
-                                    _buildings.Add(requiredBuilding);
-                                }
-                                _requiredBuildingGrid.anchoredPosition = new Vector2(0, _requiredBuildingGrid.anchoredPosition.y);
-                                _requiredBuildingPanel.SetActive(true);
-                                _upgradeButton.interactable = false;
-                            }
-                            else
-                            {
-                                if (haveResources == false)
-                                {
-                                    _townHallRequiredPanel.SetActive(true);
-                                    switch (Language.instanse.language)
-                                    {
-                                        case Language.LanguageID.persian:
-                                            _townHallRequiredText.text = "به اندازه کافی منابع ندارید";
-                                            break;
-                                        default:
-                                            _townHallRequiredText.text = "You do not have enough resources";
-                                            break;
-                                    }
-                                }
-                                else if (UI_Main.instanse.haveAvalibaleBuilder == false)
-                                {
-                                    _upgradeButton.interactable = false;
-                                    _townHallRequiredPanel.SetActive(true);
-                                    switch (Language.instanse.language)
-                                    {
-                                        case Language.LanguageID.persian:
-                                            _townHallRequiredText.text = "کارگر آزاد برای ساخت ندارید";
-                                            break;
-                                        default:
-                                            _townHallRequiredText.text = "You do not have available worker";
-                                            break;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _townHallRequiredPanel.SetActive(true);
-                            switch (Language.instanse.language)
-                            {
-                                case Language.LanguageID.persian:
-                                    _townHallRequiredText.text = Language.instanse.GetBuildingName(Data.BuildingID.townhall) + " به حداکثر سطح رسیده است";
-                                    break;
-                                default:
-                                    _townHallRequiredText.text = Language.instanse.GetBuildingName(Data.BuildingID.townhall) + " is at Max Level";
-                                    break;
-                            }
-                            _upgradeButton.interactable = false;
-                        }
-                    }
-                    else
-                    {
-                        Data.BuildingCount limits = Data.GetBuildingLimits(townHallLevel, Player.instanse.data.buildings[x].id.ToString());
-                        if(limits != null && limits.maxLevel > Player.instanse.data.buildings[x].level)
-                        {
-                            if (haveResources == false)
-                            {
-                                _townHallRequiredPanel.SetActive(true);
-                                switch (Language.instanse.language)
-                                {
-                                    case Language.LanguageID.persian:
-                                        _townHallRequiredText.text = "به اندازه کافی منابع ندارید";
-                                        break;
-                                    default:
-                                        _townHallRequiredText.text = "You do not have enough resources";
-                                        break;
-                                }
-                            }
-                            else if (UI_Main.instanse.haveAvalibaleBuilder == false)
-                            {
-                                _upgradeButton.interactable = false;
-                                _townHallRequiredPanel.SetActive(true);
-                                switch (Language.instanse.language)
-                                {
-                                    case Language.LanguageID.persian:
-                                        _townHallRequiredText.text = "کارگر آزاد برای ساخت ندارید";
-                                        break;
-                                    default:
-                                        _townHallRequiredText.text = "You do not have available worker";
-                                        break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _upgradeButton.interactable = false;
-                            _townHallRequiredPanel.SetActive(true);
-                            switch (Language.instanse.language)
-                            {
-                                case Language.LanguageID.persian:
-                                    _townHallRequiredText.text = "نیاز به ارتقای " + Language.instanse.GetBuildingName(Data.BuildingID.townhall) + " میباشد";
-                                    break;
-                                default:
-                                    _townHallRequiredText.text = Language.instanse.GetBuildingName(Data.BuildingID.townhall) + " Upgrade is Required";
-                                    break;
-                            }
-                        }
-                    }
-                    reqGold.text = serverBuilding.requiredGold.ToString();
-                    reqElixir.text = serverBuilding.requiredElixir.ToString();
-                    reqDark.text = serverBuilding.requiredDarkElixir.ToString();
-                    reqGems.text = serverBuilding.requiredGems.ToString();
-                    if(haveResources == false)
+                    // =========================================================
+                    // BIO-CLASH: FITNESS REQUIREMENT CHECK
+                    // =========================================================
+                    bool meetsFitnessRequirement = CheckFitnessRequirement(selectedInstanse);
+                    
+                    // Display fitness requirements
+                    DisplayFitnessRequirements(selectedInstanse);
+                    
+                    // Check builder availability (still needed)
+                    if (UI_Main.instanse.haveAvalibaleBuilder == false)
                     {
                         _upgradeButton.interactable = false;
+                        _townHallRequiredPanel.SetActive(true);
+                        _townHallRequiredText.text = "You do not have available worker";
                     }
-                    reqTime.text = Tools.SecondsToTimeFormat(serverBuilding.buildTime);
-                    switch (Language.instanse.language)
+                    else if (!meetsFitnessRequirement)
                     {
-                        case Language.LanguageID.persian:
-                            _titleLevel.text = "ارتقاء به سطح " + (Player.instanse.data.buildings[x].level + 1).ToString();
-                            break;
-                        default:
-                            _titleLevel.text = "Upgrade to Level " + (Player.instanse.data.buildings[x].level + 1).ToString();
-                            break;
+                        _upgradeButton.interactable = false;
+                        _townHallRequiredPanel.SetActive(true);
+                        _townHallRequiredText.text = "💪 Workout more to unlock!";
                     }
+
+                    // Hide original resource requirements, show fitness
+                    if (reqGold != null) reqGold.text = "0";
+                    if (reqElixir != null) reqElixir.text = "0";
+                    if (reqDark != null) reqDark.text = "0";
+                    if (reqGems != null) reqGems.text = "0";
+                    
+                    // Build time based on recovery score (faster if recovered)
+                    int baseBuildTime = serverBuilding.buildTime;
+                    if (FitnessManager.instance != null)
+                    {
+                        float recoveryMultiplier = 1f - (FitnessManager.instance.recoveryScore / 200f); // 100% recovery = 50% faster
+                        baseBuildTime = Mathf.Max(10, (int)(baseBuildTime * recoveryMultiplier));
+                    }
+                    if (reqTime != null) reqTime.text = Tools.SecondsToTimeFormat(baseBuildTime);
+                    
+                    _titleLevel.text = "Upgrade to Level " + (Player.instanse.data.buildings[x].level + 1).ToString();
                     _maxLevelPanel.SetActive(false);
                     _detailsPanel.SetActive(true);
                 }
@@ -261,16 +152,85 @@
                     _maxLevelPanel.SetActive(true);
                     _detailsPanel.SetActive(false);
                 }
+                
                 _active = true;
                 _elements.SetActive(true);
                 _titleLevel.ForceMeshUpdate(true);
-                _titleLevel.ForceMeshUpdate(true);
-                reqTime.ForceMeshUpdate(true);
-                reqGold.ForceMeshUpdate(true);
-                reqElixir.ForceMeshUpdate(true);
-                reqDark.ForceMeshUpdate(true);
-                reqGems.ForceMeshUpdate(true);
                 _titleBuilding.ForceMeshUpdate(true);
+            }
+        }
+
+        /// <summary>
+        /// Check if player meets fitness requirements for this building upgrade.
+        /// </summary>
+        private bool CheckFitnessRequirement(Building building)
+        {
+            if (FitnessManager.instance == null)
+            {
+                Debug.LogWarning("FitnessManager not found - allowing upgrade for demo");
+                return true;
+            }
+            
+            return building.CanUpgradeWithFitness();
+        }
+
+        /// <summary>
+        /// Display fitness requirements in the upgrade panel.
+        /// </summary>
+        private void DisplayFitnessRequirements(Building building)
+        {
+            if (FitnessManager.instance == null) return;
+            
+            // Get muscle group for this building
+            string muscleGroup = building.GetMuscleGroupName();
+            float requiredVolume = building.GetFitnessRequirement();
+            float currentVolume = building.GetCurrentFitnessVolume();
+            
+            // Handle Town Hall (uses streak)
+            if (building.id == Data.BuildingID.townhall)
+            {
+                int requiredDays = (building.data.level + 1) * 7;
+                int currentStreak = FitnessManager.instance.workoutStreak;
+                
+                if (reqMuscle != null) reqMuscle.text = "🔥 Consistency";
+                if (reqVolume != null) reqVolume.text = $"{currentStreak} / {requiredDays} days";
+                if (reqVolumeBar != null) reqVolumeBar.fillAmount = Mathf.Clamp01((float)currentStreak / requiredDays);
+                if (reqStreak != null) reqStreak.text = $"Maintain a {requiredDays}-day workout streak!";
+            }
+            else
+            {
+                // Regular buildings use muscle volume
+                string muscleEmoji = GetMuscleEmoji(muscleGroup);
+                
+                if (reqMuscle != null) reqMuscle.text = $"{muscleEmoji} {muscleGroup}";
+                if (reqVolume != null) reqVolume.text = $"{currentVolume:N0} / {requiredVolume:N0} kg";
+                if (reqVolumeBar != null) reqVolumeBar.fillAmount = requiredVolume > 0 ? Mathf.Clamp01(currentVolume / requiredVolume) : 1f;
+                if (reqStreak != null) reqStreak.text = $"Lift {muscleGroup.ToLower()} to unlock!";
+            }
+            
+            // Show fitness panel if available
+            if (fitnessRequirementsPanel != null)
+            {
+                fitnessRequirementsPanel.SetActive(true);
+            }
+        }
+
+        /// <summary>
+        /// Get emoji for muscle group display.
+        /// </summary>
+        private string GetMuscleEmoji(string muscle)
+        {
+            switch (muscle.ToLower())
+            {
+                case "chest": return "💪";
+                case "back": return "🦴";
+                case "legs": return "🦵";
+                case "shoulders": return "🤸";
+                case "biceps": return "💪";
+                case "triceps": return "🏋️";
+                case "core": return "🔥";
+                case "cardio": return "🏃";
+                default: return "💪";
             }
         }
 
@@ -291,13 +251,29 @@
 
         private void Upgrade()
         {
-            if(serverBuilding != null)
+            if (serverBuilding != null)
             {
+                // BIO-CLASH: Final fitness check before upgrade
+                if (!CheckFitnessRequirement(selectedInstanse))
+                {
+                    _townHallRequiredPanel.SetActive(true);
+                    _townHallRequiredText.text = "💪 Need more workout volume!";
+                    return;
+                }
+                
                 if (serverBuilding.buildTime > 0)
                 {
+                    // Apply recovery bonus to build time
+                    int adjustedBuildTime = serverBuilding.buildTime;
+                    if (FitnessManager.instance != null)
+                    {
+                        float recoveryMultiplier = 1f - (FitnessManager.instance.recoveryScore / 200f);
+                        adjustedBuildTime = Mathf.Max(10, (int)(serverBuilding.buildTime * recoveryMultiplier));
+                    }
+                    
                     selectedInstanse.isCons = true;
-                    selectedInstanse.data.constructionTime = Player.instanse.data.nowTime.AddSeconds(serverBuilding.buildTime);
-                    selectedInstanse.data.buildTime = serverBuilding.buildTime;
+                    selectedInstanse.data.constructionTime = Player.instanse.data.nowTime.AddSeconds(adjustedBuildTime);
+                    selectedInstanse.data.buildTime = adjustedBuildTime;
                 }
                 else
                 {
@@ -305,11 +281,14 @@
                     selectedInstanse.level = selectedInstanse.level + 1;
                     selectedInstanse.AdjustUI(true);
                 }
+                
                 selectedInstanse.lastChange = DateTime.Now;
+                
                 Packet packet = new Packet();
                 packet.Write((int)Player.RequestsID.UPGRADE);
                 packet.Write(id);
                 Sender.TCP_Send(packet);
+                
                 Close2();
                 SoundManager.instanse.PlaySound(SoundManager.instanse.buildStart);
             }

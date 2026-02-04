@@ -900,5 +900,63 @@ namespace DevelopersHub.ClashOfWhatecer
         }
         #endif
 
+        // ============================================================
+        // BIO-CLASH: FITNESS-BASED UPGRADE REQUIREMENTS
+        // "Your Body Builds Your Base" - Volume lifted determines upgrades
+        // ============================================================
+
+        /// <summary>
+        /// Check if player has enough volume lifted to upgrade this building.
+        /// Returns true if fitness requirement is met.
+        /// </summary>
+        public bool CanUpgradeWithFitness()
+        {
+            if (FitnessManager.instance == null)
+            {
+                Debug.LogWarning("FitnessManager not found - allowing upgrade");
+                return true;
+            }
+            return FitnessManager.instance.CanUpgradeBuilding(id, data.level);
+        }
+
+        /// <summary>
+        /// Get the volume requirement for upgrading to next level.
+        /// </summary>
+        public float GetFitnessRequirement()
+        {
+            int targetLevel = data.level + 1;
+            if (FitnessManager.instance != null)
+            {
+                return FitnessManager.instance.GetUpgradeRequirement(id, targetLevel);
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Get the current volume the player has for this building's muscle group.
+        /// </summary>
+        public float GetCurrentFitnessVolume()
+        {
+            if (FitnessManager.instance == null) return 0;
+            
+            if (FitnessManager.BuildingToMuscle.ContainsKey(id))
+            {
+                return FitnessManager.instance.GetMuscleVolume(FitnessManager.BuildingToMuscle[id]);
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Get the muscle group name for this building type.
+        /// </summary>
+        public string GetMuscleGroupName()
+        {
+            if (FitnessManager.instance != null)
+            {
+                return FitnessManager.instance.GetBuildingMuscle(id);
+            }
+            return "None";
+        }
+
     }
 }
