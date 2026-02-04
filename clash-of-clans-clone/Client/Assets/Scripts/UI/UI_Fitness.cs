@@ -138,6 +138,7 @@ namespace DevelopersHub.ClashOfWhatecer
             { "Bench Press", (FitnessManager.MuscleGroup.Chest, 60, 10) },
             { "Squat", (FitnessManager.MuscleGroup.Legs, 80, 10) },
             { "Deadlift", (FitnessManager.MuscleGroup.Back, 100, 8) },
+            { "Run", (FitnessManager.MuscleGroup.Cardio, 30, 1) },
             { "Run 30min", (FitnessManager.MuscleGroup.Cardio, 30, 1) }
         };
 
@@ -372,23 +373,34 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void QuickLog(string exercise)
         {
-            if (!quickExercises.ContainsKey(exercise)) return;
+            if (!quickExercises.ContainsKey(exercise))
+            {
+                Debug.LogWarning($"QuickLog: Unknown exercise '{exercise}'");
+                return;
+            }
 
             var preset = quickExercises[exercise];
             
             if (preset.muscle == FitnessManager.MuscleGroup.Cardio)
             {
                 FitnessManager.instance.LogCardio((int)preset.weight);
+                Debug.Log($"🏃 Quick Logged: {exercise} ({preset.weight} min cardio)");
             }
             else
             {
                 FitnessManager.instance.LogWorkout(preset.muscle, preset.weight, preset.reps);
+                Debug.Log($"💪 Quick Logged: {exercise} ({preset.weight}kg x {preset.reps} reps → {preset.muscle})");
             }
 
             RefreshStats();
+            UpdateWorkoutSessionUI();
             
             if (SoundManager.instance != null)
                 SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            
+            // Visual feedback - punch animation on the panel
+            if (_panel != null)
+                StartCoroutine(PunchScale(_panel.transform));
         }
 
         public void RefreshStats()
@@ -437,7 +449,7 @@ namespace DevelopersHub.ClashOfWhatecer
             float volume = FitnessManager.instance.GetMuscleVolume(muscle);
             
             if (text != null)
-                text.text = $"{volume:N0} kg";
+                text.text = $"{volume:N0}/{maxVolume:N0} kg";
             if (bar != null)
                 bar.fillAmount = Mathf.Clamp01(volume / maxVolume);
         }

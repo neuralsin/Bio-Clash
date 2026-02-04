@@ -26,8 +26,16 @@ namespace DevelopersHub.ClashOfWhatecer
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void AutoInitialize()
         {
-            // Only create if not already present
-            if (FindObjectOfType<FitnessSetup>() == null && FindObjectOfType<FitnessManager>() == null)
+            // ALWAYS run cleanup first - destroy any old/ugly UI_Fitness regardless of other conditions
+            UI_Fitness[] existingUIs = FindObjectsOfType<UI_Fitness>(true);
+            foreach (var oldUI in existingUIs)
+            {
+                Debug.Log($"[BIO-CLASH] AutoInit: Destroying old UI_Fitness: {oldUI.gameObject.name}");
+                DestroyImmediate(oldUI.gameObject);
+            }
+            
+            // Only create FitnessSetup if not already present
+            if (FindObjectOfType<FitnessSetup>() == null)
             {
                 GameObject setupGO = new GameObject("FitnessSetup_Auto");
                 setupGO.AddComponent<FitnessSetup>();
@@ -241,7 +249,7 @@ namespace DevelopersHub.ClashOfWhatecer
             headerRect.anchorMax = new Vector2(1, 1);
             
             // Title
-            GameObject titleGO = CreateText(headerObj.transform, "Title", "FITNESS CENTER", 36, TextAlignmentOptions.Center);
+            GameObject titleGO = CreateText(headerObj.transform, "Title", "[GYM] FITNESS CENTER", 32, TextAlignmentOptions.Center);
             TextMeshProUGUI titleText = titleGO.GetComponent<TextMeshProUGUI>();
             titleText.color = new Color(1f, 0.95f, 0.6f, 1f); // Gold
             titleText.fontStyle = FontStyles.Bold;
@@ -270,13 +278,20 @@ namespace DevelopersHub.ClashOfWhatecer
             // =================================================================================
             // 4. STATS SECTION (LEFT COLUMN)
             // =================================================================================
-            CreateText(statsCol.transform, "StatsTitle", "MUSCLE LEVELS", 24, new Vector2(0, 0.94f), new Vector2(1, 1f), TextAlignmentOptions.Left)
-                .GetComponent<TextMeshProUGUI>().color = new Color(0.8f, 0.8f, 1f);
+            
+            // Stats title with checkbox styling (matching user's screenshot)
+            GameObject statsTitleBg = CreatePanel(statsCol.transform, "StatsTitleBG", new Color(0.1f, 0.12f, 0.16f, 0.9f));
+            RectTransform statsTitleRect = statsTitleBg.GetComponent<RectTransform>();
+            statsTitleRect.anchorMin = new Vector2(0, 0.92f);
+            statsTitleRect.anchorMax = new Vector2(1, 1f);
+            
+            CreateText(statsTitleBg.transform, "StatsTitle", "□ YOUR STATS", 20, TextAlignmentOptions.Left)
+                .GetComponent<TextMeshProUGUI>().color = new Color(0.9f, 0.9f, 1f);
 
             string[] muscles = { "Chest", "Back", "Shoulders", "Biceps", "Triceps", "Legs", "Core", "Cardio" };
-            float barHeight = 0.08f;
-            float gap = 0.03f;
-            float startY = 0.88f;
+            float barHeight = 0.085f;
+            float gap = 0.015f;
+            float startY = 0.90f;
 
             for (int i = 0; i < muscles.Length; i++)
             {
@@ -317,53 +332,110 @@ namespace DevelopersHub.ClashOfWhatecer
             // --- SECTION A: QUICK LOG (TOP) ---
             GameObject quickSection = CreatePanel(mainCol.transform, "QuickLog", new Color(0.18f, 0.22f, 0.28f, 1f));
             RectTransform quickRect = quickSection.GetComponent<RectTransform>();
-            quickRect.anchorMin = new Vector2(0, 0.82f);
+            quickRect.anchorMin = new Vector2(0, 0.88f);
             quickRect.anchorMax = new Vector2(1, 1f);
 
-            CreateText(quickSection.transform, "QuickTitle", "QUICK LOG", 16, new Vector2(0.02f, 0.7f), new Vector2(0.3f, 0.95f));
+            CreateText(quickSection.transform, "QuickTitle", "Quick Log:", 14, new Vector2(0.02f, 0.1f), new Vector2(0.18f, 0.9f));
 
-            float btnWidth = 0.23f;
-            float btnGap = 0.02f;
-            float btnYMin = 0.1f;
-            float btnYMax = 0.65f;
+            float qBtnWidth = 0.19f;
+            float qBtnGap = 0.01f;
+            float qStartX = 0.20f;
 
-            fitnessUI._quickBenchButton = CreateButton(quickSection.transform, "BtnBench", "CHEST", 14, 
-                new Vector2(btnGap, btnYMin), new Vector2(btnGap + btnWidth, btnYMax)).GetComponent<Button>();
+            GameObject benchBtn = CreateButton(quickSection.transform, "BtnBench", "[GYM] Bench", 12, 
+                new Vector2(qStartX, 0.15f), new Vector2(qStartX + qBtnWidth, 0.85f));
+            benchBtn.GetComponent<Image>().color = new Color(0.9f, 0.5f, 0.2f, 1f); // Orange
+            fitnessUI._quickBenchButton = benchBtn.GetComponent<Button>();
                 
-            fitnessUI._quickSquatButton = CreateButton(quickSection.transform, "BtnSquat", "LEGS", 14, 
-                new Vector2(btnGap*2 + btnWidth, btnYMin), new Vector2(btnGap*2 + btnWidth*2, btnYMax)).GetComponent<Button>();
+            GameObject squatBtn = CreateButton(quickSection.transform, "BtnSquat", "□ Squat", 12, 
+                new Vector2(qStartX + qBtnWidth + qBtnGap, 0.15f), new Vector2(qStartX + qBtnWidth*2 + qBtnGap, 0.85f));
+            squatBtn.GetComponent<Image>().color = new Color(0.4f, 0.6f, 0.8f, 1f); // Blue
+            fitnessUI._quickSquatButton = squatBtn.GetComponent<Button>();
 
-            fitnessUI._quickDeadliftButton = CreateButton(quickSection.transform, "BtnDead", "BACK", 14, 
-                new Vector2(btnGap*3 + btnWidth*2, btnYMin), new Vector2(btnGap*3 + btnWidth*3, btnYMax)).GetComponent<Button>();
+            GameObject deadBtn = CreateButton(quickSection.transform, "BtnDead", "□ Deadlift", 12, 
+                new Vector2(qStartX + qBtnWidth*2 + qBtnGap*2, 0.15f), new Vector2(qStartX + qBtnWidth*3 + qBtnGap*2, 0.85f));
+            deadBtn.GetComponent<Image>().color = new Color(0.4f, 0.6f, 0.8f, 1f); // Blue
+            fitnessUI._quickDeadliftButton = deadBtn.GetComponent<Button>();
 
-            fitnessUI._quickRunButton = CreateButton(quickSection.transform, "BtnRun", "RUN", 14, 
-                new Vector2(btnGap*4 + btnWidth*3, btnYMin), new Vector2(btnGap*4 + btnWidth*4, btnYMax)).GetComponent<Button>();
+            GameObject runBtn = CreateButton(quickSection.transform, "BtnRun", "□ Run", 12, 
+                new Vector2(qStartX + qBtnWidth*3 + qBtnGap*3, 0.15f), new Vector2(qStartX + qBtnWidth*4 + qBtnGap*3, 0.85f));
+            runBtn.GetComponent<Image>().color = new Color(0.8f, 0.3f, 0.3f, 1f); // Red
+            fitnessUI._quickRunButton = runBtn.GetComponent<Button>();
 
+            // --- SECTION B: ACTIVE WORKOUT SESSION ---
+            GameObject workoutSection = CreatePanel(mainCol.transform, "ActiveWorkout", new Color(0.12f, 0.14f, 0.18f, 1f));
+            RectTransform workoutRect = workoutSection.GetComponent<RectTransform>();
+            workoutRect.anchorMin = new Vector2(0, 0.62f);
+            workoutRect.anchorMax = new Vector2(1, 0.86f);
 
-            // --- SECTION B: MANUAL LOG (MIDDLE) ---
-            GameObject manualSection = CreatePanel(mainCol.transform, "ManualLog", new Color(0.15f, 0.18f, 0.24f, 1f));
-            RectTransform manualRect = manualSection.GetComponent<RectTransform>();
-            manualRect.anchorMin = new Vector2(0, 0.55f);
-            manualRect.anchorMax = new Vector2(1, 0.80f);
-
-            CreateText(manualSection.transform, "ManTitle", "MANUAL ENTRY", 16, new Vector2(0.02f, 0.8f), new Vector2(1, 0.95f));
-
-            // Row 1: Exercise Name & Muscle
-            fitnessUI._exerciseInput = CreateInputField(manualSection.transform, "InpExercise", "Exercise Name...", 
-                new Vector2(0.02f, 0.5f), new Vector2(0.6f, 0.75f)).GetComponent<TMP_InputField>();
+            // Title row
+            CreateText(workoutSection.transform, "WrkTitle", "[GYM] ACTIVE WORKOUT", 16, 
+                new Vector2(0.02f, 0.82f), new Vector2(0.4f, 0.98f));
             
-            fitnessUI._muscleInput = CreateInputField(manualSection.transform, "InpMuscle", "Muscle...", 
-                new Vector2(0.62f, 0.5f), new Vector2(0.98f, 0.75f)).GetComponent<TMP_InputField>();
+            fitnessUI._workoutTimerText = CreateText(workoutSection.transform, "Timer", "[TIME] 0:00", 16, 
+                new Vector2(0.4f, 0.82f), new Vector2(0.6f, 0.98f), TextAlignmentOptions.Center).GetComponent<TextMeshProUGUI>();
+            
+            fitnessUI._workoutStatusText = CreateText(workoutSection.transform, "Status", "[GYM] Workout Active", 14, 
+                new Vector2(0.6f, 0.82f), new Vector2(0.98f, 0.98f), TextAlignmentOptions.Right).GetComponent<TextMeshProUGUI>();
 
-            // Row 2: Weight, Reps, Log Button
-            fitnessUI._weightInput = CreateInputField(manualSection.transform, "InpWeight", "Kg", 
-                new Vector2(0.02f, 0.1f), new Vector2(0.25f, 0.4f)).GetComponent<TMP_InputField>();
+            // Stats row
+            fitnessUI._totalVolumeText = CreateText(workoutSection.transform, "TotalVol", "[*] 4,000 kg", 13, 
+                new Vector2(0.02f, 0.65f), new Vector2(0.3f, 0.8f)).GetComponent<TextMeshProUGUI>();
+            
+            fitnessUI._exerciseCountText = CreateText(workoutSection.transform, "ExCount", "[#] 1 exercises", 13, 
+                new Vector2(0.3f, 0.65f), new Vector2(0.6f, 0.8f), TextAlignmentOptions.Center).GetComponent<TextMeshProUGUI>();
 
-            fitnessUI._repsInput = CreateInputField(manualSection.transform, "InpReps", "Reps", 
-                new Vector2(0.27f, 0.1f), new Vector2(0.50f, 0.4f)).GetComponent<TMP_InputField>();
+            // Control buttons row
+            GameObject startBtn = CreateButton(workoutSection.transform, "BtnStart", "□ FINISH", 14, 
+                new Vector2(0.02f, 0.38f), new Vector2(0.32f, 0.62f));
+            startBtn.GetComponent<Image>().color = new Color(0.2f, 0.7f, 0.3f, 1f); // Green
+            fitnessUI._startWorkoutButton = startBtn.GetComponent<Button>();
 
-            GameObject logBtnObj = CreateButton(manualSection.transform, "BtnLog", "LOG WORKOUT", 18, 
-                new Vector2(0.55f, 0.1f), new Vector2(0.98f, 0.4f));
+            GameObject pauseBtn = CreateButton(workoutSection.transform, "BtnPause", "[||] Pause", 14, 
+                new Vector2(0.34f, 0.38f), new Vector2(0.64f, 0.62f));
+            pauseBtn.GetComponent<Image>().color = new Color(0.3f, 0.6f, 0.8f, 1f); // Blue
+            fitnessUI._pauseWorkoutButton = pauseBtn.GetComponent<Button>();
+
+            GameObject addSetBtn = CreateButton(workoutSection.transform, "BtnAddSet", "□ ADD SET", 14, 
+                new Vector2(0.66f, 0.38f), new Vector2(0.98f, 0.62f));
+            addSetBtn.GetComponent<Image>().color = new Color(0.3f, 0.7f, 0.7f, 1f); // Cyan
+            fitnessUI._addExerciseButton = addSetBtn.GetComponent<Button>();
+
+            // Stop button (hidden until workout starts)
+            GameObject stopBtn = CreateButton(workoutSection.transform, "BtnStop", "STOP", 14, 
+                new Vector2(0.02f, 0.38f), new Vector2(0.32f, 0.62f));
+            stopBtn.GetComponent<Image>().color = new Color(0.8f, 0.3f, 0.3f, 1f); // Red
+            fitnessUI._stopWorkoutButton = stopBtn.GetComponent<Button>();
+            stopBtn.SetActive(false); // Hidden initially
+
+            // Input row: Exercise, Muscle, Kg, Reps, Sets
+            CreateText(workoutSection.transform, "LblExercise", "Exercise:", 11, 
+                new Vector2(0.02f, 0.2f), new Vector2(0.12f, 0.35f));
+            fitnessUI._exerciseInput = CreateInputField(workoutSection.transform, "InpExercise", "Bench Press", 
+                new Vector2(0.12f, 0.2f), new Vector2(0.38f, 0.35f)).GetComponent<TMP_InputField>();
+
+            CreateText(workoutSection.transform, "LblMuscle", "Muscle:", 11, 
+                new Vector2(0.40f, 0.2f), new Vector2(0.50f, 0.35f));
+            fitnessUI._muscleInput = CreateInputField(workoutSection.transform, "InpMuscle", "Chest", 
+                new Vector2(0.50f, 0.2f), new Vector2(0.70f, 0.35f)).GetComponent<TMP_InputField>();
+
+            // Bottom row: Kg, Reps, Sets, LOG Button
+            CreateText(workoutSection.transform, "LblKg", "Kg:", 11, 
+                new Vector2(0.02f, 0.02f), new Vector2(0.08f, 0.17f));
+            fitnessUI._weightInput = CreateInputField(workoutSection.transform, "InpKg", "60", 
+                new Vector2(0.08f, 0.02f), new Vector2(0.20f, 0.17f)).GetComponent<TMP_InputField>();
+
+            CreateText(workoutSection.transform, "LblReps", "Reps:", 11, 
+                new Vector2(0.22f, 0.02f), new Vector2(0.30f, 0.17f));
+            fitnessUI._repsInput = CreateInputField(workoutSection.transform, "InpReps", "10", 
+                new Vector2(0.30f, 0.02f), new Vector2(0.42f, 0.17f)).GetComponent<TMP_InputField>();
+
+            CreateText(workoutSection.transform, "LblSets", "Sets:", 11, 
+                new Vector2(0.44f, 0.02f), new Vector2(0.52f, 0.17f));
+            fitnessUI._setsInput = CreateInputField(workoutSection.transform, "InpSets", "3", 
+                new Vector2(0.52f, 0.02f), new Vector2(0.64f, 0.17f)).GetComponent<TMP_InputField>();
+
+            GameObject logBtnObj = CreateButton(workoutSection.transform, "BtnLog", "□ LOG", 14, 
+                new Vector2(0.68f, 0.02f), new Vector2(0.98f, 0.17f));
             logBtnObj.GetComponent<Image>().color = new Color(0.2f, 0.7f, 0.3f, 1f); // Green
             fitnessUI._logButton = logBtnObj.GetComponent<Button>();
 
@@ -372,7 +444,7 @@ namespace DevelopersHub.ClashOfWhatecer
             GameObject healthSection = CreatePanel(mainCol.transform, "Health", new Color(0.12f, 0.15f, 0.20f, 1f));
             RectTransform healthRect2 = healthSection.GetComponent<RectTransform>();
             healthRect2.anchorMin = new Vector2(0, 0);
-            healthRect2.anchorMax = new Vector2(1, 0.53f);
+            healthRect2.anchorMax = new Vector2(1, 0.60f);
 
             CreateText(healthSection.transform, "HealthTitle", "DAILY HEALTH", 16, new Vector2(0.02f, 0.9f), new Vector2(1, 0.98f));
 
@@ -479,6 +551,202 @@ namespace DevelopersHub.ClashOfWhatecer
                 case "cardio": return new Color(0.5f, 1f, 1f); // Cyan
                 default: return Color.white;
             }
+        }
+
+        // ===================================
+        // HELPER METHODS - UI ELEMENT CREATION
+        // ===================================
+
+        /// <summary>
+        /// Creates a UI panel with RectTransform and Image components.
+        /// </summary>
+        private GameObject CreatePanel(Transform parent, string name, Color color)
+        {
+            GameObject panel = new GameObject(name);
+            panel.transform.SetParent(parent, false);
+            
+            RectTransform rect = panel.AddComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            
+            Image img = panel.AddComponent<Image>();
+            img.color = color;
+            
+            return panel;
+        }
+
+        /// <summary>
+        /// Creates a TextMeshProUGUI element with full parent anchors.
+        /// </summary>
+        private GameObject CreateText(Transform parent, string name, string text, int fontSize, TextAlignmentOptions align)
+        {
+            GameObject textGO = new GameObject(name);
+            textGO.transform.SetParent(parent, false);
+            
+            RectTransform rect = textGO.AddComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            
+            TextMeshProUGUI tmp = textGO.AddComponent<TextMeshProUGUI>();
+            tmp.text = text;
+            tmp.fontSize = fontSize;
+            tmp.alignment = align;
+            tmp.color = Color.white;
+            
+            return textGO;
+        }
+
+        /// <summary>
+        /// Creates a TextMeshProUGUI element with specified anchor positions.
+        /// </summary>
+        private GameObject CreateText(Transform parent, string name, string text, int fontSize, 
+            Vector2 anchorMin, Vector2 anchorMax, TextAlignmentOptions align = TextAlignmentOptions.Left)
+        {
+            GameObject textGO = new GameObject(name);
+            textGO.transform.SetParent(parent, false);
+            
+            RectTransform rect = textGO.AddComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            
+            TextMeshProUGUI tmp = textGO.AddComponent<TextMeshProUGUI>();
+            tmp.text = text;
+            tmp.fontSize = fontSize;
+            tmp.alignment = align;
+            tmp.color = Color.white;
+            
+            return textGO;
+        }
+
+        /// <summary>
+        /// Creates a Button with Image and TextMeshProUGUI child.
+        /// </summary>
+        private GameObject CreateButton(Transform parent, string name, string text, int fontSize, 
+            Vector2 anchorMin, Vector2 anchorMax)
+        {
+            GameObject btnGO = new GameObject(name);
+            btnGO.transform.SetParent(parent, false);
+            
+            RectTransform rect = btnGO.AddComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            
+            Image img = btnGO.AddComponent<Image>();
+            img.color = new Color(0.3f, 0.5f, 0.7f, 1f); // Default blue button color
+            
+            Button btn = btnGO.AddComponent<Button>();
+            btn.targetGraphic = img;
+            
+            // Add button hover effect
+            ColorBlock colors = btn.colors;
+            colors.normalColor = img.color;
+            colors.highlightedColor = new Color(img.color.r + 0.1f, img.color.g + 0.1f, img.color.b + 0.1f, 1f);
+            colors.pressedColor = new Color(img.color.r - 0.1f, img.color.g - 0.1f, img.color.b - 0.1f, 1f);
+            btn.colors = colors;
+            
+            // Add text child
+            GameObject textGO = new GameObject("Text");
+            textGO.transform.SetParent(btnGO.transform, false);
+            
+            RectTransform textRect = textGO.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = new Vector2(4, 2);
+            textRect.offsetMax = new Vector2(-4, -2);
+            
+            TextMeshProUGUI tmp = textGO.AddComponent<TextMeshProUGUI>();
+            tmp.text = text;
+            tmp.fontSize = fontSize;
+            tmp.fontStyle = FontStyles.Bold;
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.color = Color.white;
+            
+            return btnGO;
+        }
+
+        /// <summary>
+        /// Creates a TMP_InputField with placeholder and input text.
+        /// </summary>
+        private GameObject CreateInputField(Transform parent, string name, string placeholder, 
+            Vector2 anchorMin, Vector2 anchorMax)
+        {
+            GameObject inputGO = new GameObject(name);
+            inputGO.transform.SetParent(parent, false);
+            
+            RectTransform rect = inputGO.AddComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            
+            Image img = inputGO.AddComponent<Image>();
+            img.color = new Color(0.15f, 0.15f, 0.2f, 1f); // Dark input background
+            
+            // Text Area (viewport for input)
+            GameObject textArea = new GameObject("Text Area");
+            textArea.transform.SetParent(inputGO.transform, false);
+            
+            RectTransform textAreaRect = textArea.AddComponent<RectTransform>();
+            textAreaRect.anchorMin = Vector2.zero;
+            textAreaRect.anchorMax = Vector2.one;
+            textAreaRect.offsetMin = new Vector2(8, 4);
+            textAreaRect.offsetMax = new Vector2(-8, -4);
+            
+            RectMask2D mask = textArea.AddComponent<RectMask2D>();
+            
+            // Placeholder text
+            GameObject placeholderGO = new GameObject("Placeholder");
+            placeholderGO.transform.SetParent(textArea.transform, false);
+            
+            RectTransform placeholderRect = placeholderGO.AddComponent<RectTransform>();
+            placeholderRect.anchorMin = Vector2.zero;
+            placeholderRect.anchorMax = Vector2.one;
+            placeholderRect.offsetMin = Vector2.zero;
+            placeholderRect.offsetMax = Vector2.zero;
+            
+            TextMeshProUGUI placeholderTMP = placeholderGO.AddComponent<TextMeshProUGUI>();
+            placeholderTMP.text = placeholder;
+            placeholderTMP.fontSize = 14;
+            placeholderTMP.fontStyle = FontStyles.Italic;
+            placeholderTMP.alignment = TextAlignmentOptions.Left;
+            placeholderTMP.color = new Color(0.5f, 0.5f, 0.5f, 0.7f);
+            
+            // Actual input text
+            GameObject textGO = new GameObject("Text");
+            textGO.transform.SetParent(textArea.transform, false);
+            
+            RectTransform textRect = textGO.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+            
+            TextMeshProUGUI inputTMP = textGO.AddComponent<TextMeshProUGUI>();
+            inputTMP.text = "";
+            inputTMP.fontSize = 14;
+            inputTMP.alignment = TextAlignmentOptions.Left;
+            inputTMP.color = Color.white;
+            
+            // Add TMP_InputField component
+            TMP_InputField inputField = inputGO.AddComponent<TMP_InputField>();
+            inputField.textViewport = textAreaRect;
+            inputField.textComponent = inputTMP;
+            inputField.placeholder = placeholderTMP;
+            inputField.fontAsset = inputTMP.font;
+            
+            // Style the caret
+            inputField.caretColor = Color.white;
+            inputField.selectionColor = new Color(0.3f, 0.5f, 0.8f, 0.5f);
+            
+            return inputGO;
         }
     }
 }
