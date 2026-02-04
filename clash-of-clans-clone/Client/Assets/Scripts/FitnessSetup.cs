@@ -27,7 +27,7 @@ namespace DevelopersHub.ClashOfWhatecer
         static void AutoInitialize()
         {
             // ALWAYS run cleanup first - destroy any old/ugly UI_Fitness regardless of other conditions
-            UI_Fitness[] existingUIs = FindObjectsOfType<UI_Fitness>(true);
+            UI_Fitness[] existingUIs = FindObjectsByType<UI_Fitness>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var oldUI in existingUIs)
             {
                 Debug.Log($"[BIO-CLASH] AutoInit: Destroying old UI_Fitness: {oldUI.gameObject.name}");
@@ -35,7 +35,7 @@ namespace DevelopersHub.ClashOfWhatecer
             }
             
             // Only create FitnessSetup if not already present
-            if (FindObjectOfType<FitnessSetup>() == null)
+            if (FindFirstObjectByType<FitnessSetup>() == null)
             {
                 GameObject setupGO = new GameObject("FitnessSetup_Auto");
                 setupGO.AddComponent<FitnessSetup>();
@@ -49,7 +49,7 @@ namespace DevelopersHub.ClashOfWhatecer
             // AGGRESSIVE CLEANUP: Destroy ALL existing UI_Fitness objects
             // This ensures the old "ugly" UI is removed before we create new one
             // ============================================================
-            UI_Fitness[] existingUIs = FindObjectsOfType<UI_Fitness>(true); // include inactive
+            UI_Fitness[] existingUIs = FindObjectsByType<UI_Fitness>(FindObjectsInactive.Include, FindObjectsSortMode.None); // include inactive
             foreach (var oldUI in existingUIs)
             {
                 Debug.Log($"[BIO-CLASH] Destroying old UI_Fitness: {oldUI.gameObject.name}");
@@ -89,7 +89,7 @@ namespace DevelopersHub.ClashOfWhatecer
             // Cache references
             if (mainCanvas == null)
             {
-                mainCanvas = FindObjectOfType<Canvas>();
+                mainCanvas = FindFirstObjectByType<Canvas>();
             }
 
             if (uiMain == null)
@@ -191,7 +191,7 @@ namespace DevelopersHub.ClashOfWhatecer
             // Check if UI_Fitness already exists using cached reference
             if (_cachedFitnessUI == null)
             {
-                _cachedFitnessUI = FindObjectOfType<UI_Fitness>();
+                _cachedFitnessUI = FindFirstObjectByType<UI_Fitness>();
             }
             
             if (_cachedFitnessUI != null)
@@ -446,6 +446,16 @@ namespace DevelopersHub.ClashOfWhatecer
                 new Vector2(0.44f, 0.02f), new Vector2(0.52f, 0.17f));
             fitnessUI._setsInput = CreateInputField(workoutSection.transform, "InpSets", "3", 
                 new Vector2(0.52f, 0.02f), new Vector2(0.64f, 0.17f)).GetComponent<TMP_InputField>();
+
+            // --- CRITICAL FIX: ENSURE INPUTS ARE ASSIGNED ---
+            // Sometimes GetComponent on the result of CreateInputField (which returns GO) might be tricky if not immediate
+            // Re-finding them just to be 100% sure they are wired
+            if (fitnessUI._exerciseInput == null) fitnessUI._exerciseInput = fitnessUI._panel.transform.Find("MainColumn/ActiveWorkout/InpExercise").GetComponent<TMP_InputField>();
+            if (fitnessUI._muscleInput == null) fitnessUI._muscleInput = fitnessUI._panel.transform.Find("MainColumn/ActiveWorkout/InpMuscle").GetComponent<TMP_InputField>();
+            if (fitnessUI._weightInput == null) fitnessUI._weightInput = fitnessUI._panel.transform.Find("MainColumn/ActiveWorkout/InpKg").GetComponent<TMP_InputField>();
+            if (fitnessUI._repsInput == null) fitnessUI._repsInput = fitnessUI._panel.transform.Find("MainColumn/ActiveWorkout/InpReps").GetComponent<TMP_InputField>();
+            if (fitnessUI._setsInput == null) fitnessUI._setsInput = fitnessUI._panel.transform.Find("MainColumn/ActiveWorkout/InpSets").GetComponent<TMP_InputField>();
+
 
             GameObject logBtnObj = CreateButton(workoutSection.transform, "BtnLog", "□ LOG", 14, 
                 new Vector2(0.68f, 0.02f), new Vector2(0.98f, 0.17f));

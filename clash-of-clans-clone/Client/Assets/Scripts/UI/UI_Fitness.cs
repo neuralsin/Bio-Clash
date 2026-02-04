@@ -93,7 +93,7 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] public TextMeshProUGUI _exerciseCountText = null;
 
         [Header("Animation")]
-        [SerializeField] private Animator _panelAnimator = null;
+        // [SerializeField] private Animator _panelAnimator = null; (Unused)
 
         private bool _isActive = false;
         public bool isActive { get { return _isActive; } }
@@ -305,68 +305,98 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void LogWorkout()
         {
+            Debug.Log("📝 LOG BUTTON CLICKED - Starting manual log...");
+            
             if (FitnessManager.instance == null)
             {
-                Debug.LogError("FitnessManager not initialized!");
+                Debug.LogError("❌ FitnessManager not initialized!");
                 return;
             }
 
+            // Parse weight
             float weight = 0;
             if (_weightInput != null && !string.IsNullOrEmpty(_weightInput.text))
             {
                 float.TryParse(_weightInput.text, out weight);
             }
+            Debug.Log($"   Weight: {weight} kg");
 
+            // Parse reps
             int reps = 0;
             if (_repsInput != null && !string.IsNullOrEmpty(_repsInput.text))
             {
                 int.TryParse(_repsInput.text, out reps);
             }
+            Debug.Log($"   Reps: {reps}");
 
-            // Get exercise name from input
-            string exerciseName = _exerciseInput != null ? _exerciseInput.text : "";
-            
-            // Try auto-detection first
+            // Parse sets (default to 1)
+            int sets = 1;
+            if (_setsInput != null && !string.IsNullOrEmpty(_setsInput.text))
+            {
+                int.TryParse(_setsInput.text, out sets);
+            }
+            Debug.Log($"   Sets: {sets}");
+
+            // Get exercise and muscle names
+            string exerciseName = _exerciseInput != null ? _exerciseInput.text.Trim() : "";
+            string muscleName = _muscleInput != null ? _muscleInput.text.Trim() : "Chest";
+            Debug.Log($"   Exercise: '{exerciseName}', Muscle: '{muscleName}'");
+
+            if (weight <= 0 || reps <= 0)
+            {
+                Debug.LogWarning("⚠️ Please enter valid weight and reps!");
+                return;
+            }
+
+            // Determine muscle group
             FitnessManager.MuscleGroup muscle = FitnessManager.MuscleGroup.Chest;
-            bool autoDetected = false;
-
-            if (!string.IsNullOrEmpty(exerciseName))
+            
+            // Try parsing muscle name directly first
+            try
             {
-                var detected = FitnessManager.instance.LogExercise(exerciseName, weight, reps);
-                if (detected.HasValue)
+                muscle = (FitnessManager.MuscleGroup)System.Enum.Parse(
+                    typeof(FitnessManager.MuscleGroup), muscleName, true);
+                Debug.Log($"   ✓ Parsed muscle from input: {muscle}");
+            }
+            catch
+            {
+                // Try auto-detection from exercise name
+                if (!string.IsNullOrEmpty(exerciseName) && 
+                    FitnessManager.ExerciseToMuscle.TryGetValue(exerciseName, out var detected))
                 {
-                    muscle = detected.Value;
-                    autoDetected = true;
+                    muscle = detected;
+                    Debug.Log($"   ✓ Auto-detected muscle from exercise: {muscle}");
+                }
+                else
+                {
+                    Debug.Log($"   ⚠️ Using default muscle: Chest");
                 }
             }
 
-            if (!autoDetected)
+            // Log each set
+            float totalVolume = weight * reps * sets;
+            for (int i = 0; i < sets; i++)
             {
-                // Fallback to manual muscle input
-                string muscleName = _muscleInput != null ? _muscleInput.text : "Chest";
-                // Simple parsing or default
-                try {
-                    muscle = (FitnessManager.MuscleGroup)System.Enum.Parse(typeof(FitnessManager.MuscleGroup), muscleName, true);
-                    FitnessManager.instance.LogWorkout(muscle, weight, reps);
-                } catch {
-                    Debug.Log($"⚠️ Could not parse muscle '{muscleName}', defaulting to Chest");
-                    FitnessManager.instance.LogWorkout(FitnessManager.MuscleGroup.Chest, weight, reps);
-                }
+                FitnessManager.instance.LogWorkout(muscle, weight, reps);
             }
+            Debug.Log($"✅ LOGGED: {exerciseName} → {muscle} | {sets}x{reps} @ {weight}kg = {totalVolume}kg volume");
 
             // Clear inputs
             if (_weightInput != null) _weightInput.text = "";
             if (_repsInput != null) _repsInput.text = "";
+            if (_setsInput != null) _setsInput.text = "";
             if (_exerciseInput != null) _exerciseInput.text = "";
 
-            // Refresh stats display
+            // ALWAYS refresh stats after logging
             RefreshStats();
+            UpdateWorkoutSessionUI();
 
-            // Play success sound
+            // Play success sound and animation
             if (SoundManager.instance != null)
                 SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
             
-            StartCoroutine(PunchScale(_panel.transform)); // Punch whole panel
+            if (_panel != null)
+                StartCoroutine(PunchScale(_panel.transform));
             
             Debug.Log($"✅ Logged: {weight}kg x {reps} reps");
         }

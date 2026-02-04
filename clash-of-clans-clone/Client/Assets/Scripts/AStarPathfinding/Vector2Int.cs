@@ -12,6 +12,8 @@ namespace AStarPathfinding
         }
 
         public override string ToString() => $"[{X},{Y}]";
+        public override bool Equals(object obj) => obj is Vector2Int other && this == other;
+        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
         public static bool operator ==(Vector2Int lhs, Vector2Int rhs) => lhs.X == rhs.X && lhs.Y == rhs.Y;
         public static bool operator !=(Vector2Int lhs, Vector2Int rhs) => lhs.X != rhs.X || lhs.Y != rhs.Y;
     }

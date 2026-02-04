@@ -33,8 +33,8 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private ParticleSystem moveEffect = null;
         [SerializeField] private ParticleSystem transitionEffect = null;
 
-        private bool _inCamp = false;
-        private Building _camp = null;
+        // private bool _inCamp = false; (Unused)
+        // private Building _camp = null; (Unused)
 
         private void Awake()
         {

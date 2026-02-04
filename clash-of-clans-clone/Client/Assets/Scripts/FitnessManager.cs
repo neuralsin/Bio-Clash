@@ -853,6 +853,7 @@ namespace DevelopersHub.ClashOfWhatecer
         /// <summary>
         /// Reset ALL fitness data to zero. Use this to clear garbage/corrupted data.
         /// </summary>
+        [ContextMenu("Reset All Fitness Data")]
         public void ResetAllData()
         {
             // Clear all muscle volumes

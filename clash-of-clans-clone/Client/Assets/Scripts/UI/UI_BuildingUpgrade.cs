@@ -46,9 +46,9 @@ namespace DevelopersHub.ClashOfWhatecer
         [SerializeField] private GameObject _requiredBuildingPanel = null;
         [SerializeField] private GameObject _townHallRequiredPanel = null;
         [SerializeField] private TextMeshProUGUI _townHallRequiredText = null;
-        [SerializeField] private UI_RequiredBuilding _requiredBuildingPrefab = null;
-        [SerializeField] private RectTransform _requiredBuildingGrid = null;
-        [SerializeField] private RectTransform _requiredBuildingRoot = null;
+        [SerializeField] private UI_RequiredBuilding _requiredBuildingPrefab = null; // Kept as it might be used by prefab
+        // [SerializeField] private RectTransform _requiredBuildingGrid = null; (Unused)
+        // [SerializeField] private RectTransform _requiredBuildingRoot = null; (Unused)
 
         private List<UI_RequiredBuilding> _buildings = new List<UI_RequiredBuilding>();
         private bool _active = false; public bool isActive { get { return _active; } }

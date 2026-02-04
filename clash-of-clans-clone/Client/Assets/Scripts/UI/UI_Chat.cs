@@ -39,7 +39,7 @@ namespace DevelopersHub.ClashOfWhatecer
         private float transitionDuration = 0.5f;
         private float transitionTimer = 0.5f;
         // private GameObject loading = null;
-        private bool sending = false;
+        // private bool sending = false; (Unused)
 
         private void Awake()
         {
@@ -128,7 +128,7 @@ namespace DevelopersHub.ClashOfWhatecer
             {
                 SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
                 message = Data.EncodeString(message);
-                sending = true;
+                // sending = true;
                 _inputMessage.interactable = false;
                 _buttonSend.interactable = false;
                 Packet packet = new Packet();
@@ -163,7 +163,7 @@ namespace DevelopersHub.ClashOfWhatecer
                         break;
                 }
             }
-            sending = false;
+            // sending = false;
             _inputMessage.text = "";
             _inputMessage.interactable = true;
             if (type == Data.ChatType.global && _globalLock)
@@ -243,7 +243,7 @@ namespace DevelopersHub.ClashOfWhatecer
 
         public void Open()
         {
-            sending = false;
+            // sending = false;
             _chatGridGlobal.gameObject.SetActive(false);
             _chatGridClan.gameObject.SetActive(false);
             _buttonClan.interactable = false;
