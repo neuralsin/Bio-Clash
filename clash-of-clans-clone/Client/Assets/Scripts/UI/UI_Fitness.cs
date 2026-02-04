@@ -16,81 +16,81 @@ namespace DevelopersHub.ClashOfWhatecer
         public static UI_Fitness instanse { get { return _instance; } }
 
         [Header("Main Panel")]
-        [SerializeField] private GameObject _panel = null;
-        [SerializeField] private Button _closeButton = null;
+        [SerializeField] public GameObject _panel = null;
+        [SerializeField] public Button _closeButton = null;
 
         [Header("Workout Input")]
-        [SerializeField] private TMP_Dropdown _exerciseDropdown = null;
-        [SerializeField] private TMP_Dropdown _muscleDropdown = null;
-        [SerializeField] private TMP_InputField _weightInput = null;
-        [SerializeField] private TMP_InputField _repsInput = null;
-        [SerializeField] private Button _logButton = null;
+        [SerializeField] public TMP_InputField _exerciseInput = null; // Changed from Dropdown
+        [SerializeField] public TMP_InputField _muscleInput = null;   // Changed from Dropdown
+        [SerializeField] public TMP_InputField _weightInput = null;
+        [SerializeField] public TMP_InputField _repsInput = null;
+        [SerializeField] public Button _logButton = null;
 
         [Header("Quick Log Buttons")]
-        [SerializeField] private Button _quickBenchButton = null;
-        [SerializeField] private Button _quickSquatButton = null;
-        [SerializeField] private Button _quickDeadliftButton = null;
-        [SerializeField] private Button _quickRunButton = null;
+        [SerializeField] public Button _quickBenchButton = null;
+        [SerializeField] public Button _quickSquatButton = null;
+        [SerializeField] public Button _quickDeadliftButton = null;
+        [SerializeField] public Button _quickRunButton = null;
 
         [Header("Stats Display")]
-        [SerializeField] private TextMeshProUGUI _chestVolumeText = null;
-        [SerializeField] private TextMeshProUGUI _backVolumeText = null;
-        [SerializeField] private TextMeshProUGUI _legsVolumeText = null;
-        [SerializeField] private TextMeshProUGUI _shouldersVolumeText = null;
-        [SerializeField] private TextMeshProUGUI _bicepsVolumeText = null;
-        [SerializeField] private TextMeshProUGUI _tricepsVolumeText = null;
-        [SerializeField] private TextMeshProUGUI _coreVolumeText = null;
-        [SerializeField] private TextMeshProUGUI _cardioVolumeText = null;
+        [SerializeField] public TextMeshProUGUI _chestVolumeText = null;
+        [SerializeField] public TextMeshProUGUI _backVolumeText = null;
+        [SerializeField] public TextMeshProUGUI _legsVolumeText = null;
+        [SerializeField] public TextMeshProUGUI _shouldersVolumeText = null;
+        [SerializeField] public TextMeshProUGUI _bicepsVolumeText = null;
+        [SerializeField] public TextMeshProUGUI _tricepsVolumeText = null;
+        [SerializeField] public TextMeshProUGUI _coreVolumeText = null;
+        [SerializeField] public TextMeshProUGUI _cardioVolumeText = null;
 
         [Header("Progress Bars")]
-        [SerializeField] private Image _chestBar = null;
-        [SerializeField] private Image _backBar = null;
-        [SerializeField] private Image _legsBar = null;
-        [SerializeField] private Image _shouldersBar = null;
-        [SerializeField] private Image _bicepsBar = null;
-        [SerializeField] private Image _tricepsBar = null;
-        [SerializeField] private Image _coreBar = null;
-        [SerializeField] private Image _cardioBar = null;
+        [SerializeField] public Image _chestBar = null;
+        [SerializeField] public Image _backBar = null;
+        [SerializeField] public Image _legsBar = null;
+        [SerializeField] public Image _shouldersBar = null;
+        [SerializeField] public Image _bicepsBar = null;
+        [SerializeField] public Image _tricepsBar = null;
+        [SerializeField] public Image _coreBar = null;
+        [SerializeField] public Image _cardioBar = null;
 
         [Header("Recovery & Streak")]
-        [SerializeField] private TextMeshProUGUI _recoveryText = null;
-        [SerializeField] private Image _recoveryBar = null;
-        [SerializeField] private TextMeshProUGUI _streakText = null;
-        [SerializeField] private TextMeshProUGUI _attackPowerText = null;
-        [SerializeField] private TextMeshProUGUI _defensePowerText = null;
+        [SerializeField] public TextMeshProUGUI _recoveryText = null;
+        [SerializeField] public Image _recoveryBar = null;
+        [SerializeField] public TextMeshProUGUI _streakText = null;
+        [SerializeField] public TextMeshProUGUI _attackPowerText = null;
+        [SerializeField] public TextMeshProUGUI _defensePowerText = null;
 
         [Header("Health Tracking")]
-        [SerializeField] private TMP_InputField _sleepHoursInput = null;
-        [SerializeField] private TMP_InputField _waterLitersInput = null;
-        [SerializeField] private TMP_InputField _stepsInput = null;
-        [SerializeField] private TMP_InputField _heartRateInput = null;
-        [SerializeField] private TMP_InputField _bodyWeightInput = null;
-        [SerializeField] private Button _logHealthButton = null;
+        [SerializeField] public TMP_InputField _sleepHoursInput = null;
+        [SerializeField] public TMP_InputField _waterLitersInput = null;
+        [SerializeField] public TMP_InputField _stepsInput = null;
+        [SerializeField] public TMP_InputField _heartRateInput = null;
+        [SerializeField] public TMP_InputField _bodyWeightInput = null;
+        [SerializeField] public Button _logHealthButton = null;
 
         [Header("Health Display")]
-        [SerializeField] private TextMeshProUGUI _sleepText = null;
-        [SerializeField] private Image _sleepBar = null;
-        [SerializeField] private TextMeshProUGUI _waterText = null;
-        [SerializeField] private Image _waterBar = null;
-        [SerializeField] private TextMeshProUGUI _stepsText = null;
-        [SerializeField] private Image _stepsBar = null;
-        [SerializeField] private TextMeshProUGUI _heartRateText = null;
-        [SerializeField] private TextMeshProUGUI _bodyWeightText = null;
-        [SerializeField] private TextMeshProUGUI _healthScoreText = null;
+        [SerializeField] public TextMeshProUGUI _sleepText = null;
+        [SerializeField] public Image _sleepBar = null;
+        [SerializeField] public TextMeshProUGUI _waterText = null;
+        [SerializeField] public Image _waterBar = null;
+        [SerializeField] public TextMeshProUGUI _stepsText = null;
+        [SerializeField] public Image _stepsBar = null;
+        [SerializeField] public TextMeshProUGUI _heartRateText = null;
+        [SerializeField] public TextMeshProUGUI _bodyWeightText = null;
+        [SerializeField] public TextMeshProUGUI _healthScoreText = null;
 
         [Header("Workout Session")]
-        [SerializeField] private GameObject _workoutSessionPanel = null;
-        [SerializeField] private Button _startWorkoutButton = null;
-        [SerializeField] private Button _stopWorkoutButton = null;
-        [SerializeField] private Button _pauseWorkoutButton = null;
-        [SerializeField] private TextMeshProUGUI _workoutTimerText = null;
-        [SerializeField] private TextMeshProUGUI _workoutStatusText = null;
-        [SerializeField] private Transform _exerciseListContainer = null;
-        [SerializeField] private GameObject _exerciseItemPrefab = null;
-        [SerializeField] private Button _addExerciseButton = null;
-        [SerializeField] private TMP_InputField _setsInput = null;
-        [SerializeField] private TextMeshProUGUI _totalVolumeText = null;
-        [SerializeField] private TextMeshProUGUI _exerciseCountText = null;
+        [SerializeField] public GameObject _workoutSessionPanel = null;
+        [SerializeField] public Button _startWorkoutButton = null;
+        [SerializeField] public Button _stopWorkoutButton = null;
+        [SerializeField] public Button _pauseWorkoutButton = null;
+        [SerializeField] public TextMeshProUGUI _workoutTimerText = null;
+        [SerializeField] public TextMeshProUGUI _workoutStatusText = null;
+        [SerializeField] public Transform _exerciseListContainer = null;
+        [SerializeField] public GameObject _exerciseItemPrefab = null;
+        [SerializeField] public Button _addExerciseButton = null;
+        [SerializeField] public TMP_InputField _setsInput = null;
+        [SerializeField] public TextMeshProUGUI _totalVolumeText = null;
+        [SerializeField] public TextMeshProUGUI _exerciseCountText = null;
 
         [Header("Animation")]
         [SerializeField] private Animator _panelAnimator = null;
@@ -187,61 +187,32 @@ namespace DevelopersHub.ClashOfWhatecer
 
             // Initialize workout session UI
             UpdateWorkoutSessionUI();
-
-            // Populate dropdowns
-            PopulateDropdowns();
         }
 
         private void PopulateDropdowns()
         {
-            if (_exerciseDropdown != null)
+            if (_exerciseInput != null)
             {
-                _exerciseDropdown.ClearOptions();
-                _exerciseDropdown.AddOptions(new List<string>
-                {
-                    "Bench Press", "Incline Press", "Dumbbell Fly",
-                    "Deadlift", "Barbell Row", "Lat Pulldown", "Pull-ups",
-                    "Squat", "Leg Press", "Lunges", "Leg Curl",
-                    "Overhead Press", "Lateral Raise", "Face Pull",
-                    "Bicep Curl", "Hammer Curl", "Preacher Curl",
-                    "Tricep Pushdown", "Skull Crusher", "Dips",
-                    "Plank", "Crunches", "Leg Raise",
-                    "Running", "Cycling", "Rowing"
-                });
+                _exerciseInput.text = ""; // Clear input field
             }
 
-            if (_muscleDropdown != null)
+            if (_muscleInput != null)
             {
-                _muscleDropdown.ClearOptions();
-                _muscleDropdown.AddOptions(new List<string>
-                {
-                    "Chest", "Back", "Shoulders", "Biceps", "Triceps", "Legs", "Core", "Cardio"
-                });
+                _muscleInput.text = ""; // Clear input field
             }
         }
 
         public void Open()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            _isActive = true;
             _panel.SetActive(true);
-            
-            if (_panelAnimator != null)
-                _panelAnimator.SetTrigger("Open");
-
+            _isActive = true;
             RefreshStats();
-            UI_Main.instanse.SetStatus(false);
         }
 
         public void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            _panel.SetActive(false);
             _isActive = false;
-            
-            if (_panelAnimator != null)
-                _panelAnimator.SetTrigger("Close");
-            
-            StartCoroutine(CloseAfterAnimation());
         }
 
         private IEnumerator CloseAfterAnimation()
@@ -259,70 +230,62 @@ namespace DevelopersHub.ClashOfWhatecer
                 return;
             }
 
-            // Get selected muscle
-            int muscleIndex = _muscleDropdown != null ? _muscleDropdown.value : 0;
-            FitnessManager.MuscleGroup muscle = (FitnessManager.MuscleGroup)muscleIndex;
-
-            // Get weight and reps
             float weight = 0;
-            int reps = 0;
-            
-            if (_weightInput != null)
+            if (_weightInput != null && !string.IsNullOrEmpty(_weightInput.text))
+            {
                 float.TryParse(_weightInput.text, out weight);
-            if (_repsInput != null)
+            }
+
+            int reps = 0;
+            if (_repsInput != null && !string.IsNullOrEmpty(_repsInput.text))
+            {
                 int.TryParse(_repsInput.text, out reps);
-
-            if (weight <= 0 || reps <= 0)
-            {
-                Debug.Log("Invalid weight or reps");
-                return;
             }
 
-            // Log the workout
-            if (muscle == FitnessManager.MuscleGroup.Cardio)
+            // Get exercise name from input
+            string exerciseName = _exerciseInput != null ? _exerciseInput.text : "";
+            
+            // Try auto-detection first
+            FitnessManager.MuscleGroup muscle = FitnessManager.MuscleGroup.Chest;
+            bool autoDetected = false;
+
+            if (!string.IsNullOrEmpty(exerciseName))
             {
-                FitnessManager.instance.LogCardio((int)weight); // Weight field used as minutes for cardio
-            }
-            else
-            {
-                // Try auto-detection from exercise name first
-                string exerciseName = _exerciseDropdown != null && _exerciseDropdown.value >= 0 
-                    ? _exerciseDropdown.options[_exerciseDropdown.value].text 
-                    : null;
-                
-                if (!string.IsNullOrEmpty(exerciseName))
+                var detected = FitnessManager.instance.LogExercise(exerciseName, weight, reps);
+                if (detected.HasValue)
                 {
-                    // Use auto-detection - this updates the correct muscle currency
-                    var detected = FitnessManager.instance.LogExercise(exerciseName, weight, reps);
-                    if (detected.HasValue)
-                    {
-                        muscle = detected.Value;
-                    }
-                    else
-                    {
-                        // Fallback to manual selection
-                        FitnessManager.instance.LogWorkout(muscle, weight, reps);
-                    }
+                    muscle = detected.Value;
+                    autoDetected = true;
                 }
-                else
-                {
-                    // Use manual muscle selection
+            }
+
+            if (!autoDetected)
+            {
+                // Fallback to manual muscle input
+                string muscleName = _muscleInput != null ? _muscleInput.text : "Chest";
+                // Simple parsing or default
+                try {
+                    muscle = (FitnessManager.MuscleGroup)System.Enum.Parse(typeof(FitnessManager.MuscleGroup), muscleName, true);
                     FitnessManager.instance.LogWorkout(muscle, weight, reps);
+                } catch {
+                    Debug.Log($"⚠️ Could not parse muscle '{muscleName}', defaulting to Chest");
+                    FitnessManager.instance.LogWorkout(FitnessManager.MuscleGroup.Chest, weight, reps);
                 }
             }
 
             // Clear inputs
             if (_weightInput != null) _weightInput.text = "";
             if (_repsInput != null) _repsInput.text = "";
+            if (_exerciseInput != null) _exerciseInput.text = "";
 
             // Refresh stats display
             RefreshStats();
 
             // Play success sound
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instanse != null)
+                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
 
-            // Show success animation (could add particle effect here)
-            Debug.Log($"✅ Logged: {weight}kg x {reps} reps ({muscle})");
+            Debug.Log($"✅ Logged: {weight}kg x {reps} reps");
         }
 
         private void QuickLog(string exercise)
@@ -341,7 +304,9 @@ namespace DevelopersHub.ClashOfWhatecer
             }
 
             RefreshStats();
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            
+            if (SoundManager.instanse != null)
+                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
         }
 
         public void RefreshStats()
@@ -442,7 +407,8 @@ namespace DevelopersHub.ClashOfWhatecer
             // Update recovery based on health
             UpdateRecoveryFromHealth();
 
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instanse != null)
+                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
             Debug.Log($"💚 Health logged: Sleep {_todaySleepHours}h, Water {_todayWaterLiters}L, Steps {_todaySteps}");
         }
 
@@ -595,7 +561,9 @@ namespace DevelopersHub.ClashOfWhatecer
             _sessionTotalVolume = 0f;
 
             UpdateWorkoutSessionUI();
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            
+            if (SoundManager.instanse != null)
+                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
             Debug.Log("🏋️ Workout started!");
         }
 
@@ -628,7 +596,9 @@ namespace DevelopersHub.ClashOfWhatecer
                 _workoutStatusText.text = $"✅ Workout Complete!\n{minutes}:{seconds:D2} | {_currentWorkoutExercises.Count} exercises | {_sessionTotalVolume:N0}kg";
 
             UpdateWorkoutSessionUI();
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            
+            if (SoundManager.instanse != null)
+                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
             Debug.Log($"✅ Workout finished! Duration: {minutes}:{seconds:D2}, Volume: {_sessionTotalVolume}kg");
         }
 
@@ -659,7 +629,8 @@ namespace DevelopersHub.ClashOfWhatecer
             }
 
             UpdateWorkoutSessionUI();
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instanse != null)
+                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
         }
 
         /// <summary>
@@ -741,7 +712,8 @@ namespace DevelopersHub.ClashOfWhatecer
             UpdateExerciseList();
             UpdateWorkoutSessionUI();
 
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instanse != null)
+                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
             Debug.Log($"➕ Added: {exerciseName} - {sets}x{reps} @ {weight}kg ({muscleGroup})");
         }
 

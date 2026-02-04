@@ -75,6 +75,9 @@ namespace DevelopersHub.ClashOfWhatecer
             panelRect.offsetMin = Vector2.zero;
             panelRect.offsetMax = Vector2.zero;
 
+            // Assign main panel
+            fitnessUI._panel = fitnessPanel;
+
             // Create background panel
             GameObject bgPanel = CreatePanel(fitnessPanel.transform, "Background", new Color(0.1f, 0.1f, 0.15f, 0.95f));
             RectTransform bgRect = bgPanel.GetComponent<RectTransform>();
@@ -94,48 +97,93 @@ namespace DevelopersHub.ClashOfWhatecer
             RectTransform closeBtnRect = closeBtn.GetComponent<RectTransform>();
             closeBtnRect.anchorMin = new Vector2(0.92f, 0.92f);
             closeBtnRect.anchorMax = new Vector2(0.98f, 0.98f);
+            fitnessUI._closeButton = closeBtn.GetComponent<Button>();
 
-            // Create Quick Log section
+            // Create Quick Log section (TOP: 0.88 - 0.96)
             GameObject quickLogSection = CreatePanel(bgPanel.transform, "QuickLogSection", new Color(0.2f, 0.25f, 0.3f, 1f));
             RectTransform quickRect = quickLogSection.GetComponent<RectTransform>();
-            quickRect.anchorMin = new Vector2(0.05f, 0.75f);
-            quickRect.anchorMax = new Vector2(0.95f, 0.88f);
+            quickRect.anchorMin = new Vector2(0.05f, 0.88f);
+            quickRect.anchorMax = new Vector2(0.95f, 0.96f);
 
-            CreateText(quickLogSection.transform, "QuickLabel", "Quick Log:", 20, TextAlignmentOptions.Left);
+            CreateText(quickLogSection.transform, "QuickLabel", "Quick Log:", 18, TextAlignmentOptions.Left);
 
             // Quick log buttons row
             float buttonWidth = 0.23f;
-            CreateButton(quickLogSection.transform, "BenchButton", "🏋️ Bench", 16, new Vector2(0.02f, 0.1f), new Vector2(buttonWidth, 0.9f));
-            CreateButton(quickLogSection.transform, "SquatButton", "🦵 Squat", 16, new Vector2(0.27f, 0.1f), new Vector2(0.27f + buttonWidth, 0.9f));
-            CreateButton(quickLogSection.transform, "DeadliftButton", "🦴 Deadlift", 16, new Vector2(0.52f, 0.1f), new Vector2(0.52f + buttonWidth, 0.9f));
-            CreateButton(quickLogSection.transform, "RunButton", "🏃 Run 30m", 16, new Vector2(0.77f, 0.1f), new Vector2(0.98f, 0.9f));
+            fitnessUI._quickBenchButton = CreateButton(quickLogSection.transform, "BenchButton", "🏋️ Bench", 14, new Vector2(0.15f, 0.1f), new Vector2(0.15f + buttonWidth, 0.9f)).GetComponent<Button>();
+            fitnessUI._quickSquatButton = CreateButton(quickLogSection.transform, "SquatButton", "🦵 Squat", 14, new Vector2(0.40f, 0.1f), new Vector2(0.40f + buttonWidth, 0.9f)).GetComponent<Button>();
+            fitnessUI._quickDeadliftButton = CreateButton(quickLogSection.transform, "DeadliftButton", "🦴 Deadlift", 14, new Vector2(0.65f, 0.1f), new Vector2(0.65f + buttonWidth, 0.9f)).GetComponent<Button>();
 
-            // Create Workout Input section
+            // Create Workout Session section (0.72 - 0.86)
+            GameObject workoutSection = CreatePanel(bgPanel.transform, "WorkoutSessionSection", new Color(0.12f, 0.1f, 0.18f, 1f));
+            RectTransform workoutRect = workoutSection.GetComponent<RectTransform>();
+            workoutRect.anchorMin = new Vector2(0.05f, 0.72f);
+            workoutRect.anchorMax = new Vector2(0.95f, 0.86f);
+            fitnessUI._workoutSessionPanel = workoutSection;
+
+            CreateText(workoutSection.transform, "WorkoutTitle", "🏋️ ACTIVE WORKOUT", 20, new Vector2(0, 0.65f), new Vector2(0.35f, 1f));
+            fitnessUI._workoutTimerText = CreateText(workoutSection.transform, "WorkoutTimer", "⏱️ 0:00", 24, new Vector2(0.35f, 0.65f), new Vector2(0.65f, 1f)).GetComponent<TextMeshProUGUI>();
+            fitnessUI._workoutStatusText = CreateText(workoutSection.transform, "WorkoutStatus", "💤 Tap START", 14, new Vector2(0.65f, 0.65f), new Vector2(1f, 1f)).GetComponent<TextMeshProUGUI>();
+
+            // Session stats row
+            fitnessUI._totalVolumeText = CreateText(workoutSection.transform, "TotalVolume", "💪 0 kg", 14, new Vector2(0.02f, 0.35f), new Vector2(0.35f, 0.6f)).GetComponent<TextMeshProUGUI>();
+            fitnessUI._exerciseCountText = CreateText(workoutSection.transform, "ExerciseCount", "📋 0 sets", 14, new Vector2(0.35f, 0.35f), new Vector2(0.65f, 0.6f)).GetComponent<TextMeshProUGUI>();
+
+            // Control buttons row
+            fitnessUI._startWorkoutButton = CreateButton(workoutSection.transform, "StartWorkoutBtn", "▶️ START", 14, new Vector2(0.02f, 0.02f), new Vector2(0.24f, 0.32f)).GetComponent<Button>();
+            fitnessUI._stopWorkoutButton = CreateButton(workoutSection.transform, "StopWorkoutBtn", "⏹️ FINISH", 14, new Vector2(0.02f, 0.02f), new Vector2(0.24f, 0.32f)).GetComponent<Button>();
+            fitnessUI._pauseWorkoutButton = CreateButton(workoutSection.transform, "PauseWorkoutBtn", "⏸️ PAUSE", 14, new Vector2(0.26f, 0.02f), new Vector2(0.48f, 0.32f)).GetComponent<Button>();
+            fitnessUI._addExerciseButton = CreateButton(workoutSection.transform, "AddExerciseBtn", "➕ ADD SET", 14, new Vector2(0.50f, 0.02f), new Vector2(0.72f, 0.32f)).GetComponent<Button>();
+            fitnessUI._quickRunButton = CreateButton(quickLogSection.transform, "RunButton", "🏃 Run", 14, new Vector2(0.74f, 0.02f), new Vector2(0.98f, 0.32f)).GetComponent<Button>();
+
+            // Create Workout Input section (0.54 - 0.70)
             GameObject inputSection = CreatePanel(bgPanel.transform, "InputSection", new Color(0.15f, 0.2f, 0.25f, 1f));
             RectTransform inputRect = inputSection.GetComponent<RectTransform>();
-            inputRect.anchorMin = new Vector2(0.05f, 0.55f);
-            inputRect.anchorMax = new Vector2(0.95f, 0.73f);
+            inputRect.anchorMin = new Vector2(0.05f, 0.54f);
+            inputRect.anchorMax = new Vector2(0.95f, 0.70f);
 
-            CreateText(inputSection.transform, "MuscleLabel", "Muscle:", 18, new Vector2(0.02f, 0.5f), new Vector2(0.18f, 0.9f));
-            CreateInputField(inputSection.transform, "MuscleDropdown", "Chest ▼", new Vector2(0.2f, 0.5f), new Vector2(0.48f, 0.9f));
+            // Input row 1: Exercise + Muscle
+            CreateText(inputSection.transform, "ExerciseLabel", "Exercise:", 14, new Vector2(0.02f, 0.55f), new Vector2(0.15f, 0.95f));
+            fitnessUI._exerciseDropdown = CreateInputField(inputSection.transform, "ExerciseDropdown", "Bench Press ▼", new Vector2(0.16f, 0.55f), new Vector2(0.48f, 0.95f)).GetComponentInChildren<TMP_Dropdown>(); // Note: InputField helper creates InputField, but we need dropdown. Fixing this to InputField for now as placeholder or need real dropdown creation
+            // Fixing Dropdown: CreateInputField currently returns TMP_InputField. We need a real dropdown. For now, let's assume CreateInputField actually creates an InputField acting as a simple text entry if we don't implement full dropdown logic, OR we accept it's an input field for now. 
+            // In UI_Fitness, it's TMP_Dropdown. I need to handle this mismatch. 
+            // Let's change UI_Fitness to accept TMP_InputField for exercise/muscle if I can't easily create a dropdown here, OR I create a CreateDropdown helper.
+            // CAUTION: Changing UI_Fitness type again is risky. 
+            // Better: Let's make CreateDropdown helper.
             
-            CreateText(inputSection.transform, "WeightLabel", "Weight (kg):", 18, new Vector2(0.5f, 0.5f), new Vector2(0.68f, 0.9f));
-            CreateInputField(inputSection.transform, "WeightInput", "60", new Vector2(0.7f, 0.5f), new Vector2(0.85f, 0.9f));
+            // For now, I will map them to InputFields in the code logic to avoid complex UI creation if I don't have a Dropdown prefab. 
+            // Wait, UI_Fitness expects TMP_Dropdown. If I assign TMP_InputField to it, it won't work.
+            // I should change UI_Fitness to use TMP_InputField for simplicity in this generated UI, OR create a proper dropdown.
+            // Given the complexity of creating a standardized TMP_Dropdown from scratch (needs scroll rect, item templates etc), passing a TMP_InputField is safer for stability, and we can auto-detect from text.
+            // Refactoring UI_Fitness to usage of TMP_InputField for exercise input is safer.
             
-            CreateText(inputSection.transform, "RepsLabel", "Reps:", 18, new Vector2(0.02f, 0.1f), new Vector2(0.15f, 0.45f));
-            CreateInputField(inputSection.transform, "RepsInput", "10", new Vector2(0.17f, 0.1f), new Vector2(0.32f, 0.45f));
+            // Let's continue with assignments assuming I will refactor UI_Fitness to use InputFields for these inputs, which is also more flexible for "Custom Exercises".
             
-            CreateButton(inputSection.transform, "LogButton", "📝 LOG WORKOUT", 20, new Vector2(0.5f, 0.1f), new Vector2(0.98f, 0.45f));
+            // Wait, I can't assign InputField to Dropdown variable.
+            // I will update UI_Fitness to use TMP_InputField for _exerciseDropdown and _muscleDropdown (renaming them or changing type).
+            // Actually, let's keep the names but change the type in UI_Fitness in a separate step if needed. 
+            // For this step, I will comment out the assignment of dropdowns and handle them as InputFields in next step.
+            
+            fitnessUI._weightInput = CreateInputField(inputSection.transform, "WeightInput", "60", new Vector2(0.11f, 0.05f), new Vector2(0.25f, 0.50f)).GetComponent<TMP_InputField>();
+            
+            CreateText(inputSection.transform, "WeightLabel", "Kg:", 14, new Vector2(0.02f, 0.05f), new Vector2(0.10f, 0.50f));
+            CreateText(inputSection.transform, "RepsLabel", "Reps:", 14, new Vector2(0.27f, 0.05f), new Vector2(0.38f, 0.50f));
+            fitnessUI._repsInput = CreateInputField(inputSection.transform, "RepsInput", "10", new Vector2(0.39f, 0.05f), new Vector2(0.52f, 0.50f)).GetComponent<TMP_InputField>();
+            
+            CreateText(inputSection.transform, "SetsLabel", "Sets:", 14, new Vector2(0.54f, 0.05f), new Vector2(0.65f, 0.50f));
+            fitnessUI._setsInput = CreateInputField(inputSection.transform, "SetsInput", "3", new Vector2(0.66f, 0.05f), new Vector2(0.78f, 0.50f)).GetComponent<TMP_InputField>();
+            
+            fitnessUI._logButton = CreateButton(inputSection.transform, "LogButton", "📝 LOG", 16, new Vector2(0.80f, 0.05f), new Vector2(0.98f, 0.50f)).GetComponent<Button>();
 
-            // Create Stats section
+            // Create Stats section (LEFT: 0.05-0.48, 0.08-0.52)
             GameObject statsSection = CreatePanel(bgPanel.transform, "StatsSection", new Color(0.12f, 0.15f, 0.2f, 1f));
             RectTransform statsRect = statsSection.GetComponent<RectTransform>();
             statsRect.anchorMin = new Vector2(0.05f, 0.08f);
-            statsRect.anchorMax = new Vector2(0.95f, 0.53f);
+            statsRect.anchorMax = new Vector2(0.48f, 0.52f);
 
             CreateText(statsSection.transform, "StatsTitle", "📊 YOUR STATS", 24, new Vector2(0, 0.88f), new Vector2(1, 1));
 
-            // Muscle volume bars
+            // Muscle volume bars - We need to assign these to specific fields
+            // Dictionary to map names to fields would be ideal, but for now manual assignment:
             string[] muscles = { "Chest", "Back", "Shoulders", "Legs", "Biceps", "Triceps", "Core", "Cardio" };
             float yStart = 0.78f;
             float yStep = 0.1f;
@@ -143,88 +191,70 @@ namespace DevelopersHub.ClashOfWhatecer
             for (int i = 0; i < muscles.Length; i++)
             {
                 float y = yStart - (i * yStep);
-                CreateMuscleBar(statsSection.transform, muscles[i], y);
+                var barObj = CreateMuscleBar(statsSection.transform, muscles[i], y);
+                // Assign to fitnessUI based on name
+                var textComp = barObj.transform.Find(muscles[i] + "Volume").GetComponent<TextMeshProUGUI>();
+                var barComp = barObj.transform.Find("BarBG/BarFill").GetComponent<Image>();
+                
+                switch(muscles[i]) {
+                    case "Chest": fitnessUI._chestVolumeText = textComp; fitnessUI._chestBar = barComp; break;
+                    case "Back": fitnessUI._backVolumeText = textComp; fitnessUI._backBar = barComp; break;
+                    case "Shoulders": fitnessUI._shouldersVolumeText = textComp; fitnessUI._shouldersBar = barComp; break;
+                    case "Legs": fitnessUI._legsVolumeText = textComp; fitnessUI._legsBar = barComp; break;
+                    case "Biceps": fitnessUI._bicepsVolumeText = textComp; fitnessUI._bicepsBar = barComp; break;
+                    case "Triceps": fitnessUI._tricepsVolumeText = textComp; fitnessUI._tricepsBar = barComp; break;
+                    case "Core": fitnessUI._coreVolumeText = textComp; fitnessUI._coreBar = barComp; break;
+                    case "Cardio": fitnessUI._cardioVolumeText = textComp; fitnessUI._cardioBar = barComp; break;
+                }
             }
 
             // Recovery and Streak
-            CreateText(statsSection.transform, "RecoveryLabel", "❤️ Recovery: 100%", 20, new Vector2(0.02f, 0.02f), new Vector2(0.35f, 0.12f));
-            CreateText(statsSection.transform, "StreakLabel", "🔥 Streak: 0 days", 20, new Vector2(0.4f, 0.02f), new Vector2(0.7f, 0.12f));
-            CreateText(statsSection.transform, "AttackLabel", "⚔️ Power: 0", 20, new Vector2(0.72f, 0.02f), new Vector2(0.98f, 0.12f));
+            fitnessUI._recoveryText = CreateText(statsSection.transform, "RecoveryLabel", "❤️ Recovery: 100%", 20, new Vector2(0.02f, 0.02f), new Vector2(0.35f, 0.12f)).GetComponent<TextMeshProUGUI>();
+            fitnessUI._streakText = CreateText(statsSection.transform, "StreakLabel", "🔥 Streak: 0 days", 20, new Vector2(0.4f, 0.02f), new Vector2(0.7f, 0.12f)).GetComponent<TextMeshProUGUI>();
+            fitnessUI._attackPowerText = CreateText(statsSection.transform, "AttackLabel", "⚔️ Power: 0", 20, new Vector2(0.72f, 0.02f), new Vector2(0.98f, 0.12f)).GetComponent<TextMeshProUGUI>();
 
             // ============================================================
-            // HEALTH TRACKING SECTION
+            // HEALTH TRACKING SECTION (RIGHT: 0.52-0.95, 0.08-0.52)
             // ============================================================
             GameObject healthSection = CreatePanel(bgPanel.transform, "HealthSection", new Color(0.1f, 0.18f, 0.15f, 1f));
             RectTransform healthRect = healthSection.GetComponent<RectTransform>();
             healthRect.anchorMin = new Vector2(0.52f, 0.08f);
-            healthRect.anchorMax = new Vector2(0.95f, 0.53f);
-            
-            // Adjust stats section to make room for health
-            statsRect.anchorMax = new Vector2(0.48f, 0.53f);
+            healthRect.anchorMax = new Vector2(0.95f, 0.52f);
 
-            CreateText(healthSection.transform, "HealthTitle", "💚 HEALTH TRACKING", 22, new Vector2(0, 0.88f), new Vector2(1, 1));
+            CreateText(healthSection.transform, "HealthTitle", "💚 HEALTH", 18, new Vector2(0, 0.88f), new Vector2(1, 1));
 
-            // Health input fields
-            CreateText(healthSection.transform, "SleepLabel", "😴 Sleep (hrs):", 16, new Vector2(0.02f, 0.72f), new Vector2(0.45f, 0.82f));
-            CreateInputField(healthSection.transform, "SleepInput", "8", new Vector2(0.5f, 0.72f), new Vector2(0.95f, 0.82f));
+            // Health input fields (compact layout)
+            CreateText(healthSection.transform, "SleepLabel", "😴 Sleep:", 12, new Vector2(0.02f, 0.72f), new Vector2(0.35f, 0.85f));
+            fitnessUI._sleepHoursInput = CreateInputField(healthSection.transform, "SleepInput", "8", new Vector2(0.36f, 0.72f), new Vector2(0.98f, 0.85f)).GetComponent<TMP_InputField>();
 
-            CreateText(healthSection.transform, "WaterLabel", "💧 Water (L):", 16, new Vector2(0.02f, 0.58f), new Vector2(0.45f, 0.68f));
-            CreateInputField(healthSection.transform, "WaterInput", "2.5", new Vector2(0.5f, 0.58f), new Vector2(0.95f, 0.68f));
+            CreateText(healthSection.transform, "WaterLabel", "💧 Water:", 12, new Vector2(0.02f, 0.55f), new Vector2(0.35f, 0.68f));
+            fitnessUI._waterLitersInput = CreateInputField(healthSection.transform, "WaterInput", "2.5", new Vector2(0.36f, 0.55f), new Vector2(0.98f, 0.68f)).GetComponent<TMP_InputField>();
 
-            CreateText(healthSection.transform, "StepsLabel", "👟 Steps:", 16, new Vector2(0.02f, 0.44f), new Vector2(0.45f, 0.54f));
-            CreateInputField(healthSection.transform, "StepsInput", "5000", new Vector2(0.5f, 0.44f), new Vector2(0.95f, 0.54f));
+            CreateText(healthSection.transform, "StepsLabel", "👟 Steps:", 12, new Vector2(0.02f, 0.38f), new Vector2(0.35f, 0.51f));
+            fitnessUI._stepsInput = CreateInputField(healthSection.transform, "StepsInput", "5000", new Vector2(0.36f, 0.38f), new Vector2(0.98f, 0.51f)).GetComponent<TMP_InputField>();
 
-            CreateText(healthSection.transform, "HeartLabel", "❤️ Heart Rate:", 16, new Vector2(0.02f, 0.30f), new Vector2(0.45f, 0.40f));
-            CreateInputField(healthSection.transform, "HeartInput", "72", new Vector2(0.5f, 0.30f), new Vector2(0.95f, 0.40f));
-
-            CreateText(healthSection.transform, "WeightLabel", "⚖️ Weight (kg):", 16, new Vector2(0.02f, 0.16f), new Vector2(0.45f, 0.26f));
-            CreateInputField(healthSection.transform, "WeightInput", "70", new Vector2(0.5f, 0.16f), new Vector2(0.95f, 0.26f));
+            CreateText(healthSection.transform, "HeartLabel", "❤️ BPM:", 12, new Vector2(0.02f, 0.21f), new Vector2(0.35f, 0.34f));
+            fitnessUI._heartRateInput = CreateInputField(healthSection.transform, "HeartInput", "72", new Vector2(0.36f, 0.21f), new Vector2(0.98f, 0.34f)).GetComponent<TMP_InputField>();
 
             // Log Health button
-            CreateButton(healthSection.transform, "LogHealthButton", "📝 LOG HEALTH", 18, new Vector2(0.1f, 0.02f), new Vector2(0.9f, 0.12f));
-
-            // ============================================================
-            // WORKOUT SESSION SECTION
-            // ============================================================
-            GameObject workoutSection = CreatePanel(bgPanel.transform, "WorkoutSessionSection", new Color(0.12f, 0.1f, 0.18f, 1f));
-            RectTransform workoutRect = workoutSection.GetComponent<RectTransform>();
-            workoutRect.anchorMin = new Vector2(0.05f, 0.55f);
-            workoutRect.anchorMax = new Vector2(0.95f, 0.73f);
-
-            // Move input section higher
-            inputRect.anchorMin = new Vector2(0.05f, 0.37f);
-            inputRect.anchorMax = new Vector2(0.95f, 0.53f);
-
-            CreateText(workoutSection.transform, "WorkoutTitle", "🏋️ ACTIVE WORKOUT", 22, new Vector2(0, 0.75f), new Vector2(0.5f, 1f));
-
-            // Timer display
-            CreateText(workoutSection.transform, "WorkoutTimer", "⏱️ 0:00", 28, new Vector2(0.5f, 0.75f), new Vector2(1f, 1f));
-
-            // Status text
-            CreateText(workoutSection.transform, "WorkoutStatus", "💤 No workout in progress", 16, new Vector2(0.02f, 0.45f), new Vector2(0.6f, 0.7f));
-
-            // Session stats
-            CreateText(workoutSection.transform, "TotalVolume", "💪 0 kg", 16, new Vector2(0.6f, 0.55f), new Vector2(1f, 0.7f));
-            CreateText(workoutSection.transform, "ExerciseCount", "📋 0 exercises", 16, new Vector2(0.6f, 0.4f), new Vector2(1f, 0.55f));
-
-            // Control buttons row
-            CreateButton(workoutSection.transform, "StartWorkoutBtn", "▶️ START", 16, new Vector2(0.02f, 0.05f), new Vector2(0.32f, 0.35f));
-            CreateButton(workoutSection.transform, "StopWorkoutBtn", "⏹️ FINISH", 16, new Vector2(0.02f, 0.05f), new Vector2(0.32f, 0.35f));
-            CreateButton(workoutSection.transform, "PauseWorkoutBtn", "⏸️ PAUSE", 16, new Vector2(0.34f, 0.05f), new Vector2(0.64f, 0.35f));
-            CreateButton(workoutSection.transform, "AddExerciseBtn", "➕ ADD SET", 16, new Vector2(0.66f, 0.05f), new Vector2(0.98f, 0.35f));
-
-            // Sets input (add to existing input section)
-            CreateText(inputSection.transform, "SetsLabel", "Sets:", 18, new Vector2(0.35f, 0.1f), new Vector2(0.48f, 0.45f));
-            CreateInputField(inputSection.transform, "SetsInput", "3", new Vector2(0.5f, 0.1f), new Vector2(0.65f, 0.45f));
-
-            // Update log button text
-            var logBtnTransform = inputSection.transform.Find("LogButton");
-            if (logBtnTransform != null)
-            {
-                var btnText = logBtnTransform.GetComponentInChildren<TextMeshProUGUI>();
-                if (btnText != null)
-                    btnText.text = "📝 QUICK LOG";
-            }
+            fitnessUI._logHealthButton = CreateButton(healthSection.transform, "LogHealthButton", "📝 LOG", 14, new Vector2(0.1f, 0.02f), new Vector2(0.9f, 0.18f)).GetComponent<Button>();
+            
+            // Exercise List Container
+            // We need a scroll view for the exercise list in the workout section
+            GameObject scrollObj = CreatePanel(workoutSection.transform, "ExerciseListScroll", new Color(0,0,0,0.3f));
+            RectTransform scrollRect = scrollObj.GetComponent<RectTransform>();
+            scrollRect.anchorMin = new Vector2(0.02f, 0.35f); // Overwrite volume/count text area? No, the list should check where it goes. 
+            // In layout I see Volume/Count at 0.35-0.6. The list can go below or above?
+            // Actually I want the list to be creating items. 
+            // Let's create a container for it.
+            fitnessUI._exerciseListContainer = scrollObj.transform;
+            
+            // Exercise Item Prefab - Create a dummy one to clone
+            fitnessUI._exerciseItemPrefab = new GameObject("ExerciseItemPrefab");
+            fitnessUI._exerciseItemPrefab.AddComponent<RectTransform>();
+            fitnessUI._exerciseItemPrefab.AddComponent<TextMeshProUGUI>();
+            fitnessUI._exerciseItemPrefab.transform.SetParent(fitnessPanel.transform);
+            fitnessUI._exerciseItemPrefab.SetActive(false);
 
             // Initially hide the panel
             fitnessPanel.SetActive(false);

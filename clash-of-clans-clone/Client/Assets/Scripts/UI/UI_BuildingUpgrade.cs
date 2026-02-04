@@ -181,6 +181,12 @@
         {
             if (FitnessManager.instance == null) return;
             
+            // Auto-create UI if missing (SAFE MODE)
+            if (reqMuscle == null || reqVolume == null)
+            {
+                CreateFitnessRequirementUI();
+            }
+
             // Get muscle group for this building
             string muscleGroup = building.GetMuscleGroupName();
             float requiredVolume = building.GetFitnessRequirement();
@@ -215,6 +221,74 @@
             }
         }
 
+        private void CreateFitnessRequirementUI()
+        {
+            if (_detailsPanel == null) return;
+
+            Debug.Log("🛠️ Auto-creating Fitness Requirement UI elements");
+
+            // Create container
+            fitnessRequirementsPanel = new GameObject("FitnessRequirements");
+            fitnessRequirementsPanel.transform.SetParent(_detailsPanel.transform, false);
+            RectTransform rt = fitnessRequirementsPanel.AddComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.05f, 0.2f);
+            rt.anchorMax = new Vector2(0.95f, 0.45f);
+            
+            // Background
+            Image bg = fitnessRequirementsPanel.AddComponent<Image>();
+            bg.color = new Color(0.1f, 0.15f, 0.2f, 0.8f);
+
+            // Muscle Text
+            GameObject muscleGO = new GameObject("ReqMuscle");
+            muscleGO.transform.SetParent(fitnessRequirementsPanel.transform, false);
+            reqMuscle = muscleGO.AddComponent<TextMeshProUGUI>();
+            reqMuscle.fontSize = 20;
+            reqMuscle.alignment = TextAlignmentOptions.TopLeft;
+            RectTransform muscleRect = muscleGO.GetComponent<RectTransform>();
+            muscleRect.anchorMin = new Vector2(0.05f, 0.6f);
+            muscleRect.anchorMax = new Vector2(0.6f, 0.9f);
+
+            // Volume Text
+            GameObject volumeGO = new GameObject("ReqVolume");
+            volumeGO.transform.SetParent(fitnessRequirementsPanel.transform, false);
+            reqVolume = volumeGO.AddComponent<TextMeshProUGUI>();
+            reqVolume.fontSize = 20;
+            reqVolume.alignment = TextAlignmentOptions.TopRight;
+            RectTransform volumeRect = volumeGO.GetComponent<RectTransform>();
+            volumeRect.anchorMin = new Vector2(0.6f, 0.6f);
+            volumeRect.anchorMax = new Vector2(0.95f, 0.9f);
+
+            // Bar Background
+            GameObject barBG = new GameObject("BarBG");
+            barBG.transform.SetParent(fitnessRequirementsPanel.transform, false);
+            Image barBGImg = barBG.AddComponent<Image>();
+            barBGImg.color = new Color(0, 0, 0, 0.5f);
+            RectTransform barBGRect = barBG.GetComponent<RectTransform>();
+            barBGRect.anchorMin = new Vector2(0.05f, 0.3f);
+            barBGRect.anchorMax = new Vector2(0.95f, 0.5f);
+
+            // Bar Fill
+            GameObject barFill = new GameObject("BarFill");
+            barFill.transform.SetParent(barBG.transform, false);
+            reqVolumeBar = barFill.AddComponent<Image>();
+            reqVolumeBar.color = new Color(0.2f, 0.8f, 0.4f, 1f);
+            RectTransform barFillRect = barFill.GetComponent<RectTransform>();
+            barFillRect.anchorMin = Vector2.zero;
+            barFillRect.anchorMax = Vector2.one;
+            barFillRect.offsetMin = Vector2.zero;
+            barFillRect.offsetMax = Vector2.zero;
+
+            // Streak/Info Text
+            GameObject streakGO = new GameObject("ReqStreak");
+            streakGO.transform.SetParent(fitnessRequirementsPanel.transform, false);
+            reqStreak = streakGO.AddComponent<TextMeshProUGUI>();
+            reqStreak.fontSize = 14;
+            reqStreak.alignment = TextAlignmentOptions.Center;
+            RectTransform streakRect = streakGO.GetComponent<RectTransform>();
+            streakRect.anchorMin = new Vector2(0.05f, 0.05f);
+            streakRect.anchorMax = new Vector2(0.95f, 0.25f);
+        }
+
         /// <summary>
         /// Get emoji for muscle group display.
         /// </summary>
@@ -236,7 +310,8 @@
 
         public void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instanse != null)
+                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
             _active = false;
             ClearBuildings();
             _elements.SetActive(false);
