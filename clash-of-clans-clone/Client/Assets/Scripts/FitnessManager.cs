@@ -571,6 +571,9 @@ namespace DevelopersHub.ClashOfWhatecer
             // Sync with server
             SendWorkoutToServer(muscle, volume, reps);
 
+            // Check for level up
+            CheckAndShowLevelUp(muscle);
+
             // Log with calorie info
             float calories = EstimateCaloriesBurned(volume, muscle == MuscleGroup.Cardio);
             Debug.Log($"[LOGGED] {volume:F0}kg {muscle} | 1RM: {Calculate1RM(weight, reps):F1}kg | ~{calories:F0} cal");
@@ -844,6 +847,98 @@ namespace DevelopersHub.ClashOfWhatecer
                 }
                 // Recovery increases overnight
                 recoveryScore = Mathf.Min(100, recoveryScore + 20);
+            }
+        }
+
+        /// <summary>
+        /// Reset ALL fitness data to zero. Use this to clear garbage/corrupted data.
+        /// </summary>
+        public void ResetAllData()
+        {
+            // Clear all muscle volumes
+            for (int i = 0; i < 8; i++)
+            {
+                muscleVolumes[i] = 0;
+                todayVolumes[i] = 0;
+                personalRecords[i] = 0;
+                if (muscleCurrencies[i] != null)
+                {
+                    muscleCurrencies[i].volume = 0;
+                    muscleCurrencies[i].todayVolume = 0;
+                    muscleCurrencies[i].workoutCount = 0;
+                }
+            }
+            
+            // Reset other stats
+            recoveryScore = 100;
+            workoutStreak = 0;
+            lastWorkoutDate = DateTime.MinValue;
+            workoutHistory.Clear();
+            
+            // Clear PlayerPrefs
+            for (int i = 0; i < 8; i++)
+            {
+                PlayerPrefs.DeleteKey($"muscle_{i}");
+                PlayerPrefs.DeleteKey($"today_{i}");
+                PlayerPrefs.DeleteKey($"pr_{i}");
+            }
+            PlayerPrefs.DeleteKey("recovery");
+            PlayerPrefs.DeleteKey("streak");
+            PlayerPrefs.DeleteKey("lastWorkout");
+            PlayerPrefs.Save();
+            
+            Debug.Log("🔄 ALL FITNESS DATA RESET TO ZERO");
+        }
+
+        // Tracking previous levels for level-up detection
+        private int[] _previousLevels = new int[8];
+
+        /// <summary>
+        /// Check if any muscle group leveled up and show notification.
+        /// Call this after LogWorkout to detect level ups.
+        /// </summary>
+        public void CheckAndShowLevelUp(MuscleGroup muscle)
+        {
+            int muscleIndex = (int)muscle;
+            int newLevel = GetMuscleLevel(muscle);
+            
+            if (_previousLevels[muscleIndex] > 0 && newLevel > _previousLevels[muscleIndex])
+            {
+                ShowLevelUpNotification(muscle, newLevel);
+            }
+            _previousLevels[muscleIndex] = newLevel;
+        }
+
+        /// <summary>
+        /// Get the current level of a muscle group based on accumulated volume.
+        /// </summary>
+        public int GetMuscleLevel(MuscleGroup muscle)
+        {
+            float volume = muscleVolumes[(int)muscle];
+            int level = 1;
+            
+            foreach (var req in LevelRequirements)
+            {
+                if (volume >= req.Value)
+                    level = req.Key;
+            }
+            return level;
+        }
+
+        /// <summary>
+        /// Show a level up notification popup.
+        /// </summary>
+        public void ShowLevelUpNotification(MuscleGroup muscle, int newLevel)
+        {
+            string muscleName = muscle.ToString();
+            string message = $"🎉 {muscleName} reached Level {newLevel}!";
+            
+            Debug.Log($"🏆 LEVEL UP! {message}");
+            
+            // Create popup if UI_Fitness is available
+            if (UI_Fitness.instance != null)
+            {
+                UI_Fitness.instance.ShowLevelUpPopup(muscleName, newLevel);
             }
         }
 

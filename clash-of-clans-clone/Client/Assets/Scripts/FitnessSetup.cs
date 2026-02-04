@@ -374,18 +374,31 @@ namespace DevelopersHub.ClashOfWhatecer
             fitnessUI._workoutTimerText = CreateText(workoutSection.transform, "Timer", "[TIME] 0:00", 16, 
                 new Vector2(0.4f, 0.82f), new Vector2(0.6f, 0.98f), TextAlignmentOptions.Center).GetComponent<TextMeshProUGUI>();
             
-            fitnessUI._workoutStatusText = CreateText(workoutSection.transform, "Status", "[GYM] Workout Active", 14, 
+            fitnessUI._workoutStatusText = CreateText(workoutSection.transform, "Status", "[ZZZ] No workout in progress", 14, 
                 new Vector2(0.6f, 0.82f), new Vector2(0.98f, 0.98f), TextAlignmentOptions.Right).GetComponent<TextMeshProUGUI>();
 
             // Stats row
-            fitnessUI._totalVolumeText = CreateText(workoutSection.transform, "TotalVol", "[*] 4,000 kg", 13, 
+            fitnessUI._totalVolumeText = CreateText(workoutSection.transform, "TotalVol", "[*] 0 kg", 13, 
                 new Vector2(0.02f, 0.65f), new Vector2(0.3f, 0.8f)).GetComponent<TextMeshProUGUI>();
             
-            fitnessUI._exerciseCountText = CreateText(workoutSection.transform, "ExCount", "[#] 1 exercises", 13, 
+            fitnessUI._exerciseCountText = CreateText(workoutSection.transform, "ExCount", "[#] 0 exercises", 13, 
                 new Vector2(0.3f, 0.65f), new Vector2(0.6f, 0.8f), TextAlignmentOptions.Center).GetComponent<TextMeshProUGUI>();
 
-            // Control buttons row
-            GameObject startBtn = CreateButton(workoutSection.transform, "BtnStart", "□ FINISH", 14, 
+            // Reset button (to clear old data)
+            GameObject resetBtn = CreateButton(workoutSection.transform, "BtnReset", "[X] Reset", 11, 
+                new Vector2(0.6f, 0.65f), new Vector2(0.80f, 0.8f));
+            resetBtn.GetComponent<Image>().color = new Color(0.6f, 0.3f, 0.3f, 1f); // Red-ish
+            Button resetButton = resetBtn.GetComponent<Button>();
+            resetButton.onClick.AddListener(() => {
+                if (FitnessManager.instance != null) {
+                    FitnessManager.instance.ResetAllData();
+                    fitnessUI.RefreshStats();
+                    Debug.Log("🔄 All fitness data reset!");
+                }
+            });
+
+            // Control buttons row - START button (visible when no workout active)
+            GameObject startBtn = CreateButton(workoutSection.transform, "BtnStart", "▶ START", 14, 
                 new Vector2(0.02f, 0.38f), new Vector2(0.32f, 0.62f));
             startBtn.GetComponent<Image>().color = new Color(0.2f, 0.7f, 0.3f, 1f); // Green
             fitnessUI._startWorkoutButton = startBtn.GetComponent<Button>();
@@ -401,7 +414,7 @@ namespace DevelopersHub.ClashOfWhatecer
             fitnessUI._addExerciseButton = addSetBtn.GetComponent<Button>();
 
             // Stop button (hidden until workout starts)
-            GameObject stopBtn = CreateButton(workoutSection.transform, "BtnStop", "STOP", 14, 
+            GameObject stopBtn = CreateButton(workoutSection.transform, "BtnStop", "■ STOP", 14, 
                 new Vector2(0.02f, 0.38f), new Vector2(0.32f, 0.62f));
             stopBtn.GetComponent<Image>().color = new Color(0.8f, 0.3f, 0.3f, 1f); // Red
             fitnessUI._stopWorkoutButton = stopBtn.GetComponent<Button>();

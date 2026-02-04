@@ -373,6 +373,16 @@ namespace DevelopersHub.ClashOfWhatecer
 
         private void QuickLog(string exercise)
         {
+            Debug.Log($"📍 QuickLog called: {exercise}");
+            
+            // Ensure FitnessManager exists
+            if (FitnessManager.instance == null)
+            {
+                Debug.LogError("❌ FitnessManager.instance is NULL! Creating one...");
+                GameObject fmGO = new GameObject("FitnessManager_AutoCreated");
+                fmGO.AddComponent<FitnessManager>();
+            }
+            
             if (!quickExercises.ContainsKey(exercise))
             {
                 Debug.LogWarning($"QuickLog: Unknown exercise '{exercise}'");
@@ -940,6 +950,124 @@ namespace DevelopersHub.ClashOfWhatecer
         public float GetWorkoutDuration()
         {
             return _workoutDuration;
+        }
+
+        // ============================================================
+        // LEVEL UP NOTIFICATION
+        // ============================================================
+
+        /// <summary>
+        /// Show a level up popup notification.
+        /// </summary>
+        public void ShowLevelUpPopup(string muscleName, int newLevel)
+        {
+            StartCoroutine(ShowLevelUpPopupCoroutine(muscleName, newLevel));
+        }
+
+        private IEnumerator ShowLevelUpPopupCoroutine(string muscleName, int newLevel)
+        {
+            // Create popup container
+            GameObject popup = new GameObject("LevelUpPopup");
+            popup.transform.SetParent(_panel.transform, false);
+            
+            RectTransform popupRect = popup.AddComponent<RectTransform>();
+            popupRect.anchorMin = new Vector2(0.25f, 0.35f);
+            popupRect.anchorMax = new Vector2(0.75f, 0.65f);
+            popupRect.offsetMin = Vector2.zero;
+            popupRect.offsetMax = Vector2.zero;
+            
+            // Background
+            Image bg = popup.AddComponent<Image>();
+            bg.color = new Color(0.1f, 0.15f, 0.2f, 0.95f);
+            
+            // Add outline
+            Outline outline = popup.AddComponent<Outline>();
+            outline.effectColor = new Color(1f, 0.85f, 0.2f, 1f); // Gold outline
+            outline.effectDistance = new Vector2(3, 3);
+            
+            // Title
+            GameObject titleGO = new GameObject("Title");
+            titleGO.transform.SetParent(popup.transform, false);
+            RectTransform titleRect = titleGO.AddComponent<RectTransform>();
+            titleRect.anchorMin = new Vector2(0, 0.6f);
+            titleRect.anchorMax = new Vector2(1, 0.95f);
+            titleRect.offsetMin = Vector2.zero;
+            titleRect.offsetMax = Vector2.zero;
+            
+            TextMeshProUGUI titleText = titleGO.AddComponent<TextMeshProUGUI>();
+            titleText.text = "🏆 LEVEL UP!";
+            titleText.fontSize = 36;
+            titleText.fontStyle = FontStyles.Bold;
+            titleText.alignment = TextAlignmentOptions.Center;
+            titleText.color = new Color(1f, 0.85f, 0.2f); // Gold
+            
+            // Muscle name and level
+            GameObject msgGO = new GameObject("Message");
+            msgGO.transform.SetParent(popup.transform, false);
+            RectTransform msgRect = msgGO.AddComponent<RectTransform>();
+            msgRect.anchorMin = new Vector2(0, 0.25f);
+            msgRect.anchorMax = new Vector2(1, 0.6f);
+            msgRect.offsetMin = Vector2.zero;
+            msgRect.offsetMax = Vector2.zero;
+            
+            TextMeshProUGUI msgText = msgGO.AddComponent<TextMeshProUGUI>();
+            msgText.text = $"{muscleName} reached\nLevel {newLevel}!";
+            msgText.fontSize = 24;
+            msgText.alignment = TextAlignmentOptions.Center;
+            msgText.color = Color.white;
+            
+            // Subtext
+            GameObject subGO = new GameObject("Subtext");
+            subGO.transform.SetParent(popup.transform, false);
+            RectTransform subRect = subGO.AddComponent<RectTransform>();
+            subRect.anchorMin = new Vector2(0, 0.05f);
+            subRect.anchorMax = new Vector2(1, 0.25f);
+            subRect.offsetMin = Vector2.zero;
+            subRect.offsetMax = Vector2.zero;
+            
+            TextMeshProUGUI subText = subGO.AddComponent<TextMeshProUGUI>();
+            subText.text = "New building upgrades unlocked!";
+            subText.fontSize = 14;
+            subText.fontStyle = FontStyles.Italic;
+            subText.alignment = TextAlignmentOptions.Center;
+            subText.color = new Color(0.7f, 0.7f, 0.7f);
+            
+            // Animate in (scale punch)
+            popup.transform.localScale = Vector3.zero;
+            float duration = 0.3f;
+            float elapsed = 0;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / duration;
+                float scale = Mathf.Sin(t * Mathf.PI * 0.5f) * 1.1f; // Overshoot
+                popup.transform.localScale = Vector3.one * Mathf.Min(scale, 1f);
+                yield return null;
+            }
+            popup.transform.localScale = Vector3.one;
+            
+            // Play sound
+            if (SoundManager.instance != null)
+                SoundManager.instance.PlaySound(SoundManager.instance.buttonClickSound);
+            
+            // Wait 3 seconds
+            yield return new WaitForSeconds(3f);
+            
+            // Fade out
+            elapsed = 0;
+            duration = 0.5f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = 1 - (elapsed / duration);
+                bg.color = new Color(bg.color.r, bg.color.g, bg.color.b, 0.95f * t);
+                titleText.color = new Color(titleText.color.r, titleText.color.g, titleText.color.b, t);
+                msgText.color = new Color(msgText.color.r, msgText.color.g, msgText.color.b, t);
+                subText.color = new Color(subText.color.r, subText.color.g, subText.color.b, t);
+                yield return null;
+            }
+            
+            Destroy(popup);
         }
     }
 }
